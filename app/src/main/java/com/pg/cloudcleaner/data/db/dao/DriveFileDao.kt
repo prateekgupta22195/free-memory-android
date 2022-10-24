@@ -1,4 +1,4 @@
-package com.pg.cloudcleaner
+package com.pg.cloudcleaner.data.db.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
