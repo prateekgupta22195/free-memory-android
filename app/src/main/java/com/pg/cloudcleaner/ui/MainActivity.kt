@@ -8,7 +8,6 @@ import androidx.navigation.compose.rememberNavController
 import com.pg.cloudcleaner.app.AppData
 import com.pg.cloudcleaner.app.CloudCleanerApp
 
-
 @ExperimentalFoundationApi
 class MainActivity : AppCompatActivity() {
 
@@ -19,10 +18,8 @@ class MainActivity : AppCompatActivity() {
             AppData.instance().navController = rememberNavController()
             CloudCleanerApp(navController = AppData.instance().navController)
         }
-
     }
 }
-
 
 object A {
     val a = 9

@@ -1,6 +1,10 @@
 package com.pg.cloudcleaner
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.pg.cloudcleaner.model.DriveFile
 import kotlinx.coroutines.flow.Flow
 
@@ -27,5 +31,4 @@ interface DriveFileDao {
 
     @Query("DELETE FROM drivefile WHERE id == (:id)")
     suspend fun delete(id: String)
-
 }

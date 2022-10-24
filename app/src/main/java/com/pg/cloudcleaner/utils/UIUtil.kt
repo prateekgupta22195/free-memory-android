@@ -17,4 +17,3 @@ fun Fragment.contentView(
     view.setContent(content)
     return view
 }
-

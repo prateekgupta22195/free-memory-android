@@ -6,24 +6,20 @@ class AppData {
 
     lateinit var navController: NavHostController
 
-
     companion object {
 
         @Volatile
-        private var INSTANCE : AppData? = null
+        private var INSTANCE: AppData? = null
 
-        fun instance() : AppData {
+        fun instance(): AppData {
 
-            if(INSTANCE!=null)
+            if (INSTANCE != null)
                 return INSTANCE!!
 
             synchronized(this) {
                 INSTANCE = AppData()
                 return INSTANCE!!
             }
-
         }
     }
-
-
 }

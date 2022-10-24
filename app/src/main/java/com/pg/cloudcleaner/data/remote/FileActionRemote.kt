@@ -11,4 +11,3 @@ interface FileActionRemote {
 
     suspend fun deleteFile(accessToken: String, fileId: String): Response<ResponseBody>
 }
-

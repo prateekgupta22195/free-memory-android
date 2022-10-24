@@ -25,7 +25,6 @@ import com.pg.cloudcleaner.data.repo.FileActionRepoImpl
 import com.pg.cloudcleaner.model.DriveFile
 import kotlinx.coroutines.*
 
-
 @ExperimentalFoundationApi
 @Composable
 fun FileExplorer() {
@@ -38,11 +37,12 @@ fun FileExplorer() {
         FileActionRepoImpl(context = context)
     }
 
-
     if (filesMutable.value != null)
 
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(8.dp)) {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(8.dp)
+        ) {
 
             items(filesMutable.value!!.size) { index ->
                 DriveFileItem(filesMutable.value!![index], fileRepo)
@@ -56,33 +56,32 @@ fun FileExplorer() {
                 filesMutable.value = it
             }
         }
-
-
     })
-
-
 }
-
 
 @ExperimentalFoundationApi
 @Composable
 fun DriveFileItem(file: DriveFile, fileActionRepo: FileActionRepo) {
 
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.combinedClickable(
-        onClick = {
-            if (file.fileType?.contains("image") == true) {
-                AppData.instance().navController.navigate("image-viewer/${file.id}")
-            }
-        }, onDoubleClick = {
-            CoroutineScope(Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
-                throwable.printStackTrace()
-            }).launch {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.combinedClickable(
+            onClick = {
+                if (file.fileType?.contains("image") == true) {
+                    AppData.instance().navController.navigate("image-viewer/${file.id}")
+                }
+            }, onDoubleClick = {
+            CoroutineScope(
+                Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
+                    throwable.printStackTrace()
+                }
+            ).launch {
                 fileActionRepo.deleteFile(file)
             }
         }
 
-
-    )) {
+        )
+    ) {
 
         AsyncImage(
             model = file.thumbnailLink,
@@ -91,7 +90,8 @@ fun DriveFileItem(file: DriveFile, fileActionRepo: FileActionRepo) {
                 .size(40.dp)
                 .fillMaxSize()
                 .clip(
-                    CircleShape),
+                    CircleShape
+                ),
             contentScale = ContentScale.Crop,
             error = rememberAsyncImagePainter("https://thumbs.dreamstime.com/b/beautiful-rain-forest-ang-ka-nature-trail-doi-inthanon-national-park-thailand-36703721.jpg")
 
@@ -113,5 +113,4 @@ fun DriveFileItem(file: DriveFile, fileActionRepo: FileActionRepo) {
             }
         }
     }
-
 }

@@ -24,28 +24,25 @@ import kotlinx.coroutines.withContext
 
 class MainViewModel(context: Application) : AndroidViewModel(context) {
 
-
     private var _lastSignedInAccount: MutableLiveData<GoogleSignInAccount?> = MutableLiveData()
     val lastSignedInAccount: LiveData<GoogleSignInAccount?> get() = _lastSignedInAccount
 
     private val gso by lazy {
         GoogleSignInOptions.Builder(
-            GoogleSignInOptions.DEFAULT_SIGN_IN)
+            GoogleSignInOptions.DEFAULT_SIGN_IN
+        )
             .requestEmail()
             .requestScopes(Scope(Scopes.DRIVE_FULL))
             .build()
-
     }
 
     private val fileRepo by lazy {
         FileActionRepoImpl(context = context)
     }
 
-
     fun getSignInIntent(context: Context): Intent {
         return GoogleSignIn.getClient(context, gso).signInIntent
     }
-
 
     fun handleResult(result: ActivityResult, context: Context) {
         if (result.resultCode == Activity.RESULT_OK) {
@@ -60,7 +57,6 @@ class MainViewModel(context: Application) : AndroidViewModel(context) {
             }
         }
     }
-
 
     private suspend fun handleSignInResult(account: GoogleSignInAccount?, context: Context) {
         withContext(Dispatchers.IO) {

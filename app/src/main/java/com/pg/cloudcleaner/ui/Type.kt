@@ -1,6 +1,5 @@
 package com.pg.cloudcleaner.ui
 
-
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily

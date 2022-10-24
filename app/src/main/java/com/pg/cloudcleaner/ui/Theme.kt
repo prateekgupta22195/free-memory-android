@@ -5,7 +5,6 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import com.pg.cloudcleaner.ui.*
 
-
 private val DarkColorPalette = darkColors(
     primary = Purple200,
     primaryVariant = Purple700,

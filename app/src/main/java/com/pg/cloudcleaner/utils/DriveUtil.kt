@@ -10,5 +10,4 @@ suspend fun getGoogleAccessToken(context: Context): String {
     GoogleSignIn.getLastSignedInAccount(context)?.account?.let {
         return GoogleAuthUtil.getToken(context, it, scope)
     } ?: throw IllegalStateException("No Account logged In")
-
 }

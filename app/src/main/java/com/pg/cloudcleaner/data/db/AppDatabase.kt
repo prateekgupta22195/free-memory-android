@@ -11,7 +11,6 @@ import com.pg.cloudcleaner.model.DriveFile
 abstract class AppDatabase : RoomDatabase() {
     abstract fun driveFileDao(): DriveFileDao
 
-
     companion object {
 
         @Volatile
@@ -30,8 +29,5 @@ abstract class AppDatabase : RoomDatabase() {
                 return instance
             }
         }
-
     }
 }
-
-

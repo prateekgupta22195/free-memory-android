@@ -4,8 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
-import kotlin.reflect.KProperty
-
 
 @Entity
 data class DriveFile(
@@ -17,5 +15,3 @@ data class DriveFile(
     @ColumnInfo(name = "thumbnailLink") @SerializedName("thumbnailLink") val thumbnailLink: String?,
     @PrimaryKey @SerializedName("id") val id: String,
 )
-
-

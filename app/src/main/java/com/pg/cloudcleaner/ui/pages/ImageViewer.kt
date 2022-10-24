@@ -15,7 +15,6 @@ import com.pg.cloudcleaner.model.DriveFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-
 @Composable
 fun ImageViewer(fileID: String) {
 
@@ -23,17 +22,11 @@ fun ImageViewer(fileID: String) {
         mutableStateOf<DriveFile?>(null)
     }
 
-
     val context: Context = LocalContext.current
-
 
     val fileRepo by lazy {
         FileActionRepoImpl(context = context)
     }
-
-
-
-
 
     LaunchedEffect(key1 = fileID, block = {
         withContext(Dispatchers.Default) {
@@ -41,10 +34,7 @@ fun ImageViewer(fileID: String) {
                 driveFile.value = it
             }
         }
-
-
     })
-
 
     return AsyncImage(
         model = driveFile.value?.thumbnailLink,

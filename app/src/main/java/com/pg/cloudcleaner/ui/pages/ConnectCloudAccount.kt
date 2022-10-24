@@ -11,12 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.pg.cloudcleaner.vm.MainViewModel
-
 
 @ExperimentalFoundationApi
 @Composable
@@ -28,7 +26,6 @@ fun ConnectCloudAccount() {
 
     Home(account = account, viewModel)
 }
-
 
 @ExperimentalFoundationApi
 @Composable

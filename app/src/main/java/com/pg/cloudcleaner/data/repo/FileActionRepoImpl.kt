@@ -1,19 +1,19 @@
 package com.pg.cloudcleaner.data.repo
 
 import android.content.Context
+import com.pg.cloudcleaner.R
 import com.pg.cloudcleaner.data.db.AppDatabase
 import com.pg.cloudcleaner.data.remote.FileActionRemoteImpl
 import com.pg.cloudcleaner.model.DriveFile
 import com.pg.cloudcleaner.utils.getGoogleAccessToken
 import kotlinx.coroutines.flow.Flow
 
-
 class FileActionRepoImpl(val context: Context) : FileActionRepo {
 
     private val database: AppDatabase = AppDatabase.getDatabase(context = context)
 
     private val fileActionRemote by lazy {
-        FileActionRemoteImpl()
+        FileActionRemoteImpl(apiKey = context.getString(R.string.google_api_key))
     }
 
     override suspend fun getAllFiles(): Flow<List<DriveFile>> {
@@ -29,16 +29,14 @@ class FileActionRepoImpl(val context: Context) : FileActionRepo {
 
     override suspend fun deleteFile(driveFile: DriveFile) {
         val accessToken = getGoogleAccessToken(context = context)
-        val response = fileActionRemote.deleteFile( accessToken, driveFile.id,)
+        val response = fileActionRemote.deleteFile(accessToken, driveFile.id)
         if (response.isSuccessful)
             database.driveFileDao().delete(driveFile)
     }
 
-
     override suspend fun getFile(fileID: String): Flow<DriveFile?> {
         return database.driveFileDao().get(fileID)
     }
-
 
     override suspend fun syncDBFiles(accessToken: String, pageToken: String?) {
 
@@ -53,6 +51,4 @@ class FileActionRepoImpl(val context: Context) : FileActionRepo {
         if (tempNextToken != null)
             syncDBFiles(accessToken, tempNextToken)
     }
-
-
 }
