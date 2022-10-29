@@ -17,7 +17,6 @@ interface GoogleDriveApiService {
         @Query("fields") fields: String,
         @Query("pageSize") pageSize: Int,
         @Query("pageToken") pageToken: String? = null,
-//        @Query("key") Key : String
     ): Call<DriveAPIResponse>
 
     @GET("/v1/mediaItems")

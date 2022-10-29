@@ -16,7 +16,7 @@ class FileActionRemoteImpl(
     override fun getFiles(accessToken: String, pageToken: String?): Call<DriveAPIResponse> {
         return googleDriveApiService.filesData(
             "Bearer $accessToken",
-            fields = "nextPageToken,files(createdTime,modifiedTime,size,viewedByMeTime,id,mimeType,originalFilename,thumbnailLink)",
+            fields = "nextPageToken,files(createdTime,modifiedTime,size,viewedByMeTime,id,mimeType,originalFilename,thumbnailLink,iconLink)",
             pageSize = 500, pageToken = pageToken, key = apiKey
         )
     }

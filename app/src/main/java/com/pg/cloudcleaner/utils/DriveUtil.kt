@@ -5,7 +5,7 @@ import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.Scopes
 
-suspend fun getGoogleAccessToken(context: Context): String {
+fun getGoogleAccessToken(context: Context): String {
     val scope = "oauth2:${Scopes.DRIVE_FULL}"
     GoogleSignIn.getLastSignedInAccount(context)?.account?.let {
         return GoogleAuthUtil.getToken(context, it, scope)

@@ -13,5 +13,5 @@ interface FileActionRepo {
 
     suspend fun getFile(fileID: String): Flow<DriveFile?>
 
-    suspend fun syncDBFiles(accessToken: String, pageToken: String?)
+    suspend fun syncDBFiles(accessToken: String, pageToken: String? = null)
 }

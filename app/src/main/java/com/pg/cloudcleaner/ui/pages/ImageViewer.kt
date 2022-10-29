@@ -1,6 +1,7 @@
 package com.pg.cloudcleaner.ui.pages
 
 import android.content.Context
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,13 +11,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import com.pg.cloudcleaner.app.AppData
 import com.pg.cloudcleaner.data.repo.FileActionRepoImpl
 import com.pg.cloudcleaner.model.DriveFile
+import com.pg.cloudcleaner.utils.LogCompositions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
 fun ImageViewer(fileID: String) {
+    LogCompositions(msg = "ImageViewer")
 
     val driveFile = remember {
         mutableStateOf<DriveFile?>(null)
@@ -36,11 +40,19 @@ fun ImageViewer(fileID: String) {
         }
     })
 
-    return AsyncImage(
-        model = driveFile.value?.thumbnailLink,
-        contentDescription = "",
-        modifier = Modifier
-            .fillMaxSize(),
-        error = rememberAsyncImagePainter("https://thumbs.dreamstime.com/b/beautiful-rain-forest-ang-ka-nature-trail-doi-inthanon-national-park-thailand-36703721.jpg")
-    )
+    driveFile.value?.let { file ->
+        AsyncImage(
+            model = file.thumbnailLink,
+            contentDescription = "",
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable {
+                    AppData
+                        .instance()
+                        .navController()
+                        .navigate("test-page")
+                },
+            error = rememberAsyncImagePainter(model = file.iconLink?.replace("16", "64")),
+        )
+    }
 }
