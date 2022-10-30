@@ -5,7 +5,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface FileActionRepo {
 
-    suspend fun getAllFiles(): Flow<List<DriveFile?>>
+    suspend fun getAllFiles(): Flow<List<DriveFile>?>
+
+    suspend fun getAllFilesOwnedByMe(): Flow<List<DriveFile>?>
 
     suspend fun deleteFile(fileID: String)
 

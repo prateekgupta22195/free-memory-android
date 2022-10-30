@@ -42,7 +42,7 @@ class FileExplorerViewModel(application: Application) : AndroidViewModel(applica
     init {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                filesMutable = fileRepo.getAllFiles()
+                filesMutable = fileRepo.getAllFilesOwnedByMe()
             }
         }
     }

@@ -29,28 +29,31 @@ fun DriveFileItem(file: DriveFile, fileActionRepo: FileActionRepo) {
     LogCompositions(msg = "DriveFileItem")
     val scope = rememberCoroutineScope()
 
-    Card(modifier = Modifier.fillMaxWidth()) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .combinedClickable(
+                onClick = {
+                    if (file.fileType?.contains("image") == true) {
+                        AppData
+                            .instance()
+                            .navController()
+                            .navigate("image-viewer/${file.id}")
+                    }
+                }, onDoubleClick = {
+                scope.launch(
+                    Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
+                        throwable.printStackTrace()
+                    }
+                ) {
+                    fileActionRepo.deleteFile(file)
+                }
+            }
+            )
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .combinedClickable(
-                    onClick = {
-                        if (file.fileType?.contains("image") == true) {
-                            AppData
-                                .instance()
-                                .navController()
-                                .navigate("image-viewer/${file.id}")
-                        }
-                    }, onDoubleClick = {
-                    scope.launch(
-                        Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
-                            throwable.printStackTrace()
-                        }
-                    ) {
-                        fileActionRepo.deleteFile(file)
-                    }
-                }
-                )
                 .padding(8.dp)
         ) {
 
