@@ -2,7 +2,26 @@ package com.pg.cloudcleaner.ui
 
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFF333333)
-val Purple500 = Color(0xFF333333)
-val Purple700 = Color(0xFF333333)
-val Teal200 = Color(0xFF333333)
+interface LightThemeColors : ThemeColors {
+
+    companion object {
+        val primary = Color(0XFFFFFFFF)
+        val primaryVariant = Color(0XFFEEEEEE)
+        val onPrimary = Color(0XFF222222)
+    }
+}
+
+interface DarkThemeColors {
+
+    companion object {
+        val primary = Color(0XFF333333)
+        val primaryVariant = Color(0XFF222222)
+        val onPrimary = Color(0XFFEEEEEE)
+    }
+}
+
+interface ThemeColors {
+
+    val primary: Color
+    val primaryVariant: Color
+}

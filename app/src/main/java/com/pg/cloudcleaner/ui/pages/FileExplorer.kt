@@ -1,9 +1,12 @@
 package com.pg.cloudcleaner.ui.pages
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,21 +28,27 @@ fun FileExplorer() {
     val viewModel = ViewModelProvider(LocalViewModelStoreOwner.current!!)[FileExplorerViewModel::class.java]
 
     val refreshing by remember {
+
         viewModel.refreshing
     }
 
     val state = rememberSwipeRefreshState(refreshing)
     val files = viewModel.filesMutable.collectAsState(initial = null)
 
-    SwipeRefresh(
-        state = state, onRefresh = {
-            viewModel.refresh()
-        },
-        modifier = Modifier
-            .fillMaxSize()
-            .safeContentPadding()
-    ) {
-        if (files.value != null)
-            FileListView(driveFiles = files.value!!)
+    Column {
+        TopAppBar(title = {
+            Text(text = "File Explorer")
+        })
+        SwipeRefresh(
+            state = state, onRefresh = {
+                viewModel.refresh()
+            },
+            modifier = Modifier
+                .fillMaxSize()
+                .safeContentPadding()
+        ) {
+            if (files.value != null)
+                FileListView(driveFiles = files.value!!)
+        }
     }
 }
