@@ -19,8 +19,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.pg.cloudcleaner.utils.LogCompositions
 import com.pg.cloudcleaner.utils.getBitmap
-import com.pg.cloudcleaner.utils.getMimeType
-import timber.log.Timber
 import java.io.File
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
@@ -37,20 +35,16 @@ fun FlatFileManager(encodedDirectoryPath: String = "/storage/emulated/0") {
     }
 
     fun exploreDirectory(directoryPath: String) {
-//        runBlocking(Dispatchers.IO) {
-        Timber.d("exploreDirectory thread name ${Thread.currentThread().name}")
         val directory = File(directoryPath)
         directory.listFiles()?.forEach { file ->
             if (file.isDirectory)
                 exploreDirectory(file.absolutePath)
             else {
                 if (!file.name.startsWith('.')) {
-                    Timber.d("file name " + file.name + " mime type " + getMimeType(file.absolutePath))
                     list.add(file)
                 }
             }
         }
-//        }
     }
 
     LaunchedEffect(key1 = directoryPath, block = {
@@ -76,7 +70,6 @@ fun FileListView(list: List<File>) {
 fun FileItem(file: File) {
 
     val bMap = remember {
-        Timber.d("File item")
         getBitmap(file)
     }
     Box {
