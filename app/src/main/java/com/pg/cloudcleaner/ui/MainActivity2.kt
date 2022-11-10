@@ -1,27 +1,14 @@
 package com.pg.cloudcleaner.ui
 
 import android.os.Bundle
-import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.navigation.compose.rememberNavController
-import com.pg.cloudcleaner.app.AppData
-import com.pg.cloudcleaner.app.CloudCleanerApp
+import com.pg.cloudcleaner.R
 import timber.log.Timber
 
-@ExperimentalFoundationApi
-@ExperimentalMaterialApi
-class MainActivity : AppCompatActivity() {
-
+class MainActivity2 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContent {
-            AppData.instance().initNavController(rememberNavController())
-            CloudCleanerApp()
-        }
-//        startActivity(Intent(this, MainActivity2::class.java))
+        setContentView(R.layout.activity_main2)
         Timber.e("onCreate")
     }
 
