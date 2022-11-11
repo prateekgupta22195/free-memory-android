@@ -13,5 +13,7 @@ data class DriveFile(
     @ColumnInfo(name = "originalFilename") @SerializedName("originalFilename") val fileName: String?,
     @ColumnInfo(name = "size") @SerializedName("size") val size: Long,
     @ColumnInfo(name = "thumbnailLink") @SerializedName("thumbnailLink") val thumbnailLink: String?,
+    @ColumnInfo(name = "iconLink") @SerializedName("iconLink") val iconLink: String?,
+    @ColumnInfo(name = "ownedByMe") @SerializedName("ownedByMe") val ownedByMe: Boolean,
     @PrimaryKey @SerializedName("id") val id: String,
 )

@@ -16,8 +16,12 @@ class FileActionRepoImpl(val context: Context) : FileActionRepo {
         FileActionRemoteImpl(apiKey = context.getString(R.string.google_api_key))
     }
 
-    override suspend fun getAllFiles(): Flow<List<DriveFile>> {
+    override suspend fun getAllFiles(): Flow<List<DriveFile>?> {
         return database.driveFileDao().getAll()
+    }
+
+    override suspend fun getAllFilesOwnedByMe(): Flow<List<DriveFile>?> {
+        return database.driveFileDao().getFilesOwnedByMe()
     }
 
     override suspend fun deleteFile(fileID: String) {

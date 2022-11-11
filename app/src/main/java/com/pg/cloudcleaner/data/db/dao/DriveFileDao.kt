@@ -1,10 +1,6 @@
-package com.pg.cloudcleaner
+package com.pg.cloudcleaner.data.db.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.pg.cloudcleaner.model.DriveFile
 import kotlinx.coroutines.flow.Flow
 
@@ -12,7 +8,10 @@ import kotlinx.coroutines.flow.Flow
 interface DriveFileDao {
 
     @Query("SELECT * FROM drivefile")
-    fun getAll(): Flow<List<DriveFile>>
+    fun getAll(): Flow<List<DriveFile>?>
+
+    @Query("SELECT * FROM drivefile WHERE ownedByMe = 1 ")
+    fun getFilesOwnedByMe(): Flow<List<DriveFile>?>
 
     @Query("SELECT * FROM drivefile WHERE id IN (:userIds)")
     fun loadAllByIds(userIds: IntArray): Flow<List<DriveFile>>
