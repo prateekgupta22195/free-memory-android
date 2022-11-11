@@ -12,10 +12,8 @@ import com.pg.cloudcleaner.app.CloudCleanerApp
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
 class MainActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             AppData.instance().initNavController(rememberNavController())
             CloudCleanerApp()

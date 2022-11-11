@@ -16,12 +16,12 @@ class FileActionRemoteImpl(
     override fun getFiles(accessToken: String, pageToken: String?): Call<DriveAPIResponse> {
         return googleDriveApiService.filesData(
             "Bearer $accessToken",
-            fields = "nextPageToken,files(createdTime,modifiedTime,size,viewedByMeTime,id,mimeType,originalFilename,thumbnailLink,iconLink)",
+            fields = "nextPageToken,files(createdTime,modifiedTime,size,viewedByMeTime,id,mimeType,originalFilename,thumbnailLink,iconLink,ownedByMe)",
             pageSize = 500, pageToken = pageToken, key = apiKey
         )
     }
 
     override suspend fun deleteFile(accessToken: String, fileId: String): Response<ResponseBody> {
-        return googleDriveApiService.deleteFile(fileId = fileId, auth = accessToken, key = apiKey)
+        return googleDriveApiService.deleteFile(fileId = fileId, auth = "Bearer $accessToken", key = apiKey)
     }
 }
