@@ -17,7 +17,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.pg.cloudcleaner.app.AppData
 import com.pg.cloudcleaner.data.repo.FileActionRepo
 import com.pg.cloudcleaner.model.DriveFile
-import com.pg.cloudcleaner.utils.LogCompositions
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,10 +24,7 @@ import kotlinx.coroutines.launch
 @ExperimentalFoundationApi
 @Composable
 fun DriveFileItem(file: DriveFile, fileActionRepo: FileActionRepo) {
-
-    LogCompositions(msg = "DriveFileItem")
     val scope = rememberCoroutineScope()
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
