@@ -17,25 +17,20 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import com.pg.cloudcleaner.utils.LogCompositions
-import com.pg.cloudcleaner.utils.getBitmap
+import com.pg.cloudcleaner.R
+import com.pg.cloudcleaner.ui.components.Image
+import com.pg.cloudcleaner.utils.getBitmapThumbnail
 import com.pg.cloudcleaner.vm.FlatFileManagerViewModel
 import java.io.File
 
 @Composable
-fun FlatFileManager(vm: FlatFileManagerViewModel = viewModel(factory = FlatFileManagerViewModel.Factory("/storage/emulated/0"))) {
-    LogCompositions(msg = "FlatFileManager")
-    Scaffold(topBar = {
-        TopAppBar {
-        }
-    }) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-        ) {
-            FileListView(vm.list)
-        }
+fun FlatFileManager(
+    vm: FlatFileManagerViewModel = viewModel(
+        factory = FlatFileManagerViewModel.Factory("/storage/emulated/0")
+    )
+) {
+    Scaffold(topBar = { TopAppBar {} }) { padding ->
+        Column(modifier = Modifier.padding(padding)) { FileListView(vm.list) }
     }
 }
 
@@ -44,32 +39,29 @@ fun FileListView(list: List<File>) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         modifier = Modifier.fillMaxHeight()
-    ) {
-        items(list.size) { index ->
-            FileItem(file = list[index])
-        }
-    }
+    ) { items(list.size) { index -> FileItem(file = list[index]) } }
 }
 
 @Composable
 fun FileItem(file: File) {
 
     val bMap = remember {
-        getBitmap(file)
+        getBitmapThumbnail(file)
     }
     Box {
         Column {
-            Card(
-                modifier = Modifier
-                    .padding(4.dp)
-            ) {
-//                Text(list[index].name)
-                AsyncImage(
-                    model = bMap, contentDescription = "", contentScale = ContentScale.Crop,
+            Card(modifier = Modifier.padding(4.dp)) {
+                Image(
+                    model = file.absolutePath,
+                    contentScale = ContentScale.Crop,
+                    contentDescription = "",
                     modifier = Modifier
                         .height(108.dp)
                         .clip(RoundedCornerShape(4.dp))
-                )
+                ) {
+//                    TODO: change error image
+                    it.error(R.mipmap.ic_folder)
+                }
             }
             Text(
                 text = file.name,

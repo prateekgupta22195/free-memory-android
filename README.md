@@ -8,3 +8,7 @@ Give permission to manage all files on device with:
 ## Code Style
 ktlint
 
+## Architecture and components
+- LiveData, MVVM
+- Jetpack compose
+- For Images: Glide
