@@ -12,13 +12,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.pg.cloudcleaner.data.repo.FileActionRepoImpl
 import com.pg.cloudcleaner.model.DriveFile
-import com.pg.cloudcleaner.utils.LogCompositions
 
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @Composable
 fun FileListView(driveFiles: List<DriveFile>) {
-    LogCompositions(msg = "FileListView")
     val context = LocalContext.current
     val fileRepo = FileActionRepoImpl(context = context)
     LazyColumn(

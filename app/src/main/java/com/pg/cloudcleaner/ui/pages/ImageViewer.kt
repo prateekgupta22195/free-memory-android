@@ -9,11 +9,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.pg.cloudcleaner.app.AppData
 import com.pg.cloudcleaner.data.repo.FileActionRepoImpl
 import com.pg.cloudcleaner.model.DriveFile
+import com.pg.cloudcleaner.ui.components.Image
 import com.pg.cloudcleaner.utils.LogCompositions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -41,7 +40,7 @@ fun ImageViewer(fileID: String) {
     })
 
     driveFile.value?.let { file ->
-        AsyncImage(
+        Image(
             model = file.thumbnailLink,
             contentDescription = "",
             modifier = Modifier
@@ -52,7 +51,8 @@ fun ImageViewer(fileID: String) {
                         .navController()
                         .navigate("test-page")
                 },
-            error = rememberAsyncImagePainter(model = file.iconLink?.replace("16", "64")),
-        )
+        ) {
+            it.error(file.iconLink?.replace("16", "64"))
+        }
     }
 }

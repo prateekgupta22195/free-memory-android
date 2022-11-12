@@ -4,23 +4,23 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.ThumbnailUtils
-import android.provider.MediaStore
+import android.provider.MediaStore.Video.Thumbnails
+import android.util.Size
 import android.util.TypedValue
 import android.webkit.MimeTypeMap
 import java.io.File
 
-fun getBitmap(file: File): Bitmap? {
-
+fun getBitmapThumbnail(file: File): Bitmap? {
     val mimeType = getMimeType(file.absolutePath)
     return when {
         mimeType?.contains("image") == true -> {
-            getImageBitmap(file)
+            getImageBitmapThumbnail(file)
         }
         mimeType?.contains("video") == true -> {
-            getVideoBitmap(file)
+            getVideoBitmapThumbnail(file)
         }
         mimeType?.contains("pdf") == true -> {
-            getPDFBitmap(file)
+            getPDFBitmapThumbnail(file)
         }
         else -> {
             null
@@ -28,20 +28,20 @@ fun getBitmap(file: File): Bitmap? {
     }
 }
 
-private fun getPDFBitmap(file: File): Bitmap? {
-    return ThumbnailUtils.createVideoThumbnail(file.absolutePath, MediaStore.Video.Thumbnails.MINI_KIND)
+private fun getPDFBitmapThumbnail(file: File): Bitmap? {
+    return ThumbnailUtils.createVideoThumbnail(file.absolutePath, Thumbnails.MINI_KIND)
 }
 
-private fun getImageBitmap(file: File): Bitmap {
+private fun getImageBitmapThumbnail(file: File, size: Size = Size(128.toPx.toInt(), 128.toPx.toInt())): Bitmap {
     return ThumbnailUtils.extractThumbnail(
         BitmapFactory.decodeFile(file.absolutePath),
-        128.toPx.toInt(),
-        128.toPx.toInt()
+        size.width,
+        size.height
     )
 }
 
-private fun getVideoBitmap(file: File): Bitmap? {
-    return ThumbnailUtils.createVideoThumbnail(file.absolutePath, MediaStore.Video.Thumbnails.MINI_KIND)
+private fun getVideoBitmapThumbnail(file: File, size: Size = Size(128.toPx.toInt(), 128.toPx.toInt()), thumbnailKind: Int = Thumbnails.MINI_KIND): Bitmap? {
+    return ThumbnailUtils.createVideoThumbnail(file.absolutePath, thumbnailKind)
 }
 
 fun getMimeType(path: String): String? {

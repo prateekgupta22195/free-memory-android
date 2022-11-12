@@ -12,11 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.pg.cloudcleaner.app.AppData
 import com.pg.cloudcleaner.data.repo.FileActionRepo
 import com.pg.cloudcleaner.model.DriveFile
+import com.pg.cloudcleaner.ui.components.Image
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,13 +52,14 @@ fun DriveFileItem(file: DriveFile, fileActionRepo: FileActionRepo) {
                 .padding(8.dp)
         ) {
 
-            AsyncImage(
+            Image(
                 model = file.thumbnailLink,
                 contentDescription = "",
-                error = rememberAsyncImagePainter(model = file.iconLink?.replace("16", "64")),
                 modifier = Modifier.size(with(LocalDensity.current) { 64.toDp() })
                 // crop the image if it's not a square
-            )
+            ) {
+                it.error(file.iconLink?.replace("16", "64"))
+            }
             Column(modifier = Modifier.padding(start = 8.dp)) {
                 if (file.fileName != null)
                     Text(file.fileName)
