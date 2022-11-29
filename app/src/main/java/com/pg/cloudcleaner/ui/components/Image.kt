@@ -1,4 +1,4 @@
-package com.pg.cloudcleaner.ui.components
+package com.pg.cloudcleaner.misc.ui.components
 
 import android.graphics.drawable.Drawable
 import androidx.compose.runtime.Composable

@@ -10,9 +10,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.pg.cloudcleaner.app.AppData
-import com.pg.cloudcleaner.data.repo.FileActionRepoImpl
-import com.pg.cloudcleaner.model.DriveFile
-import com.pg.cloudcleaner.ui.components.Image
+import com.pg.cloudcleaner.misc.data.repo.FileActionRepoImpl
+import com.pg.cloudcleaner.misc.model.DriveFile
+import com.pg.cloudcleaner.misc.ui.components.Image
 import com.pg.cloudcleaner.utils.LogCompositions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
