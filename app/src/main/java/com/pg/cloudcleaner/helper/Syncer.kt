@@ -5,62 +5,63 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import androidx.concurrent.futures.CallbackToFutureAdapter
+import android.os.Environment
+import android.os.Environment.DIRECTORY_DOWNLOADS
+import androidx.annotation.RequiresApi
+import androidx.compose.runtime.mutableStateListOf
 import androidx.core.app.NotificationCompat
-import androidx.work.*
-import com.google.common.util.concurrent.Futures
-import com.google.common.util.concurrent.ListenableFuture
+import androidx.work.CoroutineWorker
+import androidx.work.ForegroundInfo
+import androidx.work.WorkerParameters
 import com.pg.cloudcleaner.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.pg.cloudcleaner.app.App
+import com.pg.cloudcleaner.data.repository.LocalFilesRepoImpl
+import com.pg.cloudcleaner.domain.interactors.FileActionInteractor
+import com.pg.cloudcleaner.domain.interactors.FileActionInteractorImpl
+import kotlinx.coroutines.*
 import timber.log.Timber
-
-open class Syncer {
-
-    val request = OneTimeWorkRequestBuilder<ReadFileWorker>()
-        .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-
-        .build()
-
-}
 
 
 class ReadFileWorker(context: Context, workerParameters: WorkerParameters) :
 
-    ListenableWorker(context, workerParameters), WorkerNotification {
+    CoroutineWorker(context, workerParameters), WorkerNotification {
 
     companion object {
         private const val NOTIFICATION_CHANNEL_ID = "11"
         private const val NOTIFICATION_CHANNEL_NAME = "Work Service"
     }
 
-    override fun startWork(): ListenableFuture<Result> {
-        return CallbackToFutureAdapter.getFuture { completer ->
-//            completer.set(Result.success())
-        }
+    override suspend fun doWork(): Result {
+
+        val fileInteractor: FileActionInteractor =
+            FileActionInteractorImpl(LocalFilesRepoImpl(App.instance.db.localFilesDao()))
+        fileInteractor.syncAllFilesToDb(Environment.getExternalStorageDirectory().absolutePath)
+
+        return Result.success()
     }
 
-    override fun getForegroundInfoAsync(): ListenableFuture<ForegroundInfo> {
-        return Futures.immediateFuture(ForegroundInfo(System.currentTimeMillis().toInt(), getNotification()))
+    override suspend fun getForegroundInfo(): ForegroundInfo {
+        return ForegroundInfo(
+            System.currentTimeMillis().toInt(),
+            setForegroundNotification()
+        )
     }
 
 
-
-
-
-    override fun getNotification() : Notification {
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun createChannel() {
         val notificationManager =
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val channel = NotificationChannel(
+            NOTIFICATION_CHANNEL_ID,
+            NOTIFICATION_CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_HIGH
+        )
+        notificationManager.createNotificationChannel(channel)
+    }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                NOTIFICATION_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_HIGH
-            )
-            notificationManager.createNotificationChannel(channel)
-        }
+
+    override fun getNotification(): Notification {
         return NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setOngoing(true)
@@ -72,6 +73,13 @@ class ReadFileWorker(context: Context, workerParameters: WorkerParameters) :
             .setVisibility(NotificationCompat.VISIBILITY_SECRET)
             .setContentText("Updating widget")
             .build()
+    }
+
+    override fun setForegroundNotification(): Notification {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createChannel()
+        }
+        return getNotification()
     }
 
 }

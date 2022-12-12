@@ -1,4 +1,4 @@
-package com.pg.cloudcleaner.ui
+package com.pg.cloudcleaner.app.ui
 
 import androidx.compose.ui.graphics.Color
 

@@ -11,7 +11,7 @@ import androidx.compose.material.icons.filled.Folder
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.pg.cloudcleaner.app.AppData
+import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.utils.LogCompositions
 import com.pg.cloudcleaner.utils.getMimeType
 import timber.log.Timber
@@ -54,7 +54,10 @@ fun Item(file: File) {
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            Row(modifier = Modifier.padding(8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(
+                modifier = Modifier.padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Row {
                     Icon(Icons.Filled.Folder, "folder icon")
                     Spacer(modifier = Modifier.width(12.dp))
@@ -71,13 +74,23 @@ fun Item(file: File) {
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    AppData
-                        .instance()
+                    App
+                        .instance
                         .navController()
-                        .navigate("local-file-manager/${URLEncoder.encode(file.absolutePath, StandardCharsets.UTF_8.toString())}")
+                        .navigate(
+                            "local-file-manager/${
+                                URLEncoder.encode(
+                                    file.absolutePath,
+                                    StandardCharsets.UTF_8.toString()
+                                )
+                            }"
+                        )
                 }
         ) {
-            Row(modifier = Modifier.padding(8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(
+                modifier = Modifier.padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Row {
                     Icon(Icons.Filled.Folder, "folder icon")
                     Spacer(modifier = Modifier.width(12.dp))

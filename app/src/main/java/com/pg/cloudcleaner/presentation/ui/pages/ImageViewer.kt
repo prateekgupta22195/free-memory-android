@@ -1,4 +1,4 @@
-package com.pg.cloudcleaner.ui.pages
+package com.pg.cloudcleaner.presentation.ui.pages
 
 import android.content.Context
 import androidx.compose.foundation.clickable
@@ -9,7 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.pg.cloudcleaner.app.AppData
+import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.misc.data.repo.FileActionRepoImpl
 import com.pg.cloudcleaner.misc.model.DriveFile
 import com.pg.cloudcleaner.misc.ui.components.Image
@@ -46,8 +46,8 @@ fun ImageViewer(fileID: String) {
             modifier = Modifier
                 .fillMaxSize()
                 .clickable {
-                    AppData
-                        .instance()
+                    App
+                        .instance
                         .navController()
                         .navigate("test-page")
                 },

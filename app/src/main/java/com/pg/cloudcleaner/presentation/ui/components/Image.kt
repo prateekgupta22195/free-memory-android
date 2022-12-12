@@ -7,9 +7,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import coil.compose.AsyncImage
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.RequestBuilderTransform
+import com.pg.cloudcleaner.R
 
 /**
  * This is sort of adapter class to render Image composable.
@@ -28,14 +31,24 @@ fun Image(
     colorFilter: ColorFilter? = null,
     requestBuilderTransform: RequestBuilderTransform<Drawable> = { it }
 ) {
-    GlideImage(
+
+
+    AsyncImage(
         model = model,
+        placeholder = painterResource(R.mipmap.ic_folder),
         contentDescription = contentDescription,
-        modifier = modifier,
-        alignment = alignment,
-        contentScale = contentScale,
-        alpha = alpha,
-        colorFilter = colorFilter,
-        requestBuilderTransform = requestBuilderTransform
+        contentScale = ContentScale.Crop,
+        modifier = modifier
     )
+
+//    GlideImage(
+//        model = model,
+//        contentDescription = contentDescription,
+//        modifier = modifier,
+//        alignment = alignment,
+//        contentScale = contentScale,
+//        alpha = alpha,
+//        colorFilter = colorFilter,
+//        requestBuilderTransform = requestBuilderTransform
+//    )
 }

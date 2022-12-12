@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.pg.cloudcleaner.ui.pages.FlatFileManager
+import com.pg.cloudcleaner.presentation.ui.pages.FlatFileManager
 
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
@@ -21,7 +21,7 @@ fun CloudCleanerApp(
     AppTheme {
         NavHost(
             modifier = modifier,
-            navController = AppData.instance().navController(),
+            navController = App.instance.navController(),
             startDestination = startDestination
         ) {
 

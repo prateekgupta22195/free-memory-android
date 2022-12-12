@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.pg.cloudcleaner.app.AppData
+import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.misc.data.repo.FileActionRepo
 import com.pg.cloudcleaner.misc.model.DriveFile
 import com.pg.cloudcleaner.misc.ui.components.Image
@@ -30,20 +30,20 @@ fun DriveFileItem(file: DriveFile, fileActionRepo: FileActionRepo) {
             .combinedClickable(
                 onClick = {
                     if (file.fileType?.contains("image") == true) {
-                        AppData
-                            .instance()
+                        App
+                            .instance
                             .navController()
                             .navigate("image-viewer/${file.id}")
                     }
                 }, onDoubleClick = {
-                scope.launch(
-                    Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
-                        throwable.printStackTrace()
+                    scope.launch(
+                        Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
+                            throwable.printStackTrace()
+                        }
+                    ) {
+                        fileActionRepo.deleteFile(file)
                     }
-                ) {
-                    fileActionRepo.deleteFile(file)
                 }
-            }
             )
     ) {
         Row(

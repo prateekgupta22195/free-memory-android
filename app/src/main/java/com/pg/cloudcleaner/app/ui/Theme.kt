@@ -4,10 +4,10 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.pg.cloudcleaner.ui.DarkThemeColors
-import com.pg.cloudcleaner.ui.LightThemeColors
-import com.pg.cloudcleaner.ui.Shapes
-import com.pg.cloudcleaner.ui.Typography
+import com.pg.cloudcleaner.app.ui.DarkThemeColors
+import com.pg.cloudcleaner.app.ui.LightThemeColors
+import com.pg.cloudcleaner.app.ui.Shapes
+import com.pg.cloudcleaner.app.ui.Typography
 
 private val DarkColorPalette = darkColors(
     primary = DarkThemeColors.primary,

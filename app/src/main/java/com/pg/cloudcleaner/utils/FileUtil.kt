@@ -59,7 +59,13 @@ fun getMimeType(path: String): String? {
     return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
 }
 
-inline fun Uri.open(context: Context) {
+// return file size in mb
+fun File.size(): Long {
+    return length() / 1024
+}
+
+
+fun Uri.open(context: Context) {
     Intent(Intent.ACTION_VIEW).apply {
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         setDataAndType(this@open, context.contentResolver.getType(this@open))

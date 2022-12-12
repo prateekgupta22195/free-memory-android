@@ -1,4 +1,4 @@
-package com.pg.cloudcleaner.ui
+package com.pg.cloudcleaner.app.ui
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
