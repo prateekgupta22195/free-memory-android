@@ -19,7 +19,6 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
-        resValue "string", "google_api_key", properties.getProperty("google.api.key")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -40,18 +39,17 @@ android {
     buildFeatures {
         compose true
     }
-
     packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
+        resources {
+            excludes += ['META-INF/DEPENDENCIES', 'META-INF/NOTICE', 'META-INF/LICENSE', 'META-INF/LICENSE.txt', 'META-INF/NOTICE.txt']
+        }
     }
+
 
     composeOptions {
         kotlinCompilerExtensionVersion = "1.3.1"
     }
+    namespace 'com.pg.cloudcleaner'
 }
 
 dependencies {

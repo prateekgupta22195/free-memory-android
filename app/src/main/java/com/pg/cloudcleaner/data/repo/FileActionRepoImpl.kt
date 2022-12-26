@@ -13,7 +13,7 @@ class FileActionRepoImpl(val context: Context) : FileActionRepo {
     private val database: AppDatabase = AppDatabase.getDatabase(context = context)
 
     private val fileActionRemote by lazy {
-        FileActionRemoteImpl(apiKey = context.getString(R.string.google_api_key))
+        FileActionRemoteImpl(apiKey = "TODO: pass key later on")
     }
 
     override suspend fun getAllFiles(): Flow<List<DriveFile>?> {
