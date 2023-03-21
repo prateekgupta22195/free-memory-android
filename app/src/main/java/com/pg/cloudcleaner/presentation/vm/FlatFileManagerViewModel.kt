@@ -23,21 +23,10 @@ class FlatFileManagerViewModel : ViewModel() {
         return action.getMediaFiles().flowOn(Dispatchers.IO)
     }
 
-
-    fun readFiles1():
-            Flow<Map<String?, List<LocalFile>>> {
-
-        return action.getMediaFiles().flowOn(Dispatchers.IO).map {
-            it.groupBy { file ->
-                file.fileType
-            }
-        }
-    }
-
     fun deleteFile(localFile: LocalFile) {
         viewModelScope.launch(Dispatchers.IO) {
 
-//            deleting file from local table
+//            deleting file from local storage table
             launch { action.deleteFile(localFile.id) }.join()
 
 //            deleting file from directory

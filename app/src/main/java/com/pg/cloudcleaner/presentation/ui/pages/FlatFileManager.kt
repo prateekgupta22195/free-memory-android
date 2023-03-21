@@ -41,7 +41,7 @@ fun FlatFileManager() {
     Scaffold(topBar = { TopAppBar {} }) { padding ->
         Column(modifier = Modifier.padding(padding)) { FileListView() }
     }
-    Timber.d("${Environment.getExternalStorageDirectory().absolutePath}")
+    Timber.d(Environment.getExternalStorageDirectory().absolutePath)
 }
 
 @Composable
@@ -49,20 +49,12 @@ fun FileListView(
     vm: FlatFileManagerViewModel = viewModel()
 
 ) {
-
-
     val scope = rememberCoroutineScope()
-
     val list = vm.readFiles().collectAsState(initial = emptyList())
-    val list1 = vm.readFiles1().collectAsState(initial = emptyMap())
-
-
-
     LaunchedEffect(key1 = Unit, block = {
         scope.launch(Dispatchers.IO + CoroutineExceptionHandler { a, b ->
             Timber.d("ABc hello")
             vm.readFiles()
-
         }) {
             Timber.d("hole" + Thread.currentThread().name)
         }
@@ -75,9 +67,6 @@ fun FileListView(
         modifier = Modifier.fillMaxHeight(),
         state = lazyState
     ) {
-
-        Timber.d("list size ${list.value.size}")
-        Timber.d("list size ${list1.value.keys.toString()}")
 
         itemsIndexed(list.value) { _, file ->
             key(file.id) {
