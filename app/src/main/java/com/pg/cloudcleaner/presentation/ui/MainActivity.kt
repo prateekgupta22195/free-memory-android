@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity() {
         Timber.d("Seeking Permission")
         if (SDK_INT >= Build.VERSION_CODES.R) {
             Snackbar.make(
-                findViewById(R.id.content),
+                findViewById(android.R.id.content),
                 "Permission needed!",
                 Snackbar.LENGTH_INDEFINITE
             )

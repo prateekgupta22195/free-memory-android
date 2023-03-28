@@ -19,9 +19,16 @@ class FlatFileManagerViewModel : ViewModel() {
     private val action: FileActionInteractor =
         FileActionInteractorImpl(LocalFilesRepoImpl(App.instance.db.localFilesDao()))
 
-    fun readFiles(): Flow<List<LocalFile>> {
-        return action.getMediaFiles().flowOn(Dispatchers.IO)
+    fun readFiles(): Flow<Map<String, List<LocalFile>>> {
+        return action.getMediaFiles().flowOn(Dispatchers.IO).map {
+            it.groupBy { localFile ->
+                localFile.md5CheckSum
+            }
+        }
+//         TODO: revert
+//        return action.getMediaFiles().flowOn(Dispatchers.IO)
     }
+
 
     fun deleteFile(localFile: LocalFile) {
         viewModelScope.launch(Dispatchers.IO) {

@@ -10,12 +10,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.misc.data.repo.FileActionRepo
 import com.pg.cloudcleaner.misc.model.DriveFile
-import com.pg.cloudcleaner.misc.ui.components.Image
+import com.pg.cloudcleaner.presentation.ui.components.Image
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -57,9 +58,7 @@ fun DriveFileItem(file: DriveFile, fileActionRepo: FileActionRepo) {
                 contentDescription = "",
                 modifier = Modifier.size(with(LocalDensity.current) { 64.toDp() })
                 // crop the image if it's not a square
-            ) {
-                it.error(file.iconLink?.replace("16", "64"))
-            }
+            )
             Column(modifier = Modifier.padding(start = 8.dp)) {
                 if (file.fileName != null)
                     Text(file.fileName)

@@ -3,26 +3,25 @@ package com.pg.cloudcleaner.presentation.ui.pages
 import android.os.Environment
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.pg.cloudcleaner.R
 import com.pg.cloudcleaner.data.model.LocalFile
-import com.pg.cloudcleaner.misc.ui.components.Image
+import com.pg.cloudcleaner.presentation.ui.components.FileItem
+import com.pg.cloudcleaner.presentation.ui.components.Image
 import com.pg.cloudcleaner.presentation.vm.FlatFileManagerViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +33,7 @@ val paddingModifier = Modifier.padding(4.dp)
 
 val imageModifier = Modifier
     .height(108.dp)
+    .width(108.dp)
     .clip(RoundedCornerShape(4.dp))
 
 @Composable
@@ -50,7 +50,7 @@ fun FileListView(
 
 ) {
     val scope = rememberCoroutineScope()
-    val list = vm.readFiles().collectAsState(initial = emptyList())
+    val list = vm.readFiles().collectAsState(initial = emptyMap())
     LaunchedEffect(key1 = Unit, block = {
         scope.launch(Dispatchers.IO + CoroutineExceptionHandler { a, b ->
             Timber.d("ABc hello")
@@ -60,52 +60,35 @@ fun FileListView(
         }
     })
 
-    val lazyState = rememberLazyGridState()
+    val lazyState = rememberLazyListState()
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        modifier = Modifier.fillMaxHeight(),
-        state = lazyState
-    ) {
+    LazyColumn(
+        state = lazyState,
 
-        itemsIndexed(list.value) { _, file ->
-            key(file.id) {
-                FileItem(file = file)
+        ) {
+
+
+        items(list.value.keys.size) {
+            val key = list.value.keys.toList()[it]
+            key(key) {
+                HorizontalDuplicateImages(list.value[key]!!)
             }
         }
+
     }
 }
 
 
 @Composable
-fun FileItem(
-    file: LocalFile,
-    vm: FlatFileManagerViewModel = viewModel()
-) {
-
-    Box(modifier = Modifier.clickable {
-//        Uri.fromFile(file).open(context)
-        vm.deleteFile(localFile = file)
-    }) {
-        Column {
-            Card(modifier = paddingModifier) {
-                Image(
-                    model = file.id,
-                    contentScale = ContentScale.Crop,
-                    contentDescription = "",
-                    modifier = imageModifier
-                ) {
-//                    TODO: change error image
-                    it.error(R.mipmap.ic_folder)
-
-                }
+fun HorizontalDuplicateImages(data: List<LocalFile>, vm : FlatFileManagerViewModel = viewModel()) {
+    LazyRow (modifier = Modifier.fillMaxWidth()){
+        items(data.size) {
+            key(data[it].id) {
+                FileItem(id = data[it].id, onClick = { vm.deleteFile(data[it]) })
             }
-            if (file.fileName != null)
-                Text(
-                    text = file.fileName,
-                    modifier = paddingModifier,
-                    fontSize = 12.sp, overflow = TextOverflow.Ellipsis
-                )
         }
     }
 }
+
+
+

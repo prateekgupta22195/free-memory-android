@@ -12,6 +12,8 @@ import android.util.Size
 import android.util.TypedValue
 import android.webkit.MimeTypeMap
 import java.io.File
+import java.io.FileInputStream
+import java.security.MessageDigest
 
 fun getBitmapThumbnail(file: File): Bitmap? {
     val mimeType = getMimeType(file.absolutePath)
@@ -73,6 +75,23 @@ fun Uri.open(context: Context) {
         context.startActivity(it)
     }
 }
+fun calculateMD5(file: File): String {
+    val md: MessageDigest = MessageDigest.getInstance("MD5")
+    val fis = FileInputStream(file)
+    val buffer = ByteArray(8192)
+    var read: Int
+    while (fis.read(buffer).also { read = it } != -1) {
+        md.update(buffer, 0, read)
+    }
+    val hashBytes: ByteArray = md.digest()
+    val sb = StringBuilder()
+    for (hashByte in hashBytes) {
+        sb.append(((hashByte.toInt() and 0xff) + 0x100).toString(16).substring(1))
+    }
+    return sb.toString()
+}
+
+
 
 val Number.toPx
     get() = TypedValue.applyDimension(

@@ -1,17 +1,21 @@
-package com.pg.cloudcleaner.misc.ui.components
+package com.pg.cloudcleaner.presentation.ui.components
 
 import android.graphics.drawable.Drawable
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
-import com.bumptech.glide.integration.compose.RequestBuilderTransform
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.pg.cloudcleaner.R
 
 /**
@@ -19,36 +23,29 @@ import com.pg.cloudcleaner.R
  * If later on, we think that we should replace Glide image library with any other one,
  * then it will save us from making changes everywhere.
  */
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun Image(
     model: Any?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    alignment: Alignment = Alignment.Center,
-    contentScale: ContentScale = ContentScale.Fit,
-    alpha: Float = DefaultAlpha,
-    colorFilter: ColorFilter? = null,
-    requestBuilderTransform: RequestBuilderTransform<Drawable> = { it }
+    contentScale: ContentScale = ContentScale.None,
+    error: Painter = painterResource(
+        id = R.drawable.ic_file,
+    ),
+    placeholder: Painter = painterResource(
+        id = R.drawable.ic_file,
+    ),
 ) {
 
 
     AsyncImage(
         model = model,
-        placeholder = painterResource(R.mipmap.ic_folder),
+        placeholder = placeholder,
+        error = error,
         contentDescription = contentDescription,
-        contentScale = ContentScale.Crop,
-        modifier = modifier
+        contentScale = contentScale,
+        modifier = modifier,
     )
 
-//    GlideImage(
-//        model = model,
-//        contentDescription = contentDescription,
-//        modifier = modifier,
-//        alignment = alignment,
-//        contentScale = contentScale,
-//        alpha = alpha,
-//        colorFilter = colorFilter,
-//        requestBuilderTransform = requestBuilderTransform
-//    )
+
 }

@@ -20,6 +20,7 @@ import com.pg.cloudcleaner.domain.interactors.FileActionInteractor
 import com.pg.cloudcleaner.domain.interactors.FileActionInteractorImpl
 import kotlinx.coroutines.*
 import timber.log.Timber
+import java.util.Timer
 
 
 class ReadFileWorker(context: Context, workerParameters: WorkerParameters) :
@@ -32,11 +33,13 @@ class ReadFileWorker(context: Context, workerParameters: WorkerParameters) :
     }
 
     override suspend fun doWork(): Result {
-
+         val  startTime  = System.currentTimeMillis();
         val fileInteractor: FileActionInteractor =
             FileActionInteractorImpl(LocalFilesRepoImpl(App.instance.db.localFilesDao()))
-        fileInteractor.syncAllFilesToDb(Environment.getExternalStorageDirectory().absolutePath)
 
+
+        fileInteractor.syncAllFilesToDb(Environment.getExternalStorageDirectory().absolutePath)
+        Timber.d("Time for filling DB ${System.currentTimeMillis() - startTime}" )
         return Result.success()
     }
 
