@@ -16,11 +16,10 @@ interface LocalFilesDao {
     fun loadAllByIds(userIds: IntArray): Flow<List<LocalFile>>
 
     @Query("SELECT * FROM localfile WHERE id == (:id)")
-    fun get(id: String): Flow<LocalFile?>
+    suspend fun get(id: String): LocalFile?
 
     @Query("SELECT * FROM localfile WHERE id LIKE '%' || :id || '%'")
     fun getByIdLike(id: String): Flow<List<LocalFile>>
-
 
     @RawQuery(observedEntities = [LocalFile::class])
     fun getFilesViaQuery(query: SupportSQLiteQuery): Flow<List<LocalFile>>

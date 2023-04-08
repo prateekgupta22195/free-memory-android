@@ -6,33 +6,22 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import com.pg.cloudcleaner.presentation.ui.pages.CategoryDuplicate
-import com.pg.cloudcleaner.presentation.ui.pages.FlatFileManager
 
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 @Composable
 fun CloudCleanerApp(
     modifier: Modifier = Modifier,
-    startDestination: String =
-        "/home",
+    startDestination: String = Routes.HOME,
 ) {
-
     AppTheme {
         NavHost(
             modifier = modifier,
             navController = App.instance.navController(),
-            startDestination = startDestination
-        ) {
-
-            composable("/flat-file-manager") {
-                FlatFileManager()
-            }
-            composable("/home") {
-                CategoryDuplicate()
-            }
-
-        }
+            startDestination = startDestination,
+            builder = router
+        )
     }
 }
+
+

@@ -5,7 +5,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface HomeInteractor {
 
-   fun getAnyTwoDuplicateImages() : Flow<Pair<LocalFile, LocalFile>?>
+   fun getAnyTwoDuplicates() : Flow<Pair<LocalFile, LocalFile>?>
+   fun getVideoFile() : Flow<LocalFile?>
+   fun getVideoFiles() : Flow<List<LocalFile>>
+   fun getImageFiles() : Flow<List<LocalFile>>
 
 
 }

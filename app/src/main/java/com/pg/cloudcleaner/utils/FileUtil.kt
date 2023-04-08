@@ -38,13 +38,10 @@ private fun getPDFBitmapThumbnail(file: File): Bitmap? {
 }
 
 private fun getImageBitmapThumbnail(
-    file: File,
-    size: Size = Size(128.toPx.toInt(), 128.toPx.toInt())
+    file: File, size: Size = Size(128.toPx.toInt(), 128.toPx.toInt())
 ): Bitmap {
     return ThumbnailUtils.extractThumbnail(
-        BitmapFactory.decodeFile(file.absolutePath),
-        size.width,
-        size.height
+        BitmapFactory.decodeFile(file.absolutePath), size.width, size.height
     )
 }
 
@@ -75,6 +72,7 @@ fun Uri.open(context: Context) {
         context.startActivity(it)
     }
 }
+
 fun calculateMD5(file: File): String {
     val md: MessageDigest = MessageDigest.getInstance("MD5")
     val fis = FileInputStream(file)
@@ -92,10 +90,12 @@ fun calculateMD5(file: File): String {
 }
 
 
-
 val Number.toPx
     get() = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP,
-        this.toFloat(),
-        Resources.getSystem().displayMetrics
+        TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), Resources.getSystem().displayMetrics
     )
+
+
+fun isFileImage(mimeType: String?) = mimeType?.contains("image", ignoreCase = true) == true
+fun isFileVideo(mimeType: String?) = mimeType?.contains("video", ignoreCase = true) == true
+

@@ -17,4 +17,7 @@ interface LocalFilesRepo {
 
     fun getFilesIDLike(id: String): Flow<List<LocalFile>>
 
+    suspend fun getFileById(id: String): LocalFile?
+
+
 }

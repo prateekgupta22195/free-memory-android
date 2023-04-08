@@ -7,7 +7,6 @@ import com.google.gson.annotations.SerializedName
 import com.pg.cloudcleaner.utils.calculateMD5
 import com.pg.cloudcleaner.utils.getMimeType
 import com.pg.cloudcleaner.utils.size
-import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.FileInputStream
 import java.math.BigInteger
@@ -26,7 +25,6 @@ data class LocalFile(
 )
 
 fun File.toLocalFile(): LocalFile {
-
 
     return LocalFile(
         getMimeType(absolutePath),

@@ -3,6 +3,8 @@ package com.pg.cloudcleaner.app
 import android.app.Application
 import androidx.navigation.NavHostController
 import androidx.room.Room
+import coil.ImageLoader
+import coil.decode.VideoFrameDecoder
 import com.pg.cloudcleaner.BuildConfig
 import com.pg.cloudcleaner.data.db.AppDatabase
 import timber.log.Timber
@@ -11,6 +13,8 @@ import timber.log.Timber
 class App : Application() {
 
     private lateinit var navController: NavHostController
+
+    lateinit var imageLoader : ImageLoader;
 
     lateinit var db: AppDatabase
 
@@ -32,8 +36,7 @@ class App : Application() {
 
     private fun initDB() {
         db = Room.databaseBuilder(
-            instance.applicationContext,
-            AppDatabase::class.java, "database-name"
+            instance.applicationContext, AppDatabase::class.java, "database-name"
         ).build()
     }
 
@@ -41,6 +44,10 @@ class App : Application() {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
+
+        imageLoader = ImageLoader.Builder(instance).components {
+            add(VideoFrameDecoder.Factory())
+        }.crossfade(true).build()
     }
 
     companion object {

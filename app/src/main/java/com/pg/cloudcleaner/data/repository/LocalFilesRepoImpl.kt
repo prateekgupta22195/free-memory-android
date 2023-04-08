@@ -32,4 +32,8 @@ class LocalFilesRepoImpl(private val dao: LocalFilesDao) : LocalFilesRepo {
         return dao.getByIdLike(id)
     }
 
+    override suspend fun getFileById(id: String): LocalFile? {
+        return dao.get(id)
+    }
+
 }

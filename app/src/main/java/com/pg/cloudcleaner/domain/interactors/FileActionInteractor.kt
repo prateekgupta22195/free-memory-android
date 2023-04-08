@@ -9,8 +9,10 @@ interface FileActionInteractor {
 
     fun getAllFiles(): Flow<List<LocalFile>>
 
+    suspend fun getFileById(fileId: String): LocalFile?
+
     fun deleteFile(fileIdentity: String)
 
-    fun getMediaFiles() : Flow<List<LocalFile>>
+    fun getMediaFiles(): Flow<List<LocalFile>>
 
 }

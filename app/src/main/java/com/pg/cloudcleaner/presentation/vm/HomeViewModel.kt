@@ -13,8 +13,17 @@ class HomeViewModel : ViewModel() {
     private val interactor: HomeInteractor =
         HomeInteractorImpl(LocalFilesRepoImpl(App.instance.db.localFilesDao()))
 
-    fun getAnyTwoDuplicateImage(): Flow<Pair<LocalFile, LocalFile>?> {
-        return interactor.getAnyTwoDuplicateImages()
+    fun getAnyTwoDuplicateFiles(): Flow<Pair<LocalFile, LocalFile>?> {
+        return interactor.getAnyTwoDuplicates()
+    }
+    fun getVideoFile(): Flow<LocalFile?> {
+        return interactor.getVideoFile()
+    }
+    fun getVideoFiles(): Flow<List<LocalFile>> {
+        return interactor.getVideoFiles()
+    }
+    fun getImageFiles(): Flow<List<LocalFile>> {
+        return interactor.getImageFiles()
     }
 
 
