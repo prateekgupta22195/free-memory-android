@@ -14,12 +14,13 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
@@ -27,7 +28,6 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import com.google.android.material.snackbar.Snackbar
 import com.pg.cloudcleaner.BuildConfig
-import com.pg.cloudcleaner.R
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.CloudCleanerApp
 import com.pg.cloudcleaner.helper.ReadFileWorker
@@ -38,18 +38,26 @@ import timber.log.Timber
 @ExperimentalMaterialApi
 class MainActivity : AppCompatActivity() {
 
-    private val resultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                Timber.d("Permission granted")
-                onStoragePermissionGranted()
-            }
-        }
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<Intent>
 
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result: ActivityResult ->
+//             TODO: change this later and check why callback not working properly
+            if (isStoragePermissionGranted()) {
+                // Permission granted
+                Timber.d("Permission granted")
+                onStoragePermissionGranted()
+            } else {
+                // Permission denied
+                print("permission not")
+            }
+        }
+
 
         if (!isStoragePermissionGranted()) {
             Timber.d("Permission not granted")
@@ -87,7 +95,6 @@ class MainActivity : AppCompatActivity() {
                 Snackbar.LENGTH_INDEFINITE
             )
                 .setAction("Settings") {
-
                     val intent: Intent = try {
                         val uri: Uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID)
                         Intent(
@@ -99,7 +106,8 @@ class MainActivity : AppCompatActivity() {
                             action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
                         }
                     }
-                    resultLauncher.launch(intent)
+                    requestPermissionLauncher
+                        .launch(intent)
                 }
                 .show()
         } else {

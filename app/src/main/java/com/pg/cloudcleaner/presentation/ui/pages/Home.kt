@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pg.cloudcleaner.app.App
@@ -24,6 +25,7 @@ import com.pg.cloudcleaner.presentation.vm.HomeViewModel
 
 
 @Composable
+@Preview
 fun DataCategories() {
 
     val lazyState = rememberLazyListState()
@@ -65,9 +67,7 @@ fun DataCategories() {
 
 @Composable
 fun CategoryDuplicateFiles(vm: HomeViewModel = viewModel()) {
-
     val list = vm.getAnyTwoDuplicateFiles().collectAsState(initial = null)
-
     val scrollableState = rememberScrollState()
     if (list.value != null) {
         Card(elevation = 8.dp, modifier = Modifier
@@ -101,7 +101,7 @@ fun CategoryDuplicateFiles(vm: HomeViewModel = viewModel()) {
 @Composable
 fun CategoryImages(vm: HomeViewModel = viewModel()) {
     val videoFile = vm.getImageFiles().collectAsState(initial = null)
-    if (videoFile.value != null) {
+    if (!videoFile.value.isNullOrEmpty()) {
         Card(elevation = 8.dp, modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(text = "Image Files", modifier = Modifier.padding(bottom = 16.dp))
@@ -109,12 +109,12 @@ fun CategoryImages(vm: HomeViewModel = viewModel()) {
                     items(videoFile.value!!.size) {
                         val file = videoFile.value!![it]
                         key(file) {
-                            SelectableFileItem(videoFile.value!![it],
-//                                onClick = {
-//                                val navController = App.instance.navController()
-//                                val fileUrl = Uri.encode(videoFile.value!![it].id)
-//                                navController.navigate(Routes.PDF_VIEWER + "?url=$fileUrl")
-//                            }
+                            FileItem(videoFile.value!![it],
+                                onClick = {
+                                    val navController = App.instance.navController()
+                                    val fileUrl = Uri.encode(videoFile.value!![it].id)
+                                    navController.navigate(Routes.PDF_VIEWER + "?url=$fileUrl")
+                                }
                             )
                         }
                     }
@@ -128,7 +128,7 @@ fun CategoryImages(vm: HomeViewModel = viewModel()) {
 @Composable
 fun CategoryVideos(vm: HomeViewModel = viewModel()) {
     val videoFile = vm.getVideoFiles().collectAsState(initial = null)
-    if (videoFile.value != null) {
+    if (!videoFile.value.isNullOrEmpty()) {
         Card(elevation = 8.dp, modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(text = "Video Files", modifier = Modifier.padding(bottom = 16.dp))
