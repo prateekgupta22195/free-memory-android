@@ -36,4 +36,7 @@ interface LocalFilesDao {
     @Query("DELETE FROM localfile WHERE id == (:id)")
     fun delete(id: String)
 
+    @Query("DELETE FROM localfile WHERE id in (:id)")
+    fun delete(id: List<String>)
+
 }

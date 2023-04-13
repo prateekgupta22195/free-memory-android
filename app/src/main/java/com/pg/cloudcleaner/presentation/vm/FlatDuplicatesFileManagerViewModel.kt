@@ -1,5 +1,6 @@
 package com.pg.cloudcleaner.presentation.vm
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pg.cloudcleaner.app.App
@@ -14,19 +15,27 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.io.File
 
-class FlatFileManagerViewModel : ViewModel() {
+class FlatDuplicatesFileManagerViewModel : ViewModel() {
+
+    val selectedFileIds = mutableStateListOf<String>()
 
     private val action: FileActionInteractor =
         FileActionInteractorImpl(LocalFilesRepoImpl(App.instance.db.localFilesDao()))
 
     fun readFiles(): Flow<Map<String, List<LocalFile>>> {
-        return action.getMediaFiles().flowOn(Dispatchers.IO).map {
+        return action.getMediaFiles().flowOn(Dispatchers.Default).map { it ->
             it.groupBy { localFile ->
                 localFile.md5CheckSum
+            }.filter {
+                it.value.size > 1
+            }.onEachIndexed { _, entry ->
+//                 This is to make sure that duplicate images remain selected
+                selectedFileIds.addAll(entry.value.subList(1, entry.value.size).map {
+                    it.id
+                })
+
             }
         }
-//         TODO: revert
-//        return action.getMediaFiles().flowOn(Dispatchers.IO)
     }
 
 
@@ -38,9 +47,28 @@ class FlatFileManagerViewModel : ViewModel() {
 
 //            deleting file from directory
             File(localFile.id).apply {
-                if (exists())
-                    delete()
+                if (exists()) delete()
             }
+        }
+    }
+
+    fun deleteFiles(ids: List<String>) {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            launch {
+                action.deleteFiles(ids)
+            }.join()
+
+            launch {
+                ids.forEach { filePath ->
+                    File(filePath).apply {
+                        if (exists()) delete()
+                    }
+                }
+            }.join()
+
+            selectedFileIds.clear()
+
         }
     }
 }

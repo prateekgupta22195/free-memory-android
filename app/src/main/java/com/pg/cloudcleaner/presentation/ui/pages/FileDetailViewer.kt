@@ -50,7 +50,6 @@ fun FileDetailViewer(
             title = {},
             navigationIcon = { BackNavigationIcon() },
             actions = {
-
                 if (file.value != null) {
                     Icon(Icons.Filled.Info, "info", modifier = IconModifier.clickable {
                         infoPopUpVisibility.value = !infoPopUpVisibility.value

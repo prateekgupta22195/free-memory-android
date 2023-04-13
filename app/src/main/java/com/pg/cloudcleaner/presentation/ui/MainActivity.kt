@@ -1,10 +1,8 @@
 package com.pg.cloudcleaner.presentation.ui
 
-import android.Manifest
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -76,11 +74,9 @@ class MainActivity : AppCompatActivity() {
         } else {
             val result =
                 ActivityCompat.checkSelfPermission(this@MainActivity, READ_EXTERNAL_STORAGE)
-            val result1 =
-                ActivityCompat.checkSelfPermission(
-                    this@MainActivity,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
+            val result1 = ActivityCompat.checkSelfPermission(
+                this@MainActivity, WRITE_EXTERNAL_STORAGE
+            )
             result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED
         }
     }
@@ -90,26 +86,20 @@ class MainActivity : AppCompatActivity() {
         Timber.d("Seeking Permission")
         if (SDK_INT >= Build.VERSION_CODES.R) {
             Snackbar.make(
-                findViewById(android.R.id.content),
-                "Permission needed!",
-                Snackbar.LENGTH_INDEFINITE
-            )
-                .setAction("Settings") {
+                findViewById(android.R.id.content), "Permission needed!", Snackbar.LENGTH_INDEFINITE
+            ).setAction("Settings") {
                     val intent: Intent = try {
                         val uri: Uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID)
                         Intent(
-                            Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
-                            uri
+                            Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri
                         )
                     } catch (ex: Exception) {
                         Intent().apply {
                             action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
                         }
                     }
-                    requestPermissionLauncher
-                        .launch(intent)
-                }
-                .show()
+                    requestPermissionLauncher.launch(intent)
+                }.show()
         } else {
             if (SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(arrayOf(WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE), 123)
@@ -123,10 +113,8 @@ class MainActivity : AppCompatActivity() {
         WorkManager.getInstance(applicationContext).enqueueUniqueWork(
             "file reader",
             ExistingWorkPolicy.REPLACE,
-            OneTimeWorkRequestBuilder<ReadFileWorker>()
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .addTag("abc")
-                .build(),
+            OneTimeWorkRequestBuilder<ReadFileWorker>().setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .addTag("abc").build(),
         )
 
         setContent {
@@ -137,11 +125,8 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
-
         if (requestCode == 123 && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
             Timber.d("Permission granted")
             onStoragePermissionGranted()

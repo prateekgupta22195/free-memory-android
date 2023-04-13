@@ -13,6 +13,8 @@ interface LocalFilesRepo {
 
     fun deleteFile(id: String)
 
+    fun deleteFiles(ids: List<String>)
+
     fun getFilesViaQuery(query: String): Flow<List<LocalFile>>
 
     fun getFilesIDLike(id: String): Flow<List<LocalFile>>

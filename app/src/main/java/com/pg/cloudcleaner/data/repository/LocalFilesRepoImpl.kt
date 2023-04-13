@@ -24,6 +24,10 @@ class LocalFilesRepoImpl(private val dao: LocalFilesDao) : LocalFilesRepo {
         return dao.delete(id)
     }
 
+    override fun deleteFiles(ids: List<String>) {
+        return dao.delete(ids)
+    }
+
     override fun getFilesViaQuery(query: String): Flow<List<LocalFile>> {
         return dao.getFilesViaQuery(SimpleSQLiteQuery(query))
     }

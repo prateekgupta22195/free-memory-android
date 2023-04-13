@@ -13,6 +13,16 @@ interface FileActionInteractor {
 
     fun deleteFile(fileIdentity: String)
 
+
+    fun deleteFiles(ids: List<String>)
+
+
     fun getMediaFiles(): Flow<List<LocalFile>>
+
+    fun getVideoFiles(): Flow<List<LocalFile>>
+
+
+    fun getImageFiles(): Flow<List<LocalFile>>
+
 
 }

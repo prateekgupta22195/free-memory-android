@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.Routes
+import com.pg.cloudcleaner.app.Routes.Companion.FLAT_DUPLICATES_FILE_MANAGER
 import com.pg.cloudcleaner.presentation.ui.components.FileItem
-import com.pg.cloudcleaner.presentation.ui.components.SelectableFileItem
 import com.pg.cloudcleaner.presentation.vm.HomeViewModel
 
 
@@ -73,7 +73,9 @@ fun CategoryDuplicateFiles(vm: HomeViewModel = viewModel()) {
         Card(elevation = 8.dp, modifier = Modifier
             .fillMaxSize()
             .clickable {
-
+                App.instance
+                    .navController()
+                    .navigate(FLAT_DUPLICATES_FILE_MANAGER)
             }) {
             Column(modifier = Modifier.padding(16.dp)) {
 
@@ -129,18 +131,26 @@ fun CategoryImages(vm: HomeViewModel = viewModel()) {
 fun CategoryVideos(vm: HomeViewModel = viewModel()) {
     val videoFile = vm.getVideoFiles().collectAsState(initial = null)
     if (!videoFile.value.isNullOrEmpty()) {
-        Card(elevation = 8.dp, modifier = Modifier.fillMaxSize()) {
+        Card(elevation = 8.dp, modifier = Modifier.fillMaxSize().clickable {
+            val navController = App.instance.navController()
+            navController.navigate(Routes.FLAT_VIDEOS_FILE_MANAGER)
+        }) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(text = "Video Files", modifier = Modifier.padding(bottom = 16.dp))
                 LazyRow {
                     items(videoFile.value!!.size) {
                         val file = videoFile.value!![it]
                         key(file) {
-                            FileItem(videoFile.value!![it], onClick = {
-                                val navController = App.instance.navController()
-                                val fileUrl = Uri.encode(videoFile.value!![it].id)
-                                navController.navigate(Routes.PDF_VIEWER + "?url=$fileUrl")
-                            })
+                            FileItem(videoFile.value!![it],
+//                                onClick = {
+
+//                                val navController = App.instance.navController()
+//                                val fileUrl = Uri.encode(videoFile.value!![it].id)
+//                                navController.navigate(Routes.PDF_VIEWER + "?url=$fileUrl")
+
+
+//                            }
+                        )
                         }
                     }
                 }
