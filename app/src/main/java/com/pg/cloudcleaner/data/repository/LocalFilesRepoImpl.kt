@@ -36,6 +36,10 @@ class LocalFilesRepoImpl(private val dao: LocalFilesDao) : LocalFilesRepo {
         return dao.getByIdLike(id)
     }
 
+    override fun fileAlreadyExists(md5: String): Boolean {
+        return dao.fileExists(md5)
+    }
+
     override suspend fun getFileById(id: String): LocalFile? {
         return dao.get(id)
     }

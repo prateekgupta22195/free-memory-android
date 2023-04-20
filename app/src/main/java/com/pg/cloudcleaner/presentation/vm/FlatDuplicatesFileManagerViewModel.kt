@@ -13,6 +13,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import timber.log.Timber
 import java.io.File
 
 class FlatDuplicatesFileManagerViewModel : ViewModel() {
@@ -22,18 +25,22 @@ class FlatDuplicatesFileManagerViewModel : ViewModel() {
     private val action: FileActionInteractor =
         FileActionInteractorImpl(LocalFilesRepoImpl(App.instance.db.localFilesDao()))
 
+    val mutex = Mutex()
     fun readFiles(): Flow<Map<String, List<LocalFile>>> {
         return action.getMediaFiles().flowOn(Dispatchers.Default).map { it ->
             it.groupBy { localFile ->
                 localFile.md5CheckSum
             }.filter {
                 it.value.size > 1
-            }.onEachIndexed { _, entry ->
+            }.
+            onEachIndexed { _, entry ->
 //                 This is to make sure that duplicate images remain selected
-                selectedFileIds.addAll(entry.value.subList(1, entry.value.size).map {
-                    it.id
-                })
-
+                Timber.d("inside filter")
+//                mutex.withLock {
+                selectedFileIds.addAll(
+                    entry.value.filter {
+                    it.duplicate }.map { it.id }
+                )
             }
         }
     }
@@ -52,23 +59,25 @@ class FlatDuplicatesFileManagerViewModel : ViewModel() {
         }
     }
 
-    fun deleteFiles(ids: List<String>) {
-        viewModelScope.launch(Dispatchers.IO) {
+    suspend fun deleteFiles(ids: List<String>) {
+        mutex.withLock {
+            viewModelScope.launch(Dispatchers.IO) {
 
-            launch {
-                action.deleteFiles(ids)
-            }.join()
+                launch {
+                    action.deleteFiles(ids)
+                }.join()
 
-            launch {
-                ids.forEach { filePath ->
-                    File(filePath).apply {
-                        if (exists()) delete()
+                launch {
+                    ids.forEach { filePath ->
+                        File(filePath).apply {
+                            if (exists()) delete()
+                        }
                     }
-                }
-            }.join()
-
-            selectedFileIds.clear()
-
+                }.join()
+                selectedFileIds.clear()
+            }
         }
+
+
     }
 }

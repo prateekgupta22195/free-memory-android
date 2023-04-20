@@ -13,7 +13,7 @@ fun TestPage() {
 
     Timber.d("root directory path ${Environment.getExternalStorageDirectory().absolutePath}")
 
-    files.forEach { file ->
+    files?.forEach { file ->
         Timber.d("file name ${file.name}")
     }
 }

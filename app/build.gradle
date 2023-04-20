@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id "io.sentry.android.gradle" version "3.5.0"
 }
 
 
@@ -145,5 +146,9 @@ dependencies {
     implementation "com.google.android.exoplayer:exoplayer-core:${exo_version}"
     implementation "com.google.android.exoplayer:exoplayer-dash:${exo_version}"
     implementation "com.google.android.exoplayer:exoplayer-ui:${exo_version}"
+
+//  sentry installation
+    implementation 'io.sentry:sentry-android:6.17.0'
+    implementation 'io.sentry:sentry-compose-android:6.17.0'
 
 }

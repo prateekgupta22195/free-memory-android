@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pg.cloudcleaner.app.App
@@ -25,7 +24,6 @@ import com.pg.cloudcleaner.presentation.vm.HomeViewModel
 
 
 @Composable
-@Preview
 fun DataCategories() {
 
     val lazyState = rememberLazyListState()
@@ -110,7 +108,7 @@ fun CategoryImages(vm: HomeViewModel = viewModel()) {
                 LazyRow {
                     items(videoFile.value!!.size) {
                         val file = videoFile.value!![it]
-                        key(file) {
+                        key(file.id) {
                             FileItem(videoFile.value!![it],
                                 onClick = {
                                     val navController = App.instance.navController()

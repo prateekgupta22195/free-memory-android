@@ -19,6 +19,8 @@ interface LocalFilesRepo {
 
     fun getFilesIDLike(id: String): Flow<List<LocalFile>>
 
+    fun fileAlreadyExists(md5: String) : Boolean
+
     suspend fun getFileById(id: String): LocalFile?
 
 

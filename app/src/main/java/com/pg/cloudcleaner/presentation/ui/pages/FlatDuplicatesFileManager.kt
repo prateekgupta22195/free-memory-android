@@ -23,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+
 @Composable
 fun FlatFileManager() {
     Scaffold(topBar = {
@@ -43,6 +44,7 @@ fun FlatFileManager() {
 fun DeleteButton(vm: FlatDuplicatesFileManagerViewModel = viewModel()) {
     val selectedFileIds = remember { vm.selectedFileIds }
 
+    val scope = rememberCoroutineScope()
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -53,7 +55,9 @@ fun DeleteButton(vm: FlatDuplicatesFileManagerViewModel = viewModel()) {
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Blue, contentColor = Color.White
             ), onClick = {
-                vm.deleteFiles(selectedFileIds)
+                scope.launch {
+                    vm.deleteFiles(selectedFileIds)
+                }
             }, enabled = selectedFileIds.isNotEmpty(), modifier = Modifier.align(Alignment.Center)
         ) {
             Text(text = if (selectedFileIds.isEmpty()) "Delete" else "Delete ${selectedFileIds.size} Files")

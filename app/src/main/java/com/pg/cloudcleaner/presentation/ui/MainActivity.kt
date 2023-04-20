@@ -29,6 +29,7 @@ import com.pg.cloudcleaner.BuildConfig
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.CloudCleanerApp
 import com.pg.cloudcleaner.helper.ReadFileWorker
+import io.sentry.Sentry
 import timber.log.Timber
 
 
@@ -42,6 +43,9 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Sentry.captureMessage("testing SDK setup")
+
         requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result: ActivityResult ->

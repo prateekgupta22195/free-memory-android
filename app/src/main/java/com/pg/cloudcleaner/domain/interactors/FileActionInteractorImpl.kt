@@ -3,6 +3,7 @@ package com.pg.cloudcleaner.domain.interactors
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.data.model.toLocalFile
 import com.pg.cloudcleaner.domain.repository.LocalFilesRepo
+import com.pg.cloudcleaner.utils.calculateMD5
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -52,7 +53,17 @@ class FileActionInteractorImpl(private val repo: LocalFilesRepo) : FileActionInt
                     exploreDirectory(file.absolutePath)
                 } else {
                     Timber.d("file name ${file.absolutePath}")
-                    repo.insertFile(withContext(Dispatchers.Default) { file.toLocalFile() })
+                    withContext(Dispatchers.Default) {
+                        val md5 = try {
+                            calculateMD5(file)
+                        } catch (e: Exception) {
+                            ""
+                        }
+                        withContext(Dispatchers.IO) {
+                            repo.insertFile(file.toLocalFile(true, md5))
+                        }
+                    }
+
                 }
 
             }

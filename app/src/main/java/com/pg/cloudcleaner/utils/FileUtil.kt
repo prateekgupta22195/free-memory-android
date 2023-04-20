@@ -86,6 +86,7 @@ fun calculateMD5(file: File): String {
     for (hashByte in hashBytes) {
         sb.append(((hashByte.toInt() and 0xff) + 0x100).toString(16).substring(1))
     }
+    fis.close()
     return sb.toString()
 }
 
