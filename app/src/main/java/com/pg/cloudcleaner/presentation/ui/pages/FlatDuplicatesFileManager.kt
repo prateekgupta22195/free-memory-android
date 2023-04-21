@@ -56,11 +56,11 @@ fun DeleteButton(vm: FlatDuplicatesFileManagerViewModel = viewModel()) {
                 backgroundColor = Color.Blue, contentColor = Color.White
             ), onClick = {
                 scope.launch {
-                    vm.deleteFiles(selectedFileIds)
+                    vm.deleteFiles(selectedFileIds.value)
                 }
-            }, enabled = selectedFileIds.isNotEmpty(), modifier = Modifier.align(Alignment.Center)
+            }, enabled = selectedFileIds.value.isNotEmpty(), modifier = Modifier.align(Alignment.Center)
         ) {
-            Text(text = if (selectedFileIds.isEmpty()) "Delete" else "Delete ${selectedFileIds.size} Files")
+            Text(text = if (selectedFileIds.value.isEmpty()) "Delete" else "Delete ${selectedFileIds.value.size} Files")
         }
     }
 
@@ -70,11 +70,12 @@ fun DeleteButton(vm: FlatDuplicatesFileManagerViewModel = viewModel()) {
 fun FileListView(vm: FlatDuplicatesFileManagerViewModel = viewModel()) {
     val scope = rememberCoroutineScope()
     val list = vm.readFiles().collectAsState(initial = emptyMap())
+
     LaunchedEffect(key1 = Unit, block = {
         scope.launch(Dispatchers.IO + CoroutineExceptionHandler { a, b ->
             Timber.d("ABc hello")
-            vm.readFiles()
         }) {
+            vm.selectDuplicateFiles()
             Timber.d("hole" + Thread.currentThread().name)
         }
     })
@@ -106,10 +107,16 @@ fun HorizontalDuplicateFiles(
                     vm.selectedFileIds
                 }
                 SelectableFileItem(data[it],
-                    isSelected = selectedFileIds.contains(data[it].id),
+                    isSelected = selectedFileIds.value.contains(data[it].id),
                     onCheckedChangeListener = { checked ->
-                        if (checked) vm.selectedFileIds.add(data[it].id)
-                        else vm.selectedFileIds.remove(data[it].id)
+                        if (checked) {
+                            vm.uncheckedFiles.remove(data[it].id)
+                            selectedFileIds.value += data[it].id
+                        }
+                        else {
+                            vm.uncheckedFiles.add(data[it].id)
+                            selectedFileIds.value -= data[it].id
+                        }
                     })
             }
         }

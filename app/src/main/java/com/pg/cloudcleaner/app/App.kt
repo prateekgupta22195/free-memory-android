@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.room.Room
 import coil.ImageLoader
 import coil.decode.VideoFrameDecoder
+import coil.request.CachePolicy
 import com.pg.cloudcleaner.BuildConfig
 import com.pg.cloudcleaner.data.db.AppDatabase
 import timber.log.Timber
@@ -14,7 +15,7 @@ class App : Application() {
 
     private lateinit var navController: NavHostController
 
-    lateinit var imageLoader : ImageLoader;
+    lateinit var imageLoader: ImageLoader
 
     lateinit var db: AppDatabase
 
@@ -45,9 +46,11 @@ class App : Application() {
             Timber.plant(Timber.DebugTree())
         }
 
-        imageLoader = ImageLoader.Builder(instance).components {
-            add(VideoFrameDecoder.Factory())
-        }.crossfade(true).build()
+        imageLoader =
+            ImageLoader.Builder(instance).diskCachePolicy(CachePolicy.ENABLED).components {
+                add(VideoFrameDecoder.Factory())
+            }.crossfade(true).build()
+
     }
 
     companion object {

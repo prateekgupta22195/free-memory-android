@@ -6,6 +6,7 @@ import com.pg.cloudcleaner.domain.repository.LocalFilesRepo
 import com.pg.cloudcleaner.utils.calculateMD5
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
@@ -44,6 +45,10 @@ class FileActionInteractorImpl(private val repo: LocalFilesRepo) : FileActionInt
         return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE '%image%'")
     }
 
+    override fun getDuplicateFileIds(): Flow<List<String>> {
+        return repo.getDuplicateFileIds()
+    }
+
     private suspend fun exploreDirectory(directoryPath: String) {
         withContext(Dispatchers.IO) {
             val directory = File(directoryPath)
@@ -59,9 +64,7 @@ class FileActionInteractorImpl(private val repo: LocalFilesRepo) : FileActionInt
                         } catch (e: Exception) {
                             ""
                         }
-                        withContext(Dispatchers.IO) {
-                            repo.insertFile(file.toLocalFile(true, md5))
-                        }
+                        repo.insertFile(file.toLocalFile(repo.fileAlreadyExists(md5), md5))
                     }
 
                 }

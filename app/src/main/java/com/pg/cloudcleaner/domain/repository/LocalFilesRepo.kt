@@ -23,5 +23,6 @@ interface LocalFilesRepo {
 
     suspend fun getFileById(id: String): LocalFile?
 
+    fun getDuplicateFileIds() : Flow<List<String>>
 
 }

@@ -44,4 +44,8 @@ class LocalFilesRepoImpl(private val dao: LocalFilesDao) : LocalFilesRepo {
         return dao.get(id)
     }
 
+    override fun getDuplicateFileIds(): Flow<List<String>> {
+        return dao.getDuplicateFilesId()
+    }
+
 }

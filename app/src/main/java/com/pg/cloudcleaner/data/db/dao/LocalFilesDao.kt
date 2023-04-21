@@ -3,7 +3,6 @@ package com.pg.cloudcleaner.data.db.dao
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.pg.cloudcleaner.data.model.LocalFile
-import com.pg.cloudcleaner.misc.model.DriveFile
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -40,6 +39,11 @@ interface LocalFilesDao {
     fun delete(id: List<String>)
 
     @Query("SELECT EXISTS(SELECT 1 FROM localfile WHERE md5 = :md5)")
-    fun fileExists(md5: String) : Boolean
+    fun fileExists(md5: String): Boolean
+
+
+    @Query("SELECT id FROM localfile WHERE duplicate = 1 AND (mimeType LIKE '%image%' OR mimeType LIKE '%video%')")
+    fun getDuplicateFilesId(): Flow<List<String>>
+
 
 }

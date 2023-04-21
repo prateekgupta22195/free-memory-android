@@ -74,7 +74,7 @@ class ReadFileWorker(context: Context, workerParameters: WorkerParameters) :
             .setContentTitle(applicationContext.getString(R.string.app_name))
             .setLocalOnly(true)
             .setVisibility(NotificationCompat.VISIBILITY_SECRET)
-            .setContentText("Updating widget")
+            .setContentText("Scanning Files")
             .build()
     }
 

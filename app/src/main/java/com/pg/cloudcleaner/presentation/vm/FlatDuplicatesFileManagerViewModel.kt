@@ -1,6 +1,8 @@
 package com.pg.cloudcleaner.presentation.vm
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pg.cloudcleaner.app.App
@@ -9,18 +11,16 @@ import com.pg.cloudcleaner.data.repository.LocalFilesRepoImpl
 import com.pg.cloudcleaner.domain.interactors.FileActionInteractor
 import com.pg.cloudcleaner.domain.interactors.FileActionInteractorImpl
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import timber.log.Timber
 import java.io.File
 
 class FlatDuplicatesFileManagerViewModel : ViewModel() {
 
-    val selectedFileIds = mutableStateListOf<String>()
+     val selectedFileIds =  mutableStateOf(setOf<String>())
+    val uncheckedFiles = mutableSetOf<String>()
 
     private val action: FileActionInteractor =
         FileActionInteractorImpl(LocalFilesRepoImpl(App.instance.db.localFilesDao()))
@@ -32,16 +32,16 @@ class FlatDuplicatesFileManagerViewModel : ViewModel() {
                 localFile.md5CheckSum
             }.filter {
                 it.value.size > 1
-            }.
-            onEachIndexed { _, entry ->
-//                 This is to make sure that duplicate images remain selected
-                Timber.d("inside filter")
-//                mutex.withLock {
-                selectedFileIds.addAll(
-                    entry.value.filter {
-                    it.duplicate }.map { it.id }
-                )
             }
+        }
+    }
+
+    suspend fun selectDuplicateFiles() {
+        action.getDuplicateFileIds().distinctUntilChanged().collect {
+            it.filter {
+                !uncheckedFiles.contains(it)
+            }
+            selectedFileIds.value += it
         }
     }
 
@@ -59,12 +59,11 @@ class FlatDuplicatesFileManagerViewModel : ViewModel() {
         }
     }
 
-    suspend fun deleteFiles(ids: List<String>) {
+    suspend fun deleteFiles(ids: Set<String>) {
         mutex.withLock {
             viewModelScope.launch(Dispatchers.IO) {
-
                 launch {
-                    action.deleteFiles(ids)
+                    action.deleteFiles(ids.toList())
                 }.join()
 
                 launch {
@@ -74,7 +73,7 @@ class FlatDuplicatesFileManagerViewModel : ViewModel() {
                         }
                     }
                 }.join()
-                selectedFileIds.clear()
+                selectedFileIds.value -= ids
             }
         }
 

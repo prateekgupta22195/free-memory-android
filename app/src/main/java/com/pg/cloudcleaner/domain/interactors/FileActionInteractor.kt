@@ -25,4 +25,6 @@ interface FileActionInteractor {
     fun getImageFiles(): Flow<List<LocalFile>>
 
 
+    fun getDuplicateFileIds() : Flow<List<String>>
+
 }
