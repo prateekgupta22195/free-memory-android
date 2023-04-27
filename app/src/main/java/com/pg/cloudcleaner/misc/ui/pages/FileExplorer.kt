@@ -4,9 +4,9 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -19,7 +19,7 @@ import com.pg.cloudcleaner.misc.ui.components.fileexplorer.FileListView
 import com.pg.cloudcleaner.misc.vm.FileExplorerViewModel
 import com.pg.cloudcleaner.utils.LogCompositions
 
-@ExperimentalMaterialApi
+@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalFoundationApi
 @Composable
 fun FileExplorer(vm: FileExplorerViewModel = viewModel()) {

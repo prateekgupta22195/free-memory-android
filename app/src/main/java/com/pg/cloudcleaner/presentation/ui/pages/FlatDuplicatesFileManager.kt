@@ -1,19 +1,20 @@
 package com.pg.cloudcleaner.presentation.ui.pages
 
-import android.os.Environment
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.pg.cloudcleaner.app.itemSpacing
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIcon
 import com.pg.cloudcleaner.presentation.ui.components.SelectableFileItem
@@ -24,6 +25,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FlatFileManager() {
     Scaffold(topBar = {
@@ -34,9 +36,8 @@ fun FlatFileManager() {
     }, bottomBar = {
         DeleteButton()
     }) { padding ->
-        Column(modifier = Modifier.padding(padding)) { FileListView() }
+        Box(modifier = Modifier.padding(padding)) { FileListView() }
     }
-    Timber.d(Environment.getExternalStorageDirectory().absolutePath)
 }
 
 
@@ -52,13 +53,13 @@ fun DeleteButton(vm: FlatDuplicatesFileManagerViewModel = viewModel()) {
     ) {
 
         Button(
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.Blue, contentColor = Color.White
-            ), onClick = {
+            onClick = {
                 scope.launch {
                     vm.deleteFiles(selectedFileIds.value)
                 }
-            }, enabled = selectedFileIds.value.isNotEmpty(), modifier = Modifier.align(Alignment.Center)
+            },
+            enabled = selectedFileIds.value.isNotEmpty(),
+            modifier = Modifier.align(Alignment.Center)
         ) {
             Text(text = if (selectedFileIds.value.isEmpty()) "Delete" else "Delete ${selectedFileIds.value.size} Files")
         }
@@ -80,9 +81,7 @@ fun FileListView(vm: FlatDuplicatesFileManagerViewModel = viewModel()) {
         }
     })
 
-    val lazyState = rememberLazyListState()
-
-    LazyColumn(state = lazyState) {
+    LazyColumn {
         items(list.value.keys.size) {
             val key = list.value.keys.toList()[it]
             key(key) {
@@ -98,10 +97,14 @@ fun FileListView(vm: FlatDuplicatesFileManagerViewModel = viewModel()) {
 fun HorizontalDuplicateFiles(
     data: List<LocalFile>, vm: FlatDuplicatesFileManagerViewModel = viewModel()
 ) {
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text("${data.size} Duplicates")
-        Box(modifier = Modifier.height(4.dp))
-        LazyRow(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.padding(bottom = 16.dp)) {
+        Text("${data.size - 1} Duplicates", modifier = Modifier.padding(start = 16.dp))
+        Spacer(modifier = Modifier.height(4.dp))
+        LazyRow(
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(itemSpacing),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
             items(data.size) {
                 val selectedFileIds = remember {
                     vm.selectedFileIds
@@ -112,8 +115,7 @@ fun HorizontalDuplicateFiles(
                         if (checked) {
                             vm.uncheckedFiles.remove(data[it].id)
                             selectedFileIds.value += data[it].id
-                        }
-                        else {
+                        } else {
                             vm.uncheckedFiles.add(data[it].id)
                             selectedFileIds.value -= data[it].id
                         }

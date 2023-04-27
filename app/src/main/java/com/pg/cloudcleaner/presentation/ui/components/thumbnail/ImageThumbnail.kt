@@ -13,11 +13,12 @@ import com.pg.cloudcleaner.app.App
 
 
 @Composable
-fun ImageThumbnail(imagePath: String) {
+fun ImageThumbnail(model: Any?) {
     val painter = rememberAsyncImagePainter(
-        model = imagePath,
+        model = model,
         imageLoader = App.instance.imageLoader,
-        error = painterResource(id = R.drawable.ic_file)
+        error = painterResource(id = R.drawable.ic_file),
+        fallback = painterResource(id = R.drawable.ic_file)
     )
 
 

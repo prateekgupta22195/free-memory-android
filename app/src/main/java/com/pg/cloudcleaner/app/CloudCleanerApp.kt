@@ -2,12 +2,10 @@ package com.pg.cloudcleaner.app
 
 import AppTheme
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 
-@ExperimentalMaterialApi
 @ExperimentalFoundationApi
 @Composable
 fun CloudCleanerApp(

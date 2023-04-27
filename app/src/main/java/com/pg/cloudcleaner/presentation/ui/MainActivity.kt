@@ -17,7 +17,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.rememberNavController
 import androidx.work.ExistingWorkPolicy
@@ -26,6 +25,7 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import com.google.android.material.snackbar.Snackbar
 import com.pg.cloudcleaner.BuildConfig
+import com.pg.cloudcleaner.R
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.CloudCleanerApp
 import com.pg.cloudcleaner.helper.ReadFileWorker
@@ -34,7 +34,6 @@ import timber.log.Timber
 
 
 @ExperimentalFoundationApi
-@ExperimentalMaterialApi
 class MainActivity : AppCompatActivity() {
 
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Intent>
@@ -43,8 +42,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        Sentry.captureMessage("testing SDK setup")
+        setTheme(R.style.Theme_CloudCleaner)
 
         requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -52,27 +50,23 @@ class MainActivity : AppCompatActivity() {
 //             TODO: change this later and check why callback not working properly
             if (isStoragePermissionGranted()) {
                 // Permission granted
-                Timber.d("Permission granted")
                 onStoragePermissionGranted()
             } else {
                 // Permission denied
-                print("permission not")
+                seekStoragePermission()
             }
         }
 
 
         if (!isStoragePermissionGranted()) {
-            Timber.d("Permission not granted")
             seekStoragePermission()
         } else {
-            Timber.d("Permission already granted")
             onStoragePermissionGranted()
         }
 
     }
 
     private fun isStoragePermissionGranted(): Boolean {
-        Timber.d("checking permission")
         return if (SDK_INT >= Build.VERSION_CODES.R) {
             Environment.isExternalStorageManager()
         } else {
@@ -87,23 +81,22 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun seekStoragePermission() {
-        Timber.d("Seeking Permission")
         if (SDK_INT >= Build.VERSION_CODES.R) {
             Snackbar.make(
-                findViewById(android.R.id.content), "Permission needed!", Snackbar.LENGTH_INDEFINITE
+                findViewById(android.R.id.content), "Allow Free Memory to access files", Snackbar.LENGTH_INDEFINITE
             ).setAction("Settings") {
-                    val intent: Intent = try {
-                        val uri: Uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID)
-                        Intent(
-                            Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri
-                        )
-                    } catch (ex: Exception) {
-                        Intent().apply {
-                            action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
-                        }
+                val intent: Intent = try {
+                    val uri: Uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID)
+                    Intent(
+                        Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri
+                    )
+                } catch (ex: Exception) {
+                    Intent().apply {
+                        action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
                     }
-                    requestPermissionLauncher.launch(intent)
-                }.show()
+                }
+                requestPermissionLauncher.launch(intent)
+            }.show()
         } else {
             if (SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(arrayOf(WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE), 123)
@@ -132,7 +125,6 @@ class MainActivity : AppCompatActivity() {
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         if (requestCode == 123 && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-            Timber.d("Permission granted")
             onStoragePermissionGranted()
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)

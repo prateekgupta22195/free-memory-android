@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -14,7 +13,6 @@ import com.pg.cloudcleaner.misc.data.repo.FileActionRepoImpl
 import com.pg.cloudcleaner.misc.model.DriveFile
 
 @ExperimentalFoundationApi
-@ExperimentalMaterialApi
 @Composable
 fun FileListView(driveFiles: List<DriveFile>) {
     val context = LocalContext.current

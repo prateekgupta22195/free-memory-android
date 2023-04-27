@@ -11,7 +11,7 @@ interface LocalFilesRepo {
 
     fun getAllFiles(): Flow<List<LocalFile>>
 
-    fun deleteFile(id: String)
+    suspend fun deleteFile(id: String)
 
     fun deleteFiles(ids: List<String>)
 

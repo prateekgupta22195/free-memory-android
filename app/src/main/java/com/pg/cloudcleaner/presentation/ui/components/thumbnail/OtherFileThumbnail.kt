@@ -1,12 +1,12 @@
 package com.pg.cloudcleaner.presentation.ui.components.thumbnail
 
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.InsertChart
 import androidx.compose.material.icons.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.PictureAsPdf
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 
 @Composable
@@ -24,6 +24,6 @@ fun OtherFileThumbnail(mimeType: String?) {
     else Icons.Filled.InsertDriveFile
 
     Icon(
-        imageVector = icon, contentDescription = null, tint = MaterialTheme.colors.surface
+        imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.surface
     )
 }

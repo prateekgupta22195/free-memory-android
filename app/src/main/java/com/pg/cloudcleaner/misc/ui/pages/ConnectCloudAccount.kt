@@ -5,9 +5,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.material.Button
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -17,7 +16,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.pg.cloudcleaner.misc.vm.MainViewModel
 import com.pg.cloudcleaner.utils.LogCompositions
 
-@ExperimentalMaterialApi
 @ExperimentalFoundationApi
 @Composable
 fun ConnectCloudAccount(vm: MainViewModel = viewModel()) {
@@ -26,7 +24,6 @@ fun ConnectCloudAccount(vm: MainViewModel = viewModel()) {
     Home(account = account, vm)
 }
 
-@ExperimentalMaterialApi
 @ExperimentalFoundationApi
 @Composable
 fun Home(account: GoogleSignInAccount?, viewModel: MainViewModel) {

@@ -11,7 +11,7 @@ interface FileActionInteractor {
 
     suspend fun getFileById(fileId: String): LocalFile?
 
-    fun deleteFile(fileIdentity: String)
+    suspend fun deleteFile(fileIdentity: String)
 
 
     fun deleteFiles(ids: List<String>)
@@ -25,6 +25,8 @@ interface FileActionInteractor {
     fun getImageFiles(): Flow<List<LocalFile>>
 
 
-    fun getDuplicateFileIds() : Flow<List<String>>
+    fun getDuplicateFileIds(): Flow<List<String>>
+
+    fun getFileInfo(fileId: String): String
 
 }

@@ -17,7 +17,8 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
 
-class FlatDuplicatesFileManagerViewModel : ViewModel() {
+class
+FlatDuplicatesFileManagerViewModel : ViewModel() {
 
      val selectedFileIds =  mutableStateOf(setOf<String>())
     val uncheckedFiles = mutableSetOf<String>()
@@ -25,7 +26,6 @@ class FlatDuplicatesFileManagerViewModel : ViewModel() {
     private val action: FileActionInteractor =
         FileActionInteractorImpl(LocalFilesRepoImpl(App.instance.db.localFilesDao()))
 
-    val mutex = Mutex()
     fun readFiles(): Flow<Map<String, List<LocalFile>>> {
         return action.getMediaFiles().flowOn(Dispatchers.Default).map { it ->
             it.groupBy { localFile ->
@@ -60,23 +60,20 @@ class FlatDuplicatesFileManagerViewModel : ViewModel() {
     }
 
     suspend fun deleteFiles(ids: Set<String>) {
-        mutex.withLock {
-            viewModelScope.launch(Dispatchers.IO) {
-                launch {
-                    action.deleteFiles(ids.toList())
-                }.join()
+        viewModelScope.launch(Dispatchers.IO) {
+            launch {
+                action.deleteFiles(ids.toList())
+            }.join()
 
-                launch {
-                    ids.forEach { filePath ->
-                        File(filePath).apply {
-                            if (exists()) delete()
-                        }
+            launch {
+                ids.forEach { filePath ->
+                    File(filePath).apply {
+                        if (exists()) delete()
                     }
-                }.join()
-                selectedFileIds.value -= ids
-            }
+                }
+            }.join()
+            selectedFileIds.value -= ids
         }
-
-
     }
+
 }

@@ -7,6 +7,14 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +22,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.ui.IconModifier
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIcon
@@ -24,7 +33,9 @@ import com.pg.cloudcleaner.presentation.ui.components.thumbnail.OtherFileThumbna
 import com.pg.cloudcleaner.presentation.vm.FileDetailViewerViewModel
 import com.pg.cloudcleaner.utils.isFileImage
 import com.pg.cloudcleaner.utils.isFileVideo
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun FileDetailViewer(
@@ -43,9 +54,15 @@ fun FileDetailViewer(
         mutableStateOf(vm.infoPopUpVisible)
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
 
 
-    Scaffold(topBar = {
+    val scope = rememberCoroutineScope()
+    val navigator = remember {
+        App.instance.navController()
+    }
+
+    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }, topBar = {
         TopAppBar(
             title = {},
             navigationIcon = { BackNavigationIcon() },
@@ -56,29 +73,35 @@ fun FileDetailViewer(
                     })
                 }
 
-                Icon(Icons.Filled.Delete, "delete", modifier = IconModifier.clickable {})
+                Icon(Icons.Filled.Delete, "delete", modifier = IconModifier.clickable {
+                    scope.launch {
+                        vm.deleteFile(filePath)
+                        snackbarHostState.showSnackbar(
+                            "File deleted successfully!"
+                        )
+                        navigator.navigateUp()
+                    }
+                })
             },
         )
     }, content = fileDetailBody(file.value))
 
 
-    Popup(show = infoPopUpVisibility.value, onBackPress = {},) {
+    Popup(show = infoPopUpVisibility.value, onPopupDismissed = {
+        infoPopUpVisibility.value = false
+    }) {
         val configuration = LocalConfiguration.current
         val screenWidth = configuration.screenWidthDp
         val dialogWidth = (screenWidth * 0.8).dp
         Box {
             Card(
-                elevation = 8.dp,
                 modifier = Modifier
                     .width(dialogWidth)
-                    .height(100.dp)
                     .align(alignment = Alignment.Center)
             ) {
                 Text(
                     text = vm.getFileInfo(file.value!!),
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(16.dp),
+                    modifier = Modifier.padding(16.dp),
                     fontSize = 18.sp,
                 )
             }

@@ -20,7 +20,7 @@ class LocalFilesRepoImpl(private val dao: LocalFilesDao) : LocalFilesRepo {
         return dao.getAll()
     }
 
-    override fun deleteFile(id: String) {
+    override suspend fun deleteFile(id: String) {
         return dao.delete(id)
     }
 

@@ -4,12 +4,15 @@ import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.data.model.toLocalFile
 import com.pg.cloudcleaner.domain.repository.LocalFilesRepo
 import com.pg.cloudcleaner.utils.calculateMD5
+import com.pg.cloudcleaner.utils.getMimeType
+import com.pg.cloudcleaner.utils.size
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
+import java.util.Date
+import kotlin.math.round
 
 class FileActionInteractorImpl(private val repo: LocalFilesRepo) : FileActionInteractor {
 
@@ -25,7 +28,7 @@ class FileActionInteractorImpl(private val repo: LocalFilesRepo) : FileActionInt
         return repo.getFileById(fileId)
     }
 
-    override fun deleteFile(fileIdentity: String) {
+    override suspend fun deleteFile(fileIdentity: String) {
         return repo.deleteFile(fileIdentity)
     }
 
@@ -47,6 +50,26 @@ class FileActionInteractorImpl(private val repo: LocalFilesRepo) : FileActionInt
 
     override fun getDuplicateFileIds(): Flow<List<String>> {
         return repo.getDuplicateFileIds()
+    }
+
+    override fun getFileInfo(fileId: String): String {
+
+        val file = File(fileId)
+
+        if (!file.exists()) return "-"
+
+        val fileSize = file.size()
+        val fileSizeString: String = if (fileSize > 1000) {
+            "File size : ${(round((fileSize / 1000).toDouble()))} MB"
+        } else {
+            "File size : ${(round((fileSize).toDouble()))} KB"
+        }
+        return fileSizeString + "\nFile Type : ${getMimeType(fileId)}" + "\nFile Name : ${file.name}" + "\nLocation : $fileId" + "\nLast Modified : ${
+            file.lastModified().run {
+                if (this == 0L) "-"
+                else Date(this)
+            }
+        }"
     }
 
     private suspend fun exploreDirectory(directoryPath: String) {

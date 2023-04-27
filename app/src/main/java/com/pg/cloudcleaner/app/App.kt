@@ -46,6 +46,7 @@ class App : Application() {
             Timber.plant(Timber.DebugTree())
         }
 
+
         imageLoader =
             ImageLoader.Builder(instance).diskCachePolicy(CachePolicy.ENABLED).components {
                 add(VideoFrameDecoder.Factory())
