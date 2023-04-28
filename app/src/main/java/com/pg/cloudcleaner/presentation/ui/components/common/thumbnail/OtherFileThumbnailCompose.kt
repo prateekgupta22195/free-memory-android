@@ -1,4 +1,4 @@
-package com.pg.cloudcleaner.presentation.ui.components.thumbnail
+package com.pg.cloudcleaner.presentation.ui.components.common.thumbnail
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
@@ -10,7 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 
 @Composable
-fun OtherFileThumbnail(mimeType: String?) {
+fun OtherFileThumbnailCompose(mimeType: String?) {
     val icon = if (mimeType?.contains("pdf", true) == true) Icons.Filled.PictureAsPdf
     else if (mimeType?.contains("doc", true) == true || mimeType?.contains(
             "docx",

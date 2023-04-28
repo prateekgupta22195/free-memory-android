@@ -21,12 +21,15 @@ fun getBitmapThumbnail(file: File): Bitmap? {
         mimeType?.contains("image") == true -> {
             getImageBitmapThumbnail(file)
         }
+
         mimeType?.contains("video") == true -> {
             getVideoBitmapThumbnail(file)
         }
+
         mimeType?.contains("pdf") == true -> {
             getPDFBitmapThumbnail(file)
         }
+
         else -> {
             null
         }
@@ -73,9 +76,10 @@ fun Uri.open(context: Context) {
     }
 }
 
-fun calculateMD5(file: File): String {
+
+fun File.md5(): String {
     val md: MessageDigest = MessageDigest.getInstance("MD5")
-    val fis = FileInputStream(file)
+    val fis = FileInputStream(this)
     val buffer = ByteArray(8192)
     var read: Int
     while (fis.read(buffer).also { read = it } != -1) {

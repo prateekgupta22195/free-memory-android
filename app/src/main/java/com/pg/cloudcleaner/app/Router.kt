@@ -5,16 +5,16 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.pg.cloudcleaner.app.Routes.Companion.DOCUMENT_VIEWER
 import com.pg.cloudcleaner.app.Routes.Companion.FILE_DETAIL_VIEWER
 import com.pg.cloudcleaner.app.Routes.Companion.FLAT_DUPLICATES_FILE_MANAGER
 import com.pg.cloudcleaner.app.Routes.Companion.FLAT_IMAGES_FILE_MANAGER
 import com.pg.cloudcleaner.app.Routes.Companion.FLAT_VIDEOS_FILE_MANAGER
 import com.pg.cloudcleaner.app.Routes.Companion.HOME
-import com.pg.cloudcleaner.app.Routes.Companion.PDF_VIEWER
-import com.pg.cloudcleaner.presentation.ui.components.DocumentViewer
-import com.pg.cloudcleaner.presentation.ui.components.PdfView
-import com.pg.cloudcleaner.presentation.ui.pages.*
+import com.pg.cloudcleaner.presentation.ui.pages.DataCategories
+import com.pg.cloudcleaner.presentation.ui.pages.FileDetailViewerCompose
+import com.pg.cloudcleaner.presentation.ui.pages.FlatFileManager
+import com.pg.cloudcleaner.presentation.ui.pages.FlatImagesFileManager
+import com.pg.cloudcleaner.presentation.ui.pages.FlatVideosFileManager
 
 
 val router: NavGraphBuilder.() -> Unit = {
@@ -30,13 +30,6 @@ val router: NavGraphBuilder.() -> Unit = {
     composable(HOME) {
         DataCategories()
     }
-    composable("$DOCUMENT_VIEWER?url={url}",
-        arguments = listOf(navArgument("url") { type = NavType.StringType })
-    ) { backStackEntry ->
-        val url = backStackEntry.arguments?.getString("url")!!
-        val resolvedUrl = Uri.decode(url)
-        DocumentViewer(resolvedUrl)
-    }
     composable(
         "$FILE_DETAIL_VIEWER?url={url}", arguments = listOf(
             navArgument("url") { type = NavType.StringType },
@@ -44,14 +37,7 @@ val router: NavGraphBuilder.() -> Unit = {
     ) { backStackEntry ->
         val url = backStackEntry.arguments?.getString("url")!!
         val resolvedUrl = Uri.decode(url)
-        FileDetailViewer(resolvedUrl)
-    }
-    composable("$PDF_VIEWER?url={url}",
-        arguments = listOf(navArgument("url") { type = NavType.StringType })
-    ) { backStackEntry ->
-        val url = backStackEntry.arguments?.getString("url")!!
-        val resolvedUrl = Uri.decode(url)
-        PdfView(resolvedUrl)
+        FileDetailViewerCompose(resolvedUrl)
     }
 }
 

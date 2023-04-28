@@ -4,26 +4,27 @@ import androidx.lifecycle.ViewModel
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.data.repository.LocalFilesRepoImpl
-import com.pg.cloudcleaner.domain.interactors.HomeInteractor
-import com.pg.cloudcleaner.domain.interactors.HomeInteractorImpl
+import com.pg.cloudcleaner.domain.interactors.HomeUseCases
 import kotlinx.coroutines.flow.Flow
 
-class HomeViewModel : ViewModel() {
+class HomeVM : ViewModel() {
 
-    private val interactor: HomeInteractor =
-        HomeInteractorImpl(LocalFilesRepoImpl(App.instance.db.localFilesDao()))
+    private val homeUseCases = HomeUseCases(LocalFilesRepoImpl(App.instance.db.localFilesDao()))
 
     fun getAnyTwoDuplicateFiles(): Flow<Pair<LocalFile, LocalFile>?> {
-        return interactor.getAnyTwoDuplicates()
+        return homeUseCases.getAnyTwoDuplicates()
     }
+
     fun getVideoFile(): Flow<LocalFile?> {
-        return interactor.getVideoFile()
+        return homeUseCases.getVideoFile()
     }
+
     fun getVideoFiles(): Flow<List<LocalFile>> {
-        return interactor.getVideoFiles()
+        return homeUseCases.getVideoFiles()
     }
+
     fun getImageFiles(): Flow<List<LocalFile>> {
-        return interactor.getImageFiles()
+        return homeUseCases.getImageFiles()
     }
 
 

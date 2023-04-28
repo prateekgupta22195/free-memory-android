@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
-class HomeInteractorImpl(private val repo: LocalFilesRepo) : HomeInteractor {
+class HomeUseCases(private val repo: LocalFilesRepo) {
 
-    override fun getAnyTwoDuplicates(): Flow<Pair<LocalFile, LocalFile>?> {
+    fun getAnyTwoDuplicates(): Flow<Pair<LocalFile, LocalFile>?> {
 
         return repo.getFilesViaQuery(
 
@@ -22,7 +22,7 @@ class HomeInteractorImpl(private val repo: LocalFilesRepo) : HomeInteractor {
         }
     }
 
-    override fun getVideoFile(): Flow<LocalFile?> {
+    fun getVideoFile(): Flow<LocalFile?> {
         return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE '%video%' limit 2")
             .flowOn(Dispatchers.IO).map {
                 if (it.isEmpty()) null
@@ -30,11 +30,11 @@ class HomeInteractorImpl(private val repo: LocalFilesRepo) : HomeInteractor {
             }
     }
 
-    override fun getVideoFiles(): Flow<List<LocalFile>> {
+    fun getVideoFiles(): Flow<List<LocalFile>> {
         return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE '%video%'")
     }
 
-    override fun getImageFiles(): Flow<List<LocalFile>> {
+    fun getImageFiles(): Flow<List<LocalFile>> {
         return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE '%image%' LIMIT 5")
     }
 

@@ -1,4 +1,4 @@
-package com.pg.cloudcleaner.presentation.ui.components.thumbnail
+package com.pg.cloudcleaner.presentation.ui.components.common.thumbnail
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,7 +23,7 @@ import com.pg.cloudcleaner.app.App
 
 
 @Composable
-fun VideoThumbnail(
+fun VideoThumbnailCompose(
     model: Any?,
 ) {
     val painter = rememberAsyncImagePainter(

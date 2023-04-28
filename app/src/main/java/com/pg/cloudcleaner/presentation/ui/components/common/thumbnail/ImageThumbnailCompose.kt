@@ -1,4 +1,4 @@
-package com.pg.cloudcleaner.presentation.ui.components.thumbnail
+package com.pg.cloudcleaner.presentation.ui.components.common.thumbnail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +13,7 @@ import com.pg.cloudcleaner.app.App
 
 
 @Composable
-fun ImageThumbnail(model: Any?) {
+fun ImageThumbnailCompose(model: Any?) {
     val painter = rememberAsyncImagePainter(
         model = model,
         imageLoader = App.instance.imageLoader,

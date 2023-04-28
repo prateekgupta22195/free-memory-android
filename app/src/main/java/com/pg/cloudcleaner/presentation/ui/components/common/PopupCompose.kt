@@ -1,4 +1,4 @@
-package com.pg.cloudcleaner.presentation.ui.components
+package com.pg.cloudcleaner.presentation.ui.components.common
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
@@ -8,7 +8,7 @@ import androidx.compose.ui.window.PopupProperties
 
 
 @Composable
-fun Popup(
+fun PopupCompose(
     show: Boolean,
     onPopupDismissed: (() -> Unit)? = null,
     popUpBody: @Composable () -> Unit,

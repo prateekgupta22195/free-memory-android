@@ -16,12 +16,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.Routes
 import com.pg.cloudcleaner.app.itemSpacing
-import com.pg.cloudcleaner.presentation.ui.components.FileItem
-import com.pg.cloudcleaner.presentation.vm.HomeViewModel
+import com.pg.cloudcleaner.presentation.ui.components.FileItemCompose
+import com.pg.cloudcleaner.presentation.vm.HomeVM
 
 
 @Composable
-fun CategoryDuplicateFiles(vm: HomeViewModel = viewModel()) {
+fun CategoryDuplicateFilesCompose(vm: HomeVM = viewModel()) {
     val list = vm.getAnyTwoDuplicateFiles().collectAsState(initial = null)
     if (list.value != null) {
         Card(modifier = Modifier
@@ -37,8 +37,8 @@ fun CategoryDuplicateFiles(vm: HomeViewModel = viewModel()) {
                 Row(
                     modifier = Modifier, horizontalArrangement = Arrangement.spacedBy(itemSpacing)
                 ) {
-                    FileItem(list.value!!.first)
-                    FileItem(list.value!!.second)
+                    FileItemCompose(list.value!!.first)
+                    FileItemCompose(list.value!!.second)
                 }
             }
         }

@@ -1,4 +1,4 @@
-package com.pg.cloudcleaner.presentation.ui.components.common
+package com.pg.cloudcleaner.presentation.ui.components
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -14,12 +14,12 @@ import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import timber.log.Timber
 
 @Composable
-fun VideoPlayerThumbnail(videoUrl: String) {
+fun VideoPlayer(videoUrl: String) {
+
     var player by remember {
         mutableStateOf<ExoPlayer?>(null)
     }
@@ -28,7 +28,6 @@ fun VideoPlayerThumbnail(videoUrl: String) {
         StyledPlayerView(context).apply {
             // Create a new SimpleExoPlayer instance
             player = ExoPlayer.Builder(context).build()
-            resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
 
             // Set the player to the PlayerView
             this.player = player

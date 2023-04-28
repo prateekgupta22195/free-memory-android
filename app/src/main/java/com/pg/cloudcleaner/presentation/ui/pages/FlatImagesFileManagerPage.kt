@@ -1,6 +1,5 @@
 package com.pg.cloudcleaner.presentation.ui.pages
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,28 +26,27 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pg.cloudcleaner.app.itemSpacing
 import com.pg.cloudcleaner.app.thumbnailSize
 import com.pg.cloudcleaner.data.model.LocalFile
-import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIcon
+import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIconCompose
 import com.pg.cloudcleaner.presentation.ui.components.SelectableFileItem
-import com.pg.cloudcleaner.presentation.vm.FlatVideosFileManagerVM
+import com.pg.cloudcleaner.presentation.vm.FlatImagesFileManagerVM
 import kotlinx.coroutines.launch
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FlatVideosFileManager(vm: FlatVideosFileManagerVM = viewModel()) {
-
+fun FlatImagesFileManager(vm: FlatImagesFileManagerVM = viewModel()) {
     val selectedModeOn = remember {
         vm.selectedModeOn
     }
 
 
-    val files = vm.getVideoFiles().collectAsState(initial = listOf())
+    val files = vm.getImageFiles().collectAsState(initial = listOf())
 
 
 
     Scaffold(topBar = {
         TopAppBar(title = {
-            Text(text = "Videos")
+            Text(text = "Images")
         }, actions = {
 
             if (!selectedModeOn.value) TextButton(onClick = {
@@ -61,9 +59,9 @@ fun FlatVideosFileManager(vm: FlatVideosFileManagerVM = viewModel()) {
             }) {
                 Text("Cancel")
             }
-        }, navigationIcon = { BackNavigationIcon() })
+        }, navigationIcon = { BackNavigationIconCompose() })
     }, bottomBar = {
-        if (selectedModeOn.value) DeleteButtonComposable()
+        if (selectedModeOn.value) DeleteButtonComposable1()
     }) {
 
         Box(
@@ -71,15 +69,14 @@ fun FlatVideosFileManager(vm: FlatVideosFileManagerVM = viewModel()) {
                 .fillMaxSize()
                 .padding(it)
         ) {
-            VideosContent(files.value)
+            ImagesContent(files.value)
         }
     }
-
 
 }
 
 @Composable
-fun VideosContent(files: List<LocalFile>, vm: FlatVideosFileManagerVM = viewModel()) {
+fun ImagesContent(files: List<LocalFile>, vm: FlatImagesFileManagerVM = viewModel()) {
 
 
     val selectedModeOn = remember {
@@ -121,7 +118,7 @@ fun VideosContent(files: List<LocalFile>, vm: FlatVideosFileManagerVM = viewMode
 
 
 @Composable
-fun DeleteButtonComposable(vm: FlatVideosFileManagerVM = viewModel()) {
+fun DeleteButtonComposable1(vm: FlatImagesFileManagerVM = viewModel()) {
     val selectedFileIds = remember { vm.selectedFiles }
     val selectedModeOn = remember {
         vm.selectedModeOn

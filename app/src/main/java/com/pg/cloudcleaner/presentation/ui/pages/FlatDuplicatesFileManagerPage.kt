@@ -16,9 +16,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pg.cloudcleaner.app.itemSpacing
 import com.pg.cloudcleaner.data.model.LocalFile
-import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIcon
+import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIconCompose
 import com.pg.cloudcleaner.presentation.ui.components.SelectableFileItem
-import com.pg.cloudcleaner.presentation.vm.FlatDuplicatesFileManagerViewModel
+import com.pg.cloudcleaner.presentation.vm.FlatDuplicatesFileManagerVM
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,7 +31,7 @@ fun FlatFileManager() {
     Scaffold(topBar = {
         TopAppBar(
             title = { Text(text = "Duplicate Files") },
-            navigationIcon = { BackNavigationIcon() },
+            navigationIcon = { BackNavigationIconCompose() },
         )
     }, bottomBar = {
         DeleteButton()
@@ -42,7 +42,7 @@ fun FlatFileManager() {
 
 
 @Composable
-fun DeleteButton(vm: FlatDuplicatesFileManagerViewModel = viewModel()) {
+fun DeleteButton(vm: FlatDuplicatesFileManagerVM = viewModel()) {
     val selectedFileIds = remember { vm.selectedFileIds }
 
     val scope = rememberCoroutineScope()
@@ -68,7 +68,7 @@ fun DeleteButton(vm: FlatDuplicatesFileManagerViewModel = viewModel()) {
 }
 
 @Composable
-fun FileListView(vm: FlatDuplicatesFileManagerViewModel = viewModel()) {
+fun FileListView(vm: FlatDuplicatesFileManagerVM = viewModel()) {
     val scope = rememberCoroutineScope()
     val list = vm.readFiles().collectAsState(initial = emptyMap())
 
@@ -95,7 +95,7 @@ fun FileListView(vm: FlatDuplicatesFileManagerViewModel = viewModel()) {
 
 @Composable
 fun HorizontalDuplicateFiles(
-    data: List<LocalFile>, vm: FlatDuplicatesFileManagerViewModel = viewModel()
+    data: List<LocalFile>, vm: FlatDuplicatesFileManagerVM = viewModel()
 ) {
     Column(modifier = Modifier.padding(bottom = 16.dp)) {
         Text("${data.size - 1} Duplicates", modifier = Modifier.padding(start = 16.dp))

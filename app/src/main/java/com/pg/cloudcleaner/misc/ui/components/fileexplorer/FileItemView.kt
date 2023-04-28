@@ -2,7 +2,13 @@ package com.pg.cloudcleaner.misc.ui.components.fileexplorer
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -12,10 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.misc.data.repo.FileActionRepo
 import com.pg.cloudcleaner.misc.model.DriveFile
-import com.pg.cloudcleaner.presentation.ui.components.Image
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,8 +58,8 @@ fun DriveFileItem(file: DriveFile, fileActionRepo: FileActionRepo) {
                 .padding(8.dp)
         ) {
 
-            Image(
-                model = file.thumbnailLink,
+            AsyncImage(
+                file.thumbnailLink,
                 contentDescription = "",
                 modifier = Modifier.size(with(LocalDensity.current) { 64.toDp() })
                 // crop the image if it's not a square

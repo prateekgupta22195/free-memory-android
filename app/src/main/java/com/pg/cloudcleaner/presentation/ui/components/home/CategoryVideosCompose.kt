@@ -18,11 +18,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.Routes
 import com.pg.cloudcleaner.app.itemSpacing
-import com.pg.cloudcleaner.presentation.ui.components.FileItem
-import com.pg.cloudcleaner.presentation.vm.HomeViewModel
+import com.pg.cloudcleaner.presentation.ui.components.FileItemCompose
+import com.pg.cloudcleaner.presentation.vm.HomeVM
 
 @Composable
-fun CategoryVideos(vm: HomeViewModel = viewModel()) {
+fun CategoryVideosCompose(vm: HomeVM = viewModel()) {
     val videoFile = vm.getVideoFiles().collectAsState(initial = null)
     if (!videoFile.value.isNullOrEmpty()) {
         Card(modifier = Modifier
@@ -40,7 +40,7 @@ fun CategoryVideos(vm: HomeViewModel = viewModel()) {
                     items(videoFile.value!!.size) {
                         val file = videoFile.value!![it]
                         key(file.id) {
-                            FileItem(
+                            FileItemCompose(
                                 videoFile.value!![it],
 //                                onClick = {
 

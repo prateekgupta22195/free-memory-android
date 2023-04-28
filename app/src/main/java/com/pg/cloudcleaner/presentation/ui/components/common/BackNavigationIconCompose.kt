@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import com.pg.cloudcleaner.app.App
 
 @Composable
-fun BackNavigationIcon() {
+fun BackNavigationIconCompose() {
     val navController = App.instance.navController()
     if (navController.previousBackStackEntry != null) {
         IconButton(onClick = { navController.navigateUp() }) {

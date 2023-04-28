@@ -25,12 +25,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.ui.IconModifier
 import com.pg.cloudcleaner.data.model.LocalFile
-import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIcon
+import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIconCompose
 import com.pg.cloudcleaner.presentation.ui.components.ImageViewer
-import com.pg.cloudcleaner.presentation.ui.components.Popup
 import com.pg.cloudcleaner.presentation.ui.components.VideoPlayer
-import com.pg.cloudcleaner.presentation.ui.components.thumbnail.OtherFileThumbnail
-import com.pg.cloudcleaner.presentation.vm.FileDetailViewerViewModel
+import com.pg.cloudcleaner.presentation.ui.components.common.PopupCompose
+import com.pg.cloudcleaner.presentation.ui.components.common.thumbnail.OtherFileThumbnailCompose
+import com.pg.cloudcleaner.presentation.vm.FileDetailViewerVM
 import com.pg.cloudcleaner.utils.isFileImage
 import com.pg.cloudcleaner.utils.isFileVideo
 import kotlinx.coroutines.launch
@@ -38,8 +38,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun FileDetailViewer(
-    filePath: String, vm: FileDetailViewerViewModel = viewModel()
+fun FileDetailViewerCompose(
+    filePath: String, vm: FileDetailViewerVM = viewModel()
 ) {
     val file: MutableState<LocalFile?> = remember {
         mutableStateOf(null)
@@ -65,7 +65,7 @@ fun FileDetailViewer(
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }, topBar = {
         TopAppBar(
             title = {},
-            navigationIcon = { BackNavigationIcon() },
+            navigationIcon = { BackNavigationIconCompose() },
             actions = {
                 if (file.value != null) {
                     Icon(Icons.Filled.Info, "info", modifier = IconModifier.clickable {
@@ -84,43 +84,36 @@ fun FileDetailViewer(
                 })
             },
         )
-    }, content = fileDetailBody(file.value))
+    }, content = {
+        Box(modifier = Modifier.padding(it)) {
 
+            file.value?.let { file ->
+                if (isFileImage(file.fileType)) ImageViewer(file.id)
+                else if (isFileVideo(file.fileType)) VideoPlayer(file.id)
+                else OtherFileThumbnailCompose(mimeType = file.fileType)
+            }
 
-    Popup(show = infoPopUpVisibility.value, onPopupDismissed = {
-        infoPopUpVisibility.value = false
-    }) {
-        val configuration = LocalConfiguration.current
-        val screenWidth = configuration.screenWidthDp
-        val dialogWidth = (screenWidth * 0.8).dp
-        Box {
-            Card(
-                modifier = Modifier
-                    .width(dialogWidth)
-                    .align(alignment = Alignment.Center)
-            ) {
-                Text(
-                    text = vm.getFileInfo(file.value!!),
-                    modifier = Modifier.padding(16.dp),
-                    fontSize = 18.sp,
-                )
+            PopupCompose(show = infoPopUpVisibility.value, onPopupDismissed = {
+                infoPopUpVisibility.value = false
+            }) {
+                val configuration = LocalConfiguration.current
+                val screenWidth = configuration.screenWidthDp
+                val dialogWidth = (screenWidth * 0.8).dp
+                Box {
+                    Card(
+                        modifier = Modifier
+                            .width(dialogWidth)
+                            .align(alignment = Alignment.Center)
+                    ) {
+                        Text(
+                            text = vm.getFileInfo(file.value!!),
+                            modifier = Modifier.padding(16.dp),
+                            fontSize = 18.sp,
+                        )
+                    }
+                }
             }
         }
-
-    }
-
+    })
 }
 
-
-@Composable
-fun fileDetailBody(
-    file: LocalFile?
-): @Composable (a: PaddingValues) -> Unit {
-
-    if (file != null) return {
-        if (isFileImage(file.fileType)) ImageViewer(file.id)
-        else if (isFileVideo(file.fileType)) VideoPlayer(file.id)
-        else OtherFileThumbnail(mimeType = file.fileType)
-    }
-    return {}
-}

@@ -10,9 +10,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.pg.cloudcleaner.presentation.ui.components.home.CategoryDuplicateFiles
-import com.pg.cloudcleaner.presentation.ui.components.home.CategoryImages
-import com.pg.cloudcleaner.presentation.ui.components.home.CategoryVideos
+import com.pg.cloudcleaner.presentation.ui.components.home.CategoryDuplicateFilesCompose
+import com.pg.cloudcleaner.presentation.ui.components.home.CategoryImagesCompose
+import com.pg.cloudcleaner.presentation.ui.components.home.CategoryVideosCompose
 
 
 @Composable
@@ -29,15 +29,15 @@ fun DataCategories() {
 
         ) {
             item {
-                CategoryDuplicateFiles()
+                CategoryDuplicateFilesCompose()
             }
 
             item {
-                CategoryImages()
+                CategoryImagesCompose()
             }
 
             item {
-                CategoryVideos()
+                CategoryVideosCompose()
             }
 
         }

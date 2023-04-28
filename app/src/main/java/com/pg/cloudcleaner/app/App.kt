@@ -1,7 +1,12 @@
 package com.pg.cloudcleaner.app
 
+import AppTheme
 import android.app.Application
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
 import androidx.room.Room
 import coil.ImageLoader
 import coil.decode.VideoFrameDecoder
@@ -46,16 +51,32 @@ class App : Application() {
             Timber.plant(Timber.DebugTree())
         }
 
-
         imageLoader =
             ImageLoader.Builder(instance).diskCachePolicy(CachePolicy.ENABLED).components {
                 add(VideoFrameDecoder.Factory())
             }.crossfade(true).build()
-
     }
 
     companion object {
         lateinit var instance: App
             private set
+    }
+}
+
+
+
+@ExperimentalFoundationApi
+@Composable
+fun CloudCleanerApp(
+    modifier: Modifier = Modifier,
+    startDestination: String = Routes.HOME,
+) {
+    AppTheme {
+        NavHost(
+            modifier = modifier,
+            navController = App.instance.navController(),
+            startDestination = startDestination,
+            builder = router
+        )
     }
 }

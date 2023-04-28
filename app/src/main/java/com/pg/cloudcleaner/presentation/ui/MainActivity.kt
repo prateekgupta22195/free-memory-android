@@ -29,8 +29,6 @@ import com.pg.cloudcleaner.R
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.CloudCleanerApp
 import com.pg.cloudcleaner.helper.ReadFileWorker
-import io.sentry.Sentry
-import timber.log.Timber
 
 
 @ExperimentalFoundationApi
@@ -83,7 +81,9 @@ class MainActivity : AppCompatActivity() {
     private fun seekStoragePermission() {
         if (SDK_INT >= Build.VERSION_CODES.R) {
             Snackbar.make(
-                findViewById(android.R.id.content), "Allow Free Memory to access files", Snackbar.LENGTH_INDEFINITE
+                findViewById(android.R.id.content),
+                "Allow Free Memory to access files",
+                Snackbar.LENGTH_INDEFINITE
             ).setAction("Settings") {
                 val intent: Intent = try {
                     val uri: Uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID)
@@ -131,3 +131,5 @@ class MainActivity : AppCompatActivity() {
     }
 
 }
+
+
