@@ -26,7 +26,7 @@ import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.ui.IconModifier
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIconCompose
-import com.pg.cloudcleaner.presentation.ui.components.ImageViewer
+import com.pg.cloudcleaner.presentation.ui.components.common.ImageViewer
 import com.pg.cloudcleaner.presentation.ui.components.VideoPlayer
 import com.pg.cloudcleaner.presentation.ui.components.common.PopupCompose
 import com.pg.cloudcleaner.presentation.ui.components.common.thumbnail.OtherFileThumbnailCompose

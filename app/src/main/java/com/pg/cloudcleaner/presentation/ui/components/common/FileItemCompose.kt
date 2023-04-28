@@ -1,4 +1,4 @@
-package com.pg.cloudcleaner.presentation.ui.components
+package com.pg.cloudcleaner.presentation.ui.components.common
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable

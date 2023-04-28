@@ -93,28 +93,22 @@ fun VideosContent(files: List<LocalFile>, vm: FlatVideosFileManagerVM = viewMode
 
 
     LazyVerticalGrid(
-        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 12.dp),
-        columns = GridCells.Adaptive(minSize = thumbnailSize + 8.dp),
+        contentPadding = PaddingValues(vertical = 16.dp),
+        columns = GridCells.Adaptive(minSize = thumbnailSize),
         verticalArrangement = Arrangement.spacedBy(itemSpacing),
         horizontalArrangement = Arrangement.SpaceAround,
         modifier = Modifier.fillMaxSize()
     ) {
         items(files.size) {
-            Box(
-                modifier = Modifier
-                    .size(thumbnailSize)
-                    .padding(horizontal = 4.dp)
-            ) {
-                SelectableFileItem(
-                    file = files[it],
-                    isSelected = selectedFiles.value.contains(files[it].id),
-                    onCheckedChangeListener = { checked ->
-                        if (checked) selectedFiles.value += files[it].id
-                        else selectedFiles.value -= files[it].id
-                    },
-                    enabled = selectedModeOn.value
-                )
-            }
+            SelectableFileItem(
+                file = files[it],
+                isSelected = selectedFiles.value.contains(files[it].id),
+                onCheckedChangeListener = { checked ->
+                    if (checked) selectedFiles.value += files[it].id
+                    else selectedFiles.value -= files[it].id
+                },
+                enabled = selectedModeOn.value
+            )
         }
     }
 }

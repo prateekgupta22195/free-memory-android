@@ -14,6 +14,7 @@ import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.Routes
 import com.pg.cloudcleaner.app.ui.IconModifier
 import com.pg.cloudcleaner.data.model.LocalFile
+import com.pg.cloudcleaner.presentation.ui.components.common.FileItemCompose
 
 @Composable
 fun SelectableFileItem(
@@ -23,7 +24,7 @@ fun SelectableFileItem(
     showInfo: (() -> Unit)? = null,
     onCheckedChangeListener: ((Boolean) -> Unit)? = null
 ) {
-    Box {
+    Box(contentAlignment = Alignment.Center) {
         FileItemCompose(file = file, onClick = {
             val navController = App.instance.navController()
             val fileUrl = Uri.encode(file.id)
@@ -34,8 +35,10 @@ fun SelectableFileItem(
             onCheckedChange = onCheckedChangeListener,
             modifier = Modifier.align(Alignment.TopEnd),
         )
-        if (showInfo != null) Icon(Icons.Filled.Info, "info", modifier = IconModifier.clickable {
-            showInfo()
-        }.align(Alignment.BottomEnd))
+        if (showInfo != null) Icon(Icons.Filled.Info, "info", modifier = IconModifier
+            .clickable {
+                showInfo()
+            }
+            .align(Alignment.BottomEnd))
     }
 }

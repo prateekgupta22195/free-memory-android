@@ -6,7 +6,6 @@ import com.pg.cloudcleaner.utils.isFileVideo
 
 @Composable
 fun FileThumbnailCompose(mimeType: String?, model: Any) {
-
     return if (isFileImage(mimeType)) ImageThumbnailCompose(model = model)
     else if (isFileVideo(mimeType)) VideoThumbnailCompose(model = model)
     else OtherFileThumbnailCompose(mimeType = mimeType)
