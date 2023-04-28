@@ -51,8 +51,8 @@ class App : Application() {
             Timber.plant(Timber.DebugTree())
         }
 
-        imageLoader =
-            ImageLoader.Builder(instance).diskCachePolicy(CachePolicy.ENABLED).components {
+        imageLoader = ImageLoader.Builder(instance).memoryCachePolicy(CachePolicy.ENABLED)
+            .diskCachePolicy(CachePolicy.ENABLED).components {
                 add(VideoFrameDecoder.Factory())
             }.crossfade(true).build()
     }
@@ -62,7 +62,6 @@ class App : Application() {
             private set
     }
 }
-
 
 
 @ExperimentalFoundationApi
