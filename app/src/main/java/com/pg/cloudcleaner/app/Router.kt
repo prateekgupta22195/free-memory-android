@@ -48,8 +48,6 @@ interface Routes {
         const val FLAT_IMAGES_FILE_MANAGER = "/flat-images-file-manager"
         const val FLAT_VIDEOS_FILE_MANAGER = "/flat-videos-file-manager"
         const val HOME = "/home"
-        const val DOCUMENT_VIEWER = "/document-viewer"
         const val FILE_DETAIL_VIEWER = "/file-detail-viewer"
-        const val PDF_VIEWER = "/pdf-viewer"
     }
 }

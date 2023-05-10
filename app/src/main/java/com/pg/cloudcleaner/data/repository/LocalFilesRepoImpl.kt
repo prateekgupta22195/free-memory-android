@@ -32,10 +32,6 @@ class LocalFilesRepoImpl(private val dao: LocalFilesDao) : LocalFilesRepo {
         return dao.getFilesViaQuery(SimpleSQLiteQuery(query))
     }
 
-    override fun getFilesIDLike(id: String): Flow<List<LocalFile>> {
-        return dao.getByIdLike(id)
-    }
-
     override fun fileAlreadyExists(md5: String): Boolean {
         return dao.fileExists(md5)
     }
