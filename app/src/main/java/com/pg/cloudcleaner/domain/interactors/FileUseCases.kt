@@ -20,10 +20,6 @@ class FileUseCases(private val repo: LocalFilesRepo) {
         exploreDirectory(directoryName)
     }
 
-    fun getAllFiles(): Flow<List<LocalFile>> {
-        return repo.getAllFiles()
-    }
-
     suspend fun getFileById(fileId: String): LocalFile? {
         return repo.getFileById(fileId)
     }
