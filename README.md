@@ -6,6 +6,7 @@
 
 [![Platform](https://img.shields.io/badge/platform-Android-yellow.svg)](https://www.android.com)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html)
+
 Free Memory is a free and open-source software for Android devices that helps users clean their phone storage by identifying and suggesting categories where they can reduce occupied space. It aims to address the problem of unnecessary data occupying a significant portion of mobile memory.
 
 <div align="center">
