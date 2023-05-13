@@ -59,7 +59,7 @@ To run the project, follow these steps:
 
 Contributions to the project are welcome! To contribute or report issues, follow these steps:
 
-1. Visit the project's GitHub page: [link to your GitHub repository]
+1. Visit the project's GitHub page: [https://github.com/users/prateekgupta22195/projects/1]
 2. Create a detailed feature request or bug report, specifying the necessary details.
 3. Anyone can pick up any TODO tasks from the project and raise a pull request to contribute.
 
