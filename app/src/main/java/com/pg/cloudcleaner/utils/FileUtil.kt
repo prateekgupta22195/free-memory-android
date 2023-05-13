@@ -15,47 +15,6 @@ import java.io.File
 import java.io.FileInputStream
 import java.security.MessageDigest
 
-fun getBitmapThumbnail(file: File): Bitmap? {
-    val mimeType = getMimeType(file.absolutePath)
-    return when {
-        mimeType?.contains("image") == true -> {
-            getImageBitmapThumbnail(file)
-        }
-
-        mimeType?.contains("video") == true -> {
-            getVideoBitmapThumbnail(file)
-        }
-
-        mimeType?.contains("pdf") == true -> {
-            getPDFBitmapThumbnail(file)
-        }
-
-        else -> {
-            null
-        }
-    }
-}
-
-private fun getPDFBitmapThumbnail(file: File): Bitmap? {
-    return ThumbnailUtils.createVideoThumbnail(file.absolutePath, Thumbnails.MINI_KIND)
-}
-
-private fun getImageBitmapThumbnail(
-    file: File, size: Size = Size(128.toPx.toInt(), 128.toPx.toInt())
-): Bitmap {
-    return ThumbnailUtils.extractThumbnail(
-        BitmapFactory.decodeFile(file.absolutePath), size.width, size.height
-    )
-}
-
-private fun getVideoBitmapThumbnail(
-    file: File,
-    size: Size = Size(128.toPx.toInt(), 128.toPx.toInt()),
-    thumbnailKind: Int = Thumbnails.MINI_KIND
-): Bitmap? {
-    return ThumbnailUtils.createVideoThumbnail(file.absolutePath, thumbnailKind)
-}
-
 fun getMimeType(path: String): String? {
     val extension = MimeTypeMap.getFileExtensionFromUrl(path)
     return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
@@ -65,17 +24,6 @@ fun getMimeType(path: String): String? {
 fun File.size(): Long {
     return length() / 1024
 }
-
-
-fun Uri.open(context: Context) {
-    Intent(Intent.ACTION_VIEW).apply {
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        setDataAndType(this@open, context.contentResolver.getType(this@open))
-    }.also {
-        context.startActivity(it)
-    }
-}
-
 
 fun File.md5(): String {
     val md: MessageDigest = MessageDigest.getInstance("MD5")
@@ -93,14 +41,6 @@ fun File.md5(): String {
     fis.close()
     return sb.toString()
 }
-
-
-val Number.toPx
-    get() = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), Resources.getSystem().displayMetrics
-    )
-
-
 fun isFileImage(mimeType: String?) = mimeType?.contains("image", ignoreCase = true) == true
 fun isFileVideo(mimeType: String?) = mimeType?.contains("video", ignoreCase = true) == true
 

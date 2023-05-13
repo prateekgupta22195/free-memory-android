@@ -26,7 +26,5 @@ fun ImageThumbnailCompose(model: Any?) {
         contentScale = if (painter.state is AsyncImagePainter.State.Success) ContentScale.Crop else ContentScale.None,
         modifier = Modifier.fillMaxSize()
     )
-
 //    GlideImage(model, contentDescription = null, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop, alignment = Alignment.CenterEnd)
-
 }
