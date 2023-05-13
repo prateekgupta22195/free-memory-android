@@ -45,7 +45,7 @@ To run the project, follow these steps:
 4. Use the provided features to delete duplicate files or select and delete multiple photos and videos.
 
 <div align="center">
-  <img src="path/to/your/app_screenshot.png" alt="Free Memory App Screenshot" width="300">
+  <img src="images/img.png" alt="Free Memory App Screenshot" width="300">
 </div>
 
 ## Known Issues and Future Development
