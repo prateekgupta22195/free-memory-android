@@ -21,7 +21,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.pg.free_memory"
+        applicationId "com.pg.freememory"
         minSdk 21
         targetSdk 33
         versionCode 1
