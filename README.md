@@ -14,6 +14,7 @@ Free Memory is a free and open-source software for Android devices that helps us
 
 - **Delete Duplicate Files**: Identify and remove duplicate files to free up storage space.
 - **Select and Delete Multiple Photos and Videos**: Easily select and delete multiple photos and videos to reclaim storage.
+- **Supports Dark Theme**: Depends upon the phone if dark mode is on then theme of the App will be dark as well.
 
 ## Technologies Used
 
