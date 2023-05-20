@@ -12,11 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.pg.cloudcleaner.presentation.ui.components.home.CategoryDuplicateFilesCompose
 import com.pg.cloudcleaner.presentation.ui.components.home.CategoryImagesCompose
+import com.pg.cloudcleaner.presentation.ui.components.home.CategoryLargeFileCompose
 import com.pg.cloudcleaner.presentation.ui.components.home.CategoryVideosCompose
 
 
 @Composable
-fun DataCategories() {
+fun HomeComposable() {
     MaterialTheme {
         val lazyState = rememberLazyListState()
         LazyColumn(
@@ -28,6 +29,7 @@ fun DataCategories() {
             verticalArrangement = Arrangement.spacedBy(12.dp)
 
         ) {
+
             item {
                 CategoryDuplicateFilesCompose()
             }
@@ -38,6 +40,10 @@ fun DataCategories() {
 
             item {
                 CategoryVideosCompose()
+            }
+
+            item {
+                CategoryLargeFileCompose()
             }
 
         }

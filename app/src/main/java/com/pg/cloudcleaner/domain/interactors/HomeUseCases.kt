@@ -40,5 +40,9 @@ class HomeUseCases(private val repo: LocalFilesRepo) {
         return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE '%image%' LIMIT 5")
     }
 
+    fun getLargeFiles(): Flow<List<LocalFile>> {
+        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE size > 5000")
+    }
+
 
 }

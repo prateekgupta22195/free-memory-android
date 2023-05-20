@@ -30,10 +30,7 @@ class MainViewModel(context: Application) : AndroidViewModel(context) {
     private val gso by lazy {
         GoogleSignInOptions.Builder(
             GoogleSignInOptions.DEFAULT_SIGN_IN
-        )
-            .requestEmail()
-            .requestScopes(Scope(Scopes.DRIVE_FULL))
-            .build()
+        ).requestEmail().requestScopes(Scope(Scopes.DRIVE_FULL)).build()
     }
 
     private val fileRepo by lazy {
@@ -49,8 +46,7 @@ class MainViewModel(context: Application) : AndroidViewModel(context) {
             // There are no request codes
             val data: Intent? = result.data
 
-            val task: Task<GoogleSignInAccount> =
-                GoogleSignIn.getSignedInAccountFromIntent(data)
+            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
 
             viewModelScope.launch {
                 handleSignInResult(task.getResult(ApiException::class.java), context)

@@ -13,6 +13,7 @@ import com.pg.cloudcleaner.app.App
 
 @Composable
 fun ImageThumbnailCompose(model: Any?) {
+
     val painter = rememberAsyncImagePainter(
         model = model,
         imageLoader = App.instance.imageLoader,

@@ -10,7 +10,7 @@ import com.pg.cloudcleaner.app.Routes.Companion.FLAT_DUPLICATES_FILE_MANAGER
 import com.pg.cloudcleaner.app.Routes.Companion.FLAT_IMAGES_FILE_MANAGER
 import com.pg.cloudcleaner.app.Routes.Companion.FLAT_VIDEOS_FILE_MANAGER
 import com.pg.cloudcleaner.app.Routes.Companion.HOME
-import com.pg.cloudcleaner.presentation.ui.pages.DataCategories
+import com.pg.cloudcleaner.presentation.ui.pages.HomeComposable
 import com.pg.cloudcleaner.presentation.ui.pages.FileDetailViewerCompose
 import com.pg.cloudcleaner.presentation.ui.pages.FlatFileManager
 import com.pg.cloudcleaner.presentation.ui.pages.FlatImagesFileManager
@@ -28,7 +28,7 @@ val router: NavGraphBuilder.() -> Unit = {
         FlatImagesFileManager()
     }
     composable(HOME) {
-        DataCategories()
+        HomeComposable()
     }
     composable(
         "$FILE_DETAIL_VIEWER?url={url}", arguments = listOf(

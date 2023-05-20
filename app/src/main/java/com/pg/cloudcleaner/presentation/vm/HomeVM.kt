@@ -23,6 +23,10 @@ class HomeVM : ViewModel() {
         return homeUseCases.getVideoFiles()
     }
 
+    fun getLargeFiles(): Flow<List<LocalFile>> {
+        return homeUseCases.getLargeFiles()
+    }
+
     fun getImageFiles(): Flow<List<LocalFile>> {
         return homeUseCases.getImageFiles()
     }
