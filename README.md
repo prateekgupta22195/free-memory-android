@@ -18,13 +18,14 @@ Free Memory is a free and open-source software for Android devices that helps us
 
 ## Technologies Used
 
-- Kotlin
-- Android Studio (IDE)
-- Jetpack Compose
-- Material3 design
-- MVVM (Model-View-ViewModel) architectural pattern
-- Compose Navigation
+- [Kotlin](https://kotlinlang.org)
+- [Android Studio](https://developer.android.com/studio)
+- [Jetpack Compose](https://developer.android.com/jetpack/compose)
+- [Material3 design](https://m3.material.io)
+- [MVVM (Model-View-ViewModel) architectural pattern](https://www.digitalocean.com/community/tutorials/android-mvvm-design-pattern)
+- [Compose Navigation](https://developer.android.com/jetpack/compose/navigation)
 - LiveData for updating UI
+- [Work Manager](https://developer.android.com/topic/libraries/architecture/workmanager)
 - Flow and Coroutines for asynchronous programming
 - Clean architecture
 - Room for database management
