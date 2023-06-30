@@ -1,5 +1,6 @@
 package com.pg.cloudcleaner.presentation.ui.components.home
 
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,19 +31,23 @@ fun CategoryLargeFileCompose(vm: HomeVM = viewModel()) {
             .fillMaxSize()
             .clickable {
                 val navController = App.instance.navController()
-                navController.navigate(Routes.FLAT_VIDEOS_FILE_MANAGER)
+                val fileUrl = Uri.encode(videoFile.value!![0].id)
+                navController.navigate(Routes.FILE_DETAIL_VIEWER + "?url=$fileUrl")
+
             }) {
             Column(modifier = Modifier.padding(vertical = 16.dp)) {
-                Text(text = "Large Files", modifier = Modifier.padding(bottom = 16.dp, start = 16.dp))
+                Text(
+                    text = "Large Files",
+                    modifier = Modifier.padding(bottom = 16.dp, start = 16.dp)
+                )
                 LazyRow(
                     contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(itemSpacing)
                 ) {
                     items(videoFile.value!!.size) {
                         val file = videoFile.value!![it]
-                        key(file.id) {
-                            FileItemCompose(
-                                videoFile.value!![it],
+                        FileItemCompose(
+                            file,
 //                                onClick = {
 
 //                                val navController = App.instance.navController()
@@ -51,8 +56,7 @@ fun CategoryLargeFileCompose(vm: HomeVM = viewModel()) {
 
 
 //                            }
-                            )
-                        }
+                        )
                     }
                 }
             }

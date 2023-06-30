@@ -44,3 +44,4 @@ fun File.md5(): String {
 fun isFileImage(mimeType: String?) = mimeType?.contains("image", ignoreCase = true) == true
 fun isFileVideo(mimeType: String?) = mimeType?.contains("video", ignoreCase = true) == true
 
+fun isPDFFile(mimeType: String?) = mimeType?.contains("pdf", ignoreCase = true) == true

@@ -2,7 +2,10 @@ package com.pg.cloudcleaner.presentation.ui.pages
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -26,13 +29,15 @@ import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.ui.IconModifier
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIconCompose
-import com.pg.cloudcleaner.presentation.ui.components.common.ImageViewer
 import com.pg.cloudcleaner.presentation.ui.components.VideoPlayer
+import com.pg.cloudcleaner.presentation.ui.components.common.ImageViewer
+import com.pg.cloudcleaner.presentation.ui.components.common.PDFViewer
 import com.pg.cloudcleaner.presentation.ui.components.common.PopupCompose
 import com.pg.cloudcleaner.presentation.ui.components.common.thumbnail.OtherFileThumbnailCompose
 import com.pg.cloudcleaner.presentation.vm.FileDetailViewerVM
 import com.pg.cloudcleaner.utils.isFileImage
 import com.pg.cloudcleaner.utils.isFileVideo
+import com.pg.cloudcleaner.utils.isPDFFile
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -85,11 +90,19 @@ fun FileDetailViewerCompose(
             },
         )
     }, content = {
-        Box(modifier = Modifier.padding(it)) {
+
+
+        Box(
+            modifier = Modifier
+                .padding(it)
+                .scrollable(rememberScrollState(), orientation = Orientation.Vertical)
+        ) {
 
             file.value?.let { file ->
                 if (isFileImage(file.fileType)) ImageViewer(file.id)
                 else if (isFileVideo(file.fileType)) VideoPlayer(file.id)
+                else if (isPDFFile(file.fileType))
+                    PDFViewer(file.id)
                 else OtherFileThumbnailCompose(mimeType = file.fileType)
             }
 
