@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1083668772708",
+    "project_id": "free-memory-83c35",
+    "storage_bucket": "free-memory-83c35.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1083668772708:android:edb829b6f3406462e66c71",
+        "android_client_info": {
+          "package_name": "com.pg.freememory"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_GEykyYOTiYBd_AV8kacAeK3GDTTepys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
