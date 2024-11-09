@@ -3,11 +3,13 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id "io.sentry.android.gradle" version "4.4.1"
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
 
 android {
-    compileSdk 34
+    compileSdk 35
     Properties properties = new Properties()
     properties.load(project.rootProject.file("local.properties").newDataInputStream())
 
@@ -44,7 +46,9 @@ android {
     }
     kotlinOptions {
         jvmTarget =  JavaVersion.VERSION_17.getMajorVersion()
+
     }
+
 
     buildFeatures {
         compose true
@@ -68,6 +72,7 @@ dependencies {
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.7.0'
+    implementation 'com.google.firebase:firebase-crashlytics:19.2.1'
 
     def room_version = "2.5.2"
     implementation "androidx.room:room-runtime:$room_version"
@@ -160,8 +165,6 @@ dependencies {
 //  sentry installation
     implementation 'io.sentry:sentry-android:7.8.0'
     implementation 'io.sentry:sentry-compose-android:7.8.0'
-
-
 
 }
 

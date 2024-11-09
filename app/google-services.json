@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1083668772708",
+    "project_id": "free-memory-83c35",
+    "storage_bucket": "free-memory-83c35.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1083668772708:android:edb829b6f3406462e66c71",
+        "android_client_info": {
+          "package_name": "com.pg.freememory"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1083668772708-g5a4cdoq15la1e0ej6dqceasbi5cl9mi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_GEykyYOTiYBd_AV8kacAeK3GDTTepys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1083668772708-g5a4cdoq15la1e0ej6dqceasbi5cl9mi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
