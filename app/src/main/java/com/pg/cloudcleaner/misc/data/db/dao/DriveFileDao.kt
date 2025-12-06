@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.Flow
 interface DriveFileDao {
 
     @Query("SELECT * FROM drivefile")
-    fun getAll(): Flow<List<DriveFile>?>
+    fun getAll(): Flow<List<DriveFile>>
 
     @Query("SELECT * FROM drivefile WHERE ownedByMe = 1 ")
-    fun getFilesOwnedByMe(): Flow<List<DriveFile>?>
+    fun getFilesOwnedByMe(): Flow<List<DriveFile>>
 
     @Query("SELECT * FROM drivefile WHERE id IN (:userIds)")
     fun loadAllByIds(userIds: IntArray): Flow<List<DriveFile>>
