@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.pg.cloudcleaner.misc.data.db.dao.DriveFileDao
 import com.pg.cloudcleaner.misc.model.DriveFile
 
-@Database(entities = [DriveFile::class], version = 1, exportSchema = false)
+@Database(entities = [DriveFile::class], version = 1, exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun driveFileDao(): DriveFileDao
 
