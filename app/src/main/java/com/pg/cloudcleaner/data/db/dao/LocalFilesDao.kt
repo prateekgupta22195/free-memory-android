@@ -39,5 +39,8 @@ interface LocalFilesDao {
     @Query("SELECT id FROM localfile WHERE duplicate = 1 AND (mimeType LIKE '%image%' OR mimeType LIKE '%video%')")
     fun getDuplicateFilesId(): Flow<List<String>>
 
+    @RawQuery(observedEntities = [LocalFile::class])
+    fun getSumViaQuery(query: SupportSQLiteQuery): Flow<Long>
+
 
 }

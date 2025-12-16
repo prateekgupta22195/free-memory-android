@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Card
@@ -33,9 +34,13 @@ fun CategoryImagesCompose(vm: HomeVM = viewModel()) {
                 navController.navigate(Routes.FLAT_IMAGES_FILE_MANAGER)
             }) {
             Column(modifier = Modifier.padding(vertical = 16.dp)) {
-                Text(
-                    text = "Image Files", modifier = Modifier.padding(bottom = 16.dp, start = 16.dp)
-                )
+                Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(
+                        text = "Image Files", modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                    CategorySizeComposable(mimeType = "%image%")
+                }
+
                 LazyRow(
                     contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(itemSpacing)
@@ -46,7 +51,6 @@ fun CategoryImagesCompose(vm: HomeVM = viewModel()) {
                             Row {
                                 FileItemCompose(videoFile.value!![it])
                             }
-
                         }
                     }
                 }

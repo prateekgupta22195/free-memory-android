@@ -22,7 +22,7 @@ class FileDetailViewerVM : ViewModel() {
         return fileUseCases.getFileById(fileId)
     }
 
-    suspend fun deleteFile(fileId: String) {
+    fun deleteFile(fileId: String) {
 
         viewModelScope.launch(Dispatchers.IO) {
 //            deleting file from local storage table

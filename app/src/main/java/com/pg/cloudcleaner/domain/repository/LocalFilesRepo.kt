@@ -2,6 +2,7 @@ package com.pg.cloudcleaner.domain.repository
 
 import com.pg.cloudcleaner.data.model.LocalFile
 import kotlinx.coroutines.flow.Flow
+import org.intellij.lang.annotations.Pattern
 
 interface LocalFilesRepo {
 
@@ -22,5 +23,7 @@ interface LocalFilesRepo {
     suspend fun getFileById(id: String): LocalFile?
 
     fun getDuplicateFileIds() : Flow<List<String>>
+
+    fun getFilesSizeSumViaQuery(query: String): Flow<Long>
 
 }

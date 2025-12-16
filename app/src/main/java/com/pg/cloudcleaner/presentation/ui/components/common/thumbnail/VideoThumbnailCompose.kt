@@ -14,10 +14,13 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.size.Precision
 import com.pg.cloudcleaner.R
 import com.pg.cloudcleaner.app.App
 
@@ -26,11 +29,17 @@ import com.pg.cloudcleaner.app.App
 fun VideoThumbnailCompose(
     model: Any?,
 ) {
+    val context = LocalContext.current
     val painter = rememberAsyncImagePainter(
-        model = model.toString(),
+        model = ImageRequest.Builder(context)
+            .data(model.toString())
+            .size(coil.size.Size.ORIGINAL)
+            .precision(Precision.EXACT) // 2. Don't let Coil downsample aggressively
+            .build(),
         imageLoader = App.instance.imageLoader,
         error = painterResource(id = R.drawable.ic_file)
     )
+
     val isSuccess = painter.state is AsyncImagePainter.State.Success
     Box {
         androidx.compose.foundation.Image(
