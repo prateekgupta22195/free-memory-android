@@ -40,7 +40,12 @@ fun FlatFileManagerContent(files: List<LocalFile>, vm: SelectableDeletableVM) {
                     if (checked) selectedFiles.value += files[it].id
                     else selectedFiles.value -= files[it].id
                 },
-                enabled = selectedModeOn.value
+                enabled = selectedModeOn.value,
+                onLongClickOnItem = {
+                    if(!selectedModeOn.value) {
+                        selectedModeOn.value = true
+                    }
+                }
             )
         }
     }
