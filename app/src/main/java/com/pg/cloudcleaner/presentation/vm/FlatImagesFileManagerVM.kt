@@ -10,31 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 
-class FlatImagesFileManagerVM : ViewModel() {
-
-    private val fileUseCases =
-        FileUseCases(LocalFilesRepoImpl(App.instance.db.localFilesDao()))
-
-    val selectedModeOn = mutableStateOf(false)
-
-    val selectedFiles = mutableStateOf(setOf<String>())
-
+class FlatImagesFileManagerVM : SelectableDeletableVM() {
     fun getImageFiles() = fileUseCases.getImageFiles()
-    suspend fun deleteFiles(ids: Set<String>) {
-        viewModelScope.launch(Dispatchers.IO) {
-            launch {
-                fileUseCases.deleteFiles(ids.toList())
-            }.join()
-
-            launch {
-                ids.forEach { filePath ->
-                    File(filePath).apply {
-                        if (exists()) delete()
-                    }
-                }
-            }.join()
-            selectedFiles.value -= ids
-        }
-    }
 
 }
