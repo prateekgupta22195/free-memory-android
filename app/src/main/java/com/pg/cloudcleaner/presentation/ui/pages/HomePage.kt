@@ -24,7 +24,7 @@ fun HomeComposable() {
             state = lazyState,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(vertical = 32.dp),
+                .padding(vertical = 24.dp),
             contentPadding = PaddingValues(all = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
 
