@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
