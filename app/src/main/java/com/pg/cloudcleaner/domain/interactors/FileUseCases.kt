@@ -1,5 +1,7 @@
 package com.pg.cloudcleaner.domain.interactors
 
+import android.text.format.Formatter
+import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.data.model.toLocalFile
 import com.pg.cloudcleaner.domain.repository.LocalFilesRepo
@@ -54,20 +56,23 @@ class FileUseCases(private val repo: LocalFilesRepo) {
 
         if (!file.exists()) return "-"
 
-        val fileSize = file.size()
-        val fileSizeString: String = if (fileSize > 1000) {
-            "File size : ${(round((fileSize / 1000).toDouble()))} MB"
-        } else {
-            "File size : ${(round((fileSize).toDouble()))} KB"
-        }
-        return fileSizeString + "\nFile Type : ${getMimeType(fileId)}" + "\nFile Name : ${file.name}" + "\nLocation : $fileId" + "\nLast Modified : ${
-            file.lastModified().run {
-                if (this == 0L) "-"
-                else Date(this)
-            }
-        }"
-    }
+        // Use the application context from your App singleton
+        val context = App.instance
 
+        // Formatter handles KB, MB, GB logic automatically
+        val formattedSize = Formatter.formatFileSize(context, file.length())
+
+        return "File size : $formattedSize" +
+                "\nFile Type : ${getMimeType(fileId)}" +
+                "\nFile Name : ${file.name}" +
+                "\nLocation : $fileId" +
+                "\nLast Modified : ${
+                    file.lastModified().run {
+                        if (this == 0L) "-"
+                        else Date(this)
+                    }
+                }"
+    }
     private suspend fun exploreDirectory(directoryPath: String) {
         withContext(Dispatchers.IO) {
             val directory = File(directoryPath)

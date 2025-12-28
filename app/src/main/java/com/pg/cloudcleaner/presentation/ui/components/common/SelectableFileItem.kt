@@ -22,14 +22,19 @@ fun SelectableFileItem(
     isSelected: Boolean = false,
     enabled: Boolean = true,
     showInfo: (() -> Unit)? = null,
-    onCheckedChangeListener: ((Boolean) -> Unit)? = null
+    onCheckedChangeListener: ((Boolean) -> Unit)? = null,
+    onLongClickOnItem: (() -> Unit)? = null
 ) {
     Box(contentAlignment = Alignment.Center) {
         FileItemCompose(file = file, onClick = {
-            val navController = App.instance.navController()
-            val fileUrl = Uri.encode(file.id)
-            navController.navigate(Routes.FILE_DETAIL_VIEWER + "?url=$fileUrl")
-        })
+            if(!enabled) {
+                val navController = App.instance.navController()
+                val fileUrl = Uri.encode(file.id)
+                navController.navigate(Routes.FILE_DETAIL_VIEWER + "?url=$fileUrl")
+            } else {
+                onCheckedChangeListener?.invoke(!isSelected)
+            }
+        }, onLongClick = onLongClickOnItem )
         if (enabled) Checkbox(
             checked = isSelected,
             onCheckedChange = onCheckedChangeListener,

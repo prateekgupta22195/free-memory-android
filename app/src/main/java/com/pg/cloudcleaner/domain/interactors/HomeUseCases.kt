@@ -1,5 +1,6 @@
 package com.pg.cloudcleaner.domain.interactors
 
+import coil.size.Size
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.domain.repository.LocalFilesRepo
 import kotlinx.coroutines.Dispatchers
@@ -21,9 +22,6 @@ class HomeUseCases(private val repo: LocalFilesRepo) {
         }
     }
 
-
-
-
     fun getVideoFile(): Flow<LocalFile?> {
         return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE '%video%' limit 2")
             .flowOn(Dispatchers.IO).map {
@@ -42,6 +40,23 @@ class HomeUseCases(private val repo: LocalFilesRepo) {
 
     fun getLargeFiles(): Flow<List<LocalFile>> {
         return repo.getFilesViaQuery("SELECT * FROM localfile WHERE size > 5000")
+    }
+
+    fun getTotalSizeOfMimeType(mimeTypePattern: String): Flow<Long> {
+        val query = "SELECT COALESCE(SUM(size), 0) FROM localfile WHERE mimeType LIKE '$mimeTypePattern'"
+        return repo.getFilesSizeSumViaQuery(query).flowOn(Dispatchers.IO)
+    }
+
+    // 2. Get sum for Large Files (Size > 5000MB)
+    fun getTotalSizeOfLargeFiles(): Flow<Long> {
+        val query = "SELECT COALESCE(SUM(size), 0) FROM localfile WHERE size > 5000"
+        return repo.getFilesSizeSumViaQuery(query).flowOn(Dispatchers.IO)
+    }
+
+    // 3. Get sum for specific MimeType AND minimum size (Dynamic)
+    fun getCustomTotalSize(mimeTypePattern: String, minSize: Long): Flow<Long> {
+        val query = "SELECT COALESCE(SUM(size), 0) FROM localfile WHERE mimeType LIKE '$mimeTypePattern' AND size > $minSize"
+        return repo.getFilesSizeSumViaQuery(query).flowOn(Dispatchers.IO)
     }
 
 

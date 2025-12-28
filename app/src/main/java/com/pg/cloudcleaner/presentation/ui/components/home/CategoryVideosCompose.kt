@@ -4,7 +4,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Card
@@ -32,7 +34,10 @@ fun CategoryVideosCompose(vm: HomeVM = viewModel()) {
                 navController.navigate(Routes.FLAT_VIDEOS_FILE_MANAGER)
             }) {
             Column(modifier = Modifier.padding(vertical = 16.dp)) {
-                Text(text = "Video Files", modifier = Modifier.padding(bottom = 16.dp, start = 16.dp))
+                Row (modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp), horizontalArrangement = Arrangement.SpaceBetween){
+                    Text(text = "Video Files", modifier = Modifier.padding(bottom = 16.dp))
+                    CategorySizeComposable(mimeType = "%video%")
+                }
                 LazyRow(
                     contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(itemSpacing)

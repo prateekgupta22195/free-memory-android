@@ -1,5 +1,6 @@
 package com.pg.cloudcleaner.presentation.ui.pages
 
+import FlatFileManagerDeleteComposable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,6 +28,7 @@ import com.pg.cloudcleaner.app.thumbnailSize
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIconCompose
 import com.pg.cloudcleaner.presentation.ui.components.SelectableFileItem
+import com.pg.cloudcleaner.presentation.ui.components.common.flatFileManager.FlatFileManagerContent
 import com.pg.cloudcleaner.presentation.vm.FlatImagesFileManagerVM
 import kotlinx.coroutines.launch
 
@@ -34,14 +36,10 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FlatImagesFileManager(vm: FlatImagesFileManagerVM = viewModel()) {
-    val selectedModeOn = remember {
-        vm.selectedModeOn
-    }
 
+    val selectedModeOn = remember { vm.selectedModeOn }
 
     val files = vm.getImageFiles().collectAsState(initial = listOf())
-
-
 
     Scaffold(topBar = {
         TopAppBar(title = {
@@ -60,7 +58,7 @@ fun FlatImagesFileManager(vm: FlatImagesFileManagerVM = viewModel()) {
             }
         }, navigationIcon = { BackNavigationIconCompose() })
     }, bottomBar = {
-        if (selectedModeOn.value) DeleteButtonComposable1()
+        if (selectedModeOn.value) FlatFileManagerDeleteComposable(vm)
     }) {
 
         Box(
@@ -68,72 +66,7 @@ fun FlatImagesFileManager(vm: FlatImagesFileManagerVM = viewModel()) {
                 .fillMaxSize()
                 .padding(it)
         ) {
-            ImagesContent(files.value)
+            FlatFileManagerContent(files.value, vm)
         }
     }
-
-}
-
-@Composable
-fun ImagesContent(files: List<LocalFile>, vm: FlatImagesFileManagerVM = viewModel()) {
-
-
-    val selectedModeOn = remember {
-        vm.selectedModeOn
-    }
-
-    val selectedFiles = remember {
-        vm.selectedFiles
-    }
-
-
-
-    LazyVerticalGrid(
-        contentPadding = PaddingValues(vertical = 8.dp),
-        columns = GridCells.Adaptive(minSize = thumbnailSize),
-        verticalArrangement = Arrangement.spacedBy(itemSpacing),
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(files.size) {
-            SelectableFileItem(
-                file = files[it],
-                isSelected = selectedFiles.value.contains(files[it].id),
-                onCheckedChangeListener = { checked ->
-                    if (checked) selectedFiles.value += files[it].id
-                    else selectedFiles.value -= files[it].id
-                },
-                enabled = selectedModeOn.value
-            )
-        }
-    }
-}
-
-
-@Composable
-fun DeleteButtonComposable1(vm: FlatImagesFileManagerVM = viewModel()) {
-    val selectedFileIds = remember { vm.selectedFiles }
-    val selectedModeOn = remember {
-        vm.selectedModeOn
-    }
-
-    val scope = rememberCoroutineScope()
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        Button(
-            onClick = {
-                scope.launch {
-                    vm.deleteFiles(selectedFileIds.value)
-                }
-                selectedModeOn.value = false
-            },
-            enabled = selectedFileIds.value.isNotEmpty(),
-            modifier = Modifier.align(Alignment.Center)
-        ) {
-            Text(text = if (selectedFileIds.value.isEmpty()) "Delete" else "Delete ${selectedFileIds.value.size} Files")
-        }
-    }
-
 }

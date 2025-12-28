@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -14,6 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -61,6 +63,36 @@ fun FileDetailViewerCompose(
     val navigator = remember {
         App.instance.navController()
     }
+    val showDeleteDialog = remember { mutableStateOf(false) }
+
+    if (showDeleteDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog.value = false },
+            title = { Text("Delete File") },
+            text = { Text("Are you sure you want to delete this file permanently?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog.value = false // Dismiss the dialog
+                        scope.launch {
+                            vm.deleteFile(filePath)
+                            snackbarHostState.showSnackbar("File deleted successfully!")
+                            navigator.navigateUp()
+                        }
+                    }
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showDeleteDialog.value = false }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }, topBar = {
         TopAppBar(
@@ -74,13 +106,7 @@ fun FileDetailViewerCompose(
                 }
 
                 Icon(Icons.Filled.Delete, "delete", modifier = IconModifier.clickable {
-                    scope.launch {
-                        vm.deleteFile(filePath)
-                        snackbarHostState.showSnackbar(
-                            "File deleted successfully!"
-                        )
-                        navigator.navigateUp()
-                    }
+                    showDeleteDialog.value = true
                 })
             },
         )
