@@ -32,7 +32,7 @@ fun FileItemCompose(
                     onLongClick = { onLongClick?.invoke() },
                 )
         ) {
-            FileThumbnailCompose(mimeType = file.fileType, model = file.id)
+            FileThumbnailCompose(model = file.id)
         }
     }
 }

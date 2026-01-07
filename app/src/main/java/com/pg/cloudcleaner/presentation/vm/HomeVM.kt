@@ -39,7 +39,6 @@ class HomeVM : ViewModel() {
 
     init {
         fetchStorageDetails()
-        checkDatabaseEmpty()
         observeScanWork()
     }
 
@@ -51,7 +50,6 @@ class HomeVM : ViewModel() {
                     val progressMessage = workInfo.progress.getString(ReadFileWorker.KEY_PROGRESS_MESSAGE)
                     _scanUIStatus.value = when (workInfo.state) {
                         WorkInfo.State.SUCCEEDED -> {
-                            checkDatabaseEmpty()
                             WorkerUIState.Success(progressMessage ?: "Scan finished successfully.")
                         }
 
@@ -65,15 +63,6 @@ class HomeVM : ViewModel() {
             }
         }
     }
-
-    private fun checkDatabaseEmpty() {
-        viewModelScope.launch {
-            homeUseCases.getFileCount().collect { count ->
-                _isDatabaseEmpty.value = count == 0
-            }
-        }
-    }
-
     fun getAnyTwoDuplicateFiles(): Flow<Pair<LocalFile, LocalFile>?> {
         return homeUseCases.getAnyTwoDuplicates()
     }

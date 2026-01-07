@@ -1,6 +1,5 @@
 package com.pg.cloudcleaner.app
 
-import AppTheme
 import android.app.Application
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
@@ -11,6 +10,7 @@ import androidx.room.Room
 import coil.ImageLoader
 import coil.decode.VideoFrameDecoder
 import coil.request.CachePolicy
+import com.pg.cloudcleaner.app.uim3.theme.AppTheme
 import com.pg.cloudcleaner.BuildConfig
 import com.pg.cloudcleaner.data.db.AppDatabase
 import timber.log.Timber

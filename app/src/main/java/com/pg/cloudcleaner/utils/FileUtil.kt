@@ -8,9 +8,11 @@ import android.graphics.BitmapFactory
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.provider.MediaStore.Video.Thumbnails
+import android.util.Log
 import android.util.Size
 import android.util.TypedValue
 import android.webkit.MimeTypeMap
+import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
 import java.security.MessageDigest
@@ -46,3 +48,12 @@ fun File.md5(): String {
 fun isFileImage(mimeType: String?) = mimeType?.contains("image", ignoreCase = true) == true
 fun isFileVideo(mimeType: String?) = mimeType?.contains("video", ignoreCase = true) == true
 
+fun isVideo(path: String): Boolean {
+    val extension = path.substringAfterLast('.', "").lowercase()
+    return extension in listOf("mp4", "mkv", "webm", "avi", "mov")
+}
+
+fun isImage(path: String): Boolean {
+    val extension = path.substringAfterLast('.', "").lowercase()
+    return extension in listOf("jpg", "jpeg", "png", "gif", "bmp", "webp")
+}

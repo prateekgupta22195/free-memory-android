@@ -22,8 +22,8 @@ open class LocalFile(
     ) @SerializedName("duplicate") val duplicate: Boolean,
 )
 
-fun File.toLocalFile(duplicate: Boolean, md5: String): LocalFile {
+fun File.toLocalFile(duplicate: Boolean, md5: String?): LocalFile {
     return LocalFile(
-        getMimeType(absolutePath), lastModified(), name, size(), md5, absolutePath, duplicate
+        getMimeType(absolutePath), lastModified(), name, size(), md5?:"-", absolutePath, duplicate
     )
 }

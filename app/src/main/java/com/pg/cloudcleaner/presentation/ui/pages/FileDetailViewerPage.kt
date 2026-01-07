@@ -116,7 +116,7 @@ fun FileDetailViewerCompose(
             file.value?.let { file ->
                 if (isFileImage(file.fileType)) ImageViewer(file.id)
                 else if (isFileVideo(file.fileType)) VideoPlayer(file.id)
-                else OtherFileThumbnailCompose(mimeType = file.fileType)
+                else OtherFileThumbnailCompose(filePath = file.fileName)
             }
 
             PopupCompose(show = infoPopUpVisibility.value, onPopupDismissed = {

@@ -6,7 +6,6 @@ import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.data.model.toLocalFile
 import com.pg.cloudcleaner.domain.repository.LocalFilesRepo
 import com.pg.cloudcleaner.utils.getMimeType
-import com.pg.cloudcleaner.utils.md5
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -73,6 +72,7 @@ class FileUseCases(private val repo: LocalFilesRepo) {
                     }
                 }"
     }
+
     private suspend fun exploreDirectory(directoryPath: String) = coroutineScope {
         // Use a queue for non-recursive directory traversal
         val directoryQueue = ArrayDeque<File>()
@@ -91,9 +91,8 @@ class FileUseCases(private val repo: LocalFilesRepo) {
             val fileProcessingJobs = files.filter { it.isFile }.map { file ->
                 async(Dispatchers.Default) { // Use Default dispatcher for CPU work
                     try {
-                        val md5 = file.md5()
                         // Check if file exists and insert in one transaction if possible
-                            repo.insertFile(file.toLocalFile(duplicate = false, md5 = md5))
+                        repo.insertFile(file.toLocalFile(duplicate = false, md5 = null))
                     } catch (e: Exception) {
                         Timber.e(e, "Failed to process file: ${file.absolutePath}")
                     }
@@ -109,6 +108,4 @@ class FileUseCases(private val repo: LocalFilesRepo) {
             fileProcessingJobs.awaitAll()
         }
     }
-
-
 }
