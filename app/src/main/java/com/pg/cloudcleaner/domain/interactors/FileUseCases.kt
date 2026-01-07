@@ -1,20 +1,22 @@
 package com.pg.cloudcleaner.domain.interactors
 
 import android.text.format.Formatter
+import android.util.Log
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.data.model.toLocalFile
 import com.pg.cloudcleaner.domain.repository.LocalFilesRepo
+import com.pg.cloudcleaner.utils.crc32
 import com.pg.cloudcleaner.utils.getMimeType
 import com.pg.cloudcleaner.utils.md5
-import com.pg.cloudcleaner.utils.size
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 import java.util.Date
-import kotlin.math.round
 
 class FileUseCases(private val repo: LocalFilesRepo) {
 
@@ -73,27 +75,40 @@ class FileUseCases(private val repo: LocalFilesRepo) {
                     }
                 }"
     }
-    private suspend fun exploreDirectory(directoryPath: String) {
-        withContext(Dispatchers.IO) {
-            val directory = File(directoryPath)
-            directory.listFiles()?.forEach { file ->
-                if (file.isDirectory) {
-                    Timber.d("directory name ${file.absolutePath}")
-                    exploreDirectory(file.absolutePath)
-                } else {
-                    Timber.d("file name ${file.absolutePath}")
-                    withContext(Dispatchers.Default) {
-                        val md5 = try {
-                            file.md5()
-                        } catch (e: Exception) {
-                            ""
-                        }
-                        repo.insertFile(file.toLocalFile(repo.fileAlreadyExists(md5), md5))
+    private suspend fun exploreDirectory(directoryPath: String) = coroutineScope {
+        // Use a queue for non-recursive directory traversal
+        val directoryQueue = ArrayDeque<File>()
+        val initialDir = File(directoryPath)
+
+        if (initialDir.exists() && initialDir.isDirectory) {
+            directoryQueue.add(initialDir)
+        }
+
+        // Process directories from the queue until it's empty
+        while (directoryQueue.isNotEmpty()) {
+            val currentDir = directoryQueue.removeFirstOrNull() ?: continue
+            val files = currentDir.listFiles() ?: continue
+
+            // Use async for CPU-bound tasks (MD5 hashing) and await them in batches
+            val fileProcessingJobs = files.filter { it.isFile }.map { file ->
+                async(Dispatchers.Default) { // Use Default dispatcher for CPU work
+                    try {
+                        val md5 = file.md5()
+                        // Check if file exists and insert in one transaction if possible
+                            repo.insertFile(file.toLocalFile(duplicate = false, md5 = "md5"))
+                    } catch (e: Exception) {
+                        Timber.e(e, "Failed to process file: ${file.absolutePath}")
                     }
-
                 }
-
             }
+
+            // Add subdirectories to the queue to be processed
+            files.filter { it.isDirectory }.forEach { subDir ->
+                directoryQueue.add(subDir)
+            }
+
+            // Wait for all files in the current directory to finish processing before moving on
+            fileProcessingJobs.awaitAll()
         }
     }
 

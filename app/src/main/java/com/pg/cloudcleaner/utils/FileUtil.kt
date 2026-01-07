@@ -14,6 +14,8 @@ import android.webkit.MimeTypeMap
 import java.io.File
 import java.io.FileInputStream
 import java.security.MessageDigest
+import java.util.zip.CRC32
+import java.util.zip.CheckedInputStream
 
 fun getMimeType(path: String): String? {
     val extension = MimeTypeMap.getFileExtensionFromUrl(path)
