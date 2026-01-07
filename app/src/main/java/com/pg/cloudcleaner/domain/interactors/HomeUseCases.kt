@@ -59,5 +59,7 @@ class HomeUseCases(private val repo: LocalFilesRepo) {
         return repo.getFilesSizeSumViaQuery(query).flowOn(Dispatchers.IO)
     }
 
-
+    fun getFileCount(): Flow<Int> {
+        return repo.getFileCount()
+    }
 }

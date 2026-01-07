@@ -2,12 +2,15 @@ package com.pg.cloudcleaner.presentation.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.data.repository.LocalFilesRepoImpl
 import com.pg.cloudcleaner.domain.interactors.HomeUseCases
+import com.pg.cloudcleaner.helper.ReadFileWorker
+import com.pg.cloudcleaner.presentation.WorkerUIState
 import com.pg.cloudcleaner.utils.StorageHelper
-import com.pg.cloudcleaner.utils.StorageInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,15 +22,57 @@ import kotlinx.coroutines.withContext
 class HomeVM : ViewModel() {
 
     private val storageHelper = StorageHelper()
+    private val workManager = WorkManager.getInstance(App.instance)
+    private val uniqueWorkName = "file reader"
 
     // Use the new sealed interface for UI state
     private val _uiState = MutableStateFlow<StorageUiState>(StorageUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
+    private val _isDatabaseEmpty = MutableStateFlow(true)
+    val isDatabaseEmpty = _isDatabaseEmpty.asStateFlow()
+
+    private val _scanUIStatus = MutableStateFlow<WorkerUIState?>(null)
+    val scanUIStatus = _scanUIStatus.asStateFlow()
+
+    private val homeUseCases by lazy { HomeUseCases(LocalFilesRepoImpl(App.instance.db.localFilesDao())) }
+
     init {
         fetchStorageDetails()
+        checkDatabaseEmpty()
+        observeScanWork()
     }
-    private val homeUseCases = HomeUseCases(LocalFilesRepoImpl(App.instance.db.localFilesDao()))
+
+    private fun observeScanWork() {
+        viewModelScope.launch {
+            workManager.getWorkInfosForUniqueWorkFlow(uniqueWorkName).collect { workInfos ->
+                val workInfo = workInfos.firstOrNull()
+                if (workInfo != null) {
+                    val progressMessage = workInfo.progress.getString(ReadFileWorker.KEY_PROGRESS_MESSAGE)
+                    _scanUIStatus.value = when (workInfo.state) {
+                        WorkInfo.State.SUCCEEDED -> {
+                            checkDatabaseEmpty()
+                            WorkerUIState.Success(progressMessage ?: "Scan finished successfully.")
+                        }
+
+                        WorkInfo.State.FAILED -> WorkerUIState.Failed("Scan failed.")
+                        WorkInfo.State.CANCELLED -> WorkerUIState.Cancelled("Scan cancelled.")
+                        else -> WorkerUIState.InProgress( progressMessage?: "Scan is in progress...")
+                    }
+                } else {
+                    _scanUIStatus.value = null
+                }
+            }
+        }
+    }
+
+    private fun checkDatabaseEmpty() {
+        viewModelScope.launch {
+            homeUseCases.getFileCount().collect { count ->
+                _isDatabaseEmpty.value = count == 0
+            }
+        }
+    }
 
     fun getAnyTwoDuplicateFiles(): Flow<Pair<LocalFile, LocalFile>?> {
         return homeUseCases.getAnyTwoDuplicates()

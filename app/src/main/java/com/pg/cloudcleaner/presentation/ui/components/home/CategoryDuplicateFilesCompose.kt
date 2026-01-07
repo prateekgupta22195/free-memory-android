@@ -11,6 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pg.cloudcleaner.app.App
@@ -23,23 +25,25 @@ import com.pg.cloudcleaner.presentation.vm.HomeVM
 @Composable
 fun CategoryDuplicateFilesCompose(vm: HomeVM = viewModel()) {
     val list = vm.getAnyTwoDuplicateFiles().collectAsState(initial = null)
-    if (list.value != null) {
-        Card(modifier = Modifier
+    Card(
+        modifier = Modifier
             .fillMaxSize()
             .clickable {
                 App.instance
                     .navController()
                     .navigate(Routes.FLAT_DUPLICATES_FILE_MANAGER)
             }) {
-            Column(modifier = Modifier.padding(16.dp)) {
-
-                Text(text = "Duplicate Files", modifier = Modifier.padding(bottom = 16.dp))
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = "Duplicate Files", modifier = Modifier.padding(bottom = 16.dp), fontWeight = FontWeight.Bold)
+            if (list.value != null) {
                 Row(
                     modifier = Modifier, horizontalArrangement = Arrangement.spacedBy(itemSpacing)
                 ) {
                     FileItemCompose(list.value!!.first)
                     FileItemCompose(list.value!!.second)
                 }
+            } else {
+                Text("No Duplicate files found!")
             }
         }
     }

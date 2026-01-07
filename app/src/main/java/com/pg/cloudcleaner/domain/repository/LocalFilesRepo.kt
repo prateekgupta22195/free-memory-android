@@ -25,5 +25,6 @@ interface LocalFilesRepo {
     fun getDuplicateFileIds() : Flow<List<String>>
 
     fun getFilesSizeSumViaQuery(query: String): Flow<Long>
+    fun getFileCount(): Flow<Int>
 
 }

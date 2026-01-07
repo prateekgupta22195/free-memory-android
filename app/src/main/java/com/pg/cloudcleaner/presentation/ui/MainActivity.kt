@@ -13,7 +13,6 @@ import android.os.Environment
 import android.provider.Settings
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -26,7 +25,6 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import com.google.android.material.snackbar.Snackbar
 import com.pg.cloudcleaner.BuildConfig
-import com.pg.cloudcleaner.R
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.CloudCleanerApp
 import com.pg.cloudcleaner.helper.ReadFileWorker
@@ -42,9 +40,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
+        setContent {
+            App.instance.initNavController(rememberNavController())
+            CloudCleanerApp()
+        }
+
         requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
-        ) { result: ActivityResult ->
+        ) { _ ->
 //             TODO: change this later and check why callback not working properly
             if (isStoragePermissionGranted()) {
                 // Permission granted
@@ -109,15 +113,10 @@ class MainActivity : AppCompatActivity() {
     private fun onStoragePermissionGranted() {
         WorkManager.getInstance(applicationContext).enqueueUniqueWork(
             "file reader",
-            ExistingWorkPolicy.REPLACE,
+            ExistingWorkPolicy.KEEP,
             OneTimeWorkRequestBuilder<ReadFileWorker>().setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .addTag("abc").build(),
         )
-
-        setContent {
-            App.instance.initNavController(rememberNavController())
-            CloudCleanerApp()
-        }
     }
 
 
@@ -131,5 +130,3 @@ class MainActivity : AppCompatActivity() {
     }
 
 }
-
-

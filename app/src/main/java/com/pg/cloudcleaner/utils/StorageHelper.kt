@@ -1,6 +1,6 @@
 package com.pg.cloudcleaner.utils
 
-import android.app.usage.StorageStatsManager
+import android.content.Context
 import android.os.Build
 import android.os.Environment
 import android.os.StatFs
@@ -8,8 +8,6 @@ import android.os.storage.StorageManager
 import androidx.core.content.getSystemService
 import com.pg.cloudcleaner.app.App
 import timber.log.Timber
-import java.io.IOException
-import java.util.UUID
 
 // Data class to hold storage information
 data class StorageInfo(
@@ -20,50 +18,33 @@ data class StorageInfo(
 
 class StorageHelper {
 
-    val context = App.instance.applicationContext
+    val context: Context = App.instance.applicationContext
 
     /**
      * Calculates the total, used, and free storage space of the device,
-     * combining both internal and primary external storage.
+     * combining all available storage volumes.
      */
     fun getTotalStorageInfo(): StorageInfo {
-        // Fallback to the old method for older Android versions
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            return getLegacyStorageInfo()
-        }
-
-        val storageManager = context.getSystemService<StorageManager>()
-        val storageStatsManager = context.getSystemService<StorageStatsManager>()
-
-        if (storageManager == null || storageStatsManager == null) {
-            // If services are unavailable, fallback to the simpler method
-            return getLegacyStorageInfo()
-        }
-
         var totalBytes = 0L
         var freeBytes = 0L
 
-        // Iterate over all storage volumes, including internal and any SD cards
-        for (storageVolume in storageManager.storageVolumes) {
-            // THE FIX IS HERE:
-            // Before parsing, check if the UUID string is valid and not a placeholder.
-            val uuid: UUID = if (storageVolume.uuid != null && storageVolume.uuid != "0000-0000") {
-                UUID.fromString(storageVolume.uuid)
-            } else {
-                StorageManager.UUID_DEFAULT
-            }
+        val paths = getStoragePaths(context)
 
-            try {
-                totalBytes += storageStatsManager.getTotalBytes(uuid)
-                freeBytes += storageStatsManager.getFreeBytes(uuid)
-            } catch (e: IOException) {
-                // This can happen if the volume is not mounted or accessible.
-                // It's safe to just continue to the next volume.
-                e.printStackTrace()
-            }
+        if (paths.isEmpty()) {
+            Timber.w("getStoragePaths returned empty list, falling back to legacy method.")
+            return getLegacyStorageInfo()
         }
 
+        for (path in paths) {
+            try {
+                val stat = StatFs(path)
+                totalBytes += stat.totalBytes
+                freeBytes += stat.availableBytes
+            } catch (e: Exception) {
+                Timber.e(e, "Error getting stats for path: $path")
+                // If one path fails, continue with others.
+            }
+        }
 
         val usedBytes = totalBytes - freeBytes
 
@@ -80,20 +61,78 @@ class StorageHelper {
     }
 
     /**
-     * A fallback method for older Android versions or when StorageStatsManager is not available.
-     * This method primarily measures the internal data partition.
+     * Gets a list of all readable, primary storage paths, including internal and SD cards.
+     * This logic is the single source of truth for storage volumes.
+     */
+    fun getStoragePaths(context: Context): List<String> {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            @Suppress("DEPRECATION")
+            val externalStorage = Environment.getExternalStorageDirectory()
+            return if (externalStorage != null) listOf(externalStorage.absolutePath) else emptyList()
+        }
+
+        val storageManager = context.getSystemService<StorageManager>()
+        val storageVolumes = storageManager?.storageVolumes ?: return emptyList()
+
+        return storageVolumes.mapNotNull { volume ->
+            if (volume.state != Environment.MEDIA_MOUNTED && volume.state != Environment.MEDIA_MOUNTED_READ_ONLY) {
+                return@mapNotNull null
+            }
+
+            if (volume.isPrimary) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    // On Android 11+, getDirectory() is the correct way.
+                    volume.directory?.absolutePath
+                } else {
+                    // On older versions, a hacky reflection method might be needed for the full path,
+                    // but we can construct a reliable path for primary storage.
+                    // This will correctly point to /storage/emulated/0
+                    @Suppress("DEPRECATION")
+                    Environment.getExternalStorageDirectory().absolutePath
+                }
+            } else if (volume.isRemovable) {
+                // This handles removable SD cards
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    volume.directory?.absolutePath
+                } else {
+                    // On older versions, getting the SD card path is notoriously tricky.
+                    // This reflection method is a common and effective workaround.
+                    try {
+                        val pathField = volume.javaClass.getDeclaredField("mPath")
+                        pathField.isAccessible = true
+                        pathField.get(volume) as? String
+                    } catch (e: Exception) {
+                        Timber.e(e, "Error getting SD card path via reflection")
+                        null
+                    }
+                }
+            } else {
+                null
+            }
+        }
+    }
+
+    /**
+     * A fallback method for older Android versions or when storage volumes can't be listed.
+     * This method measures the primary external storage.
      */
     private fun getLegacyStorageInfo(): StorageInfo {
-        val path = Environment.getDataDirectory()
-        val stat = StatFs(path.path)
-        val blockSize = stat.blockSizeLong
-        val totalBlocks = stat.blockCountLong
-        val availableBlocks = stat.availableBlocksLong
+        return try {
+            @Suppress("DEPRECATION")
+            val path = Environment.getExternalStorageDirectory()
+            val stat = StatFs(path.path)
+            val totalBytes = stat.totalBytes
+            val freeBytes = stat.availableBytes
+            val usedBytes = totalBytes - freeBytes
 
-        val totalSpaceGB = (totalBlocks * blockSize) / (1024f * 1024 * 1024)
-        val freeSpaceGB = (availableBlocks * blockSize) / (1024f * 1024 * 1024)
-        val usedSpaceGB = totalSpaceGB - freeSpaceGB
+            val totalSpaceGB = totalBytes / (1024f * 1024 * 1024)
+            val freeSpaceGB = freeBytes / (1024f * 1024 * 1024)
+            val usedSpaceGB = usedBytes / (1024f * 1024 * 1024)
 
-        return StorageInfo(totalSpaceGB, usedSpaceGB, freeSpaceGB)
+            StorageInfo(totalSpaceGB, usedSpaceGB, freeSpaceGB)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to get legacy storage info.")
+            StorageInfo(0f, 0f, 0f)
+        }
     }
 }

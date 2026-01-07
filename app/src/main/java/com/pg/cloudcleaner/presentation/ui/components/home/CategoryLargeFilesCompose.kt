@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pg.cloudcleaner.app.App
@@ -31,18 +32,24 @@ import com.pg.cloudcleaner.presentation.vm.HomeVM
 @Composable
 fun CategoryLargeFileCompose(vm: HomeVM = viewModel()) {
     val videoFile = vm.getLargeFiles().collectAsState(initial = null)
-    if (!videoFile.value.isNullOrEmpty()) {
-        Card(modifier = Modifier
+    Card(
+        modifier = Modifier
             .fillMaxSize()
             .clickable {
                 val navController = App.instance.navController()
                 navController.navigate(Routes.FLAT_VIDEOS_FILE_MANAGER)
             }) {
-            Column(modifier = Modifier.padding(vertical = 16.dp)) {
-                Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-                    Text(text = "Large Files", modifier = Modifier.padding(bottom = 16.dp))
-                    LargeCategorySizeComposable()
-                }
+        Column(modifier = Modifier.padding(vertical = 16.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                Text(text = "Large Files", modifier = Modifier.padding(bottom = 16.dp), fontWeight = FontWeight.Bold)
+                LargeCategorySizeComposable()
+            }
+            if (!videoFile.value.isNullOrEmpty()) {
                 LazyRow(
                     contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(itemSpacing)
@@ -52,18 +59,12 @@ fun CategoryLargeFileCompose(vm: HomeVM = viewModel()) {
                         key(file.id) {
                             FileItemCompose(
                                 videoFile.value!![it],
-//                                onClick = {
-
-//                                val navController = App.instance.navController()
-//                                val fileUrl = Uri.encode(videoFile.value!![it].id)
-//                                navController.navigate(Routes.PDF_VIEWER + "?url=$fileUrl")
-
-
-//                            }
                             )
                         }
                     }
                 }
+            } else {
+                Text("No large files found!", modifier = Modifier.padding(16.dp))
             }
         }
     }

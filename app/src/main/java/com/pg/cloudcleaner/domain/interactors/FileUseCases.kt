@@ -1,12 +1,10 @@
 package com.pg.cloudcleaner.domain.interactors
 
 import android.text.format.Formatter
-import android.util.Log
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.data.model.toLocalFile
 import com.pg.cloudcleaner.domain.repository.LocalFilesRepo
-import com.pg.cloudcleaner.utils.crc32
 import com.pg.cloudcleaner.utils.getMimeType
 import com.pg.cloudcleaner.utils.md5
 import kotlinx.coroutines.Dispatchers
@@ -95,7 +93,7 @@ class FileUseCases(private val repo: LocalFilesRepo) {
                     try {
                         val md5 = file.md5()
                         // Check if file exists and insert in one transaction if possible
-                            repo.insertFile(file.toLocalFile(duplicate = false, md5 = "md5"))
+                            repo.insertFile(file.toLocalFile(duplicate = false, md5 = md5))
                     } catch (e: Exception) {
                         Timber.e(e, "Failed to process file: ${file.absolutePath}")
                     }

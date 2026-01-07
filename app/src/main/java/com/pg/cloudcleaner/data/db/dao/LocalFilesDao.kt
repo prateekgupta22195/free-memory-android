@@ -10,6 +10,8 @@ interface LocalFilesDao {
 
     @Query("SELECT * FROM localfile")
     fun getAll(): Flow<List<LocalFile>>
+    @Query("SELECT COUNT(*) FROM localfile")
+    fun getFileCount(): Flow<Int>
 
     @Query("SELECT * FROM localfile WHERE id == (:id)")
     suspend fun get(id: String): LocalFile?
