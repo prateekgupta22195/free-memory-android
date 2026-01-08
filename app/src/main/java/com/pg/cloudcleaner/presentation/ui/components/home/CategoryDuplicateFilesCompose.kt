@@ -18,6 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.Routes
 import com.pg.cloudcleaner.app.itemSpacing
+import com.pg.cloudcleaner.app.thumbnailSize
 import com.pg.cloudcleaner.presentation.ui.components.common.FileItemCompose
 import com.pg.cloudcleaner.presentation.vm.HomeVM
 
@@ -39,8 +40,8 @@ fun CategoryDuplicateFilesCompose(vm: HomeVM = viewModel()) {
                 Row(
                     modifier = Modifier, horizontalArrangement = Arrangement.spacedBy(itemSpacing)
                 ) {
-                    FileItemCompose(list.value!!.first)
-                    FileItemCompose(list.value!!.second)
+                    FileItemCompose(list.value!!.first, thumbnailSize = thumbnailSize)
+                    FileItemCompose(list.value!!.second, thumbnailSize = thumbnailSize)
                 }
             } else {
                 Text("No Duplicate files found!")

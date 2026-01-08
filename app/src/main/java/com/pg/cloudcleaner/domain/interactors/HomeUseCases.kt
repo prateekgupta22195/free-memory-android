@@ -1,6 +1,5 @@
 package com.pg.cloudcleaner.domain.interactors
 
-import coil.size.Size
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.domain.repository.LocalFilesRepo
 import kotlinx.coroutines.Dispatchers

@@ -8,6 +8,8 @@ import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode
@@ -17,12 +19,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import coil.size.Precision
+import coil3.compose.AsyncImagePainter
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.ImageRequest
+import coil3.size.Precision
 import com.pg.cloudcleaner.R
 import com.pg.cloudcleaner.app.App
+import androidx.compose.foundation.Image
 
 
 @Composable
@@ -33,16 +36,16 @@ fun VideoThumbnailCompose(
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(context)
             .data(model.toString())
-            .size(coil.size.Size.ORIGINAL)
+            .size(512)
             .precision(Precision.EXACT) // 2. Don't let Coil downsample aggressively
             .build(),
         imageLoader = App.instance.imageLoader,
         error = painterResource(id = R.drawable.ic_file)
     )
-
-    val isSuccess = painter.state is AsyncImagePainter.State.Success
+    val imageStatus by painter.state.collectAsState()
+    val isSuccess = imageStatus is AsyncImagePainter.State.Success
     Box {
-        androidx.compose.foundation.Image(
+        Image(
             painter = painter,
             contentDescription = "video thumbnail",
             alignment = Alignment.Center,
@@ -63,7 +66,5 @@ fun VideoThumbnailCompose(
                 .size(48.dp)
                 .align(Alignment.Center)
         )
-
     }
-
 }

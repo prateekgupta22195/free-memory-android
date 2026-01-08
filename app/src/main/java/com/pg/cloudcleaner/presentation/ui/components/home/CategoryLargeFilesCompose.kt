@@ -25,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.Routes
 import com.pg.cloudcleaner.app.itemSpacing
+import com.pg.cloudcleaner.app.thumbnailSize
 import com.pg.cloudcleaner.presentation.ui.components.common.FileItemCompose
 import com.pg.cloudcleaner.presentation.vm.HomeVM
 
@@ -37,7 +38,7 @@ fun CategoryLargeFileCompose(vm: HomeVM = viewModel()) {
             .fillMaxSize()
             .clickable {
                 val navController = App.instance.navController()
-                navController.navigate(Routes.FLAT_VIDEOS_FILE_MANAGER)
+                navController.navigate(Routes.FLAT_LARGE_FILE_MANAGER)
             }) {
         Column(modifier = Modifier.padding(vertical = 16.dp)) {
             Row(
@@ -59,6 +60,7 @@ fun CategoryLargeFileCompose(vm: HomeVM = viewModel()) {
                         key(file.id) {
                             FileItemCompose(
                                 videoFile.value!![it],
+                                thumbnailSize = thumbnailSize
                             )
                         }
                     }

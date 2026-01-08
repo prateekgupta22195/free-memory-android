@@ -46,6 +46,6 @@ interface LocalFilesDao {
     @RawQuery(observedEntities = [LocalFile::class])
     fun getSumViaQuery(query: SupportSQLiteQuery): Flow<Long>
 
-    @Query("SELECT * FROM localfile WHERE md5 = '-'")
-    fun getFilesWithoutChecksum(): List<LocalFile>
+    @Query("SELECT * FROM localfile WHERE md5 is NULL LIMIT :limit")
+    fun getFilesWithoutChecksum(limit: Int): List<LocalFile>
 }

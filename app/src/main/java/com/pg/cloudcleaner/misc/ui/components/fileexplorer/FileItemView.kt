@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.misc.data.repo.FileActionRepo
 import com.pg.cloudcleaner.misc.model.DriveFile

@@ -1,6 +1,7 @@
 package com.pg.cloudcleaner.presentation.ui.pages
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -20,6 +21,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -111,12 +113,23 @@ fun FileDetailViewerCompose(
             },
         )
     }, content = {
-        Box(modifier = Modifier.padding(it)) {
-
+        Box(modifier = Modifier.fillMaxSize().padding(it)) {
             file.value?.let { file ->
                 if (isFileImage(file.fileType)) ImageViewer(file.id)
                 else if (isFileVideo(file.fileType)) VideoPlayer(file.id)
-                else OtherFileThumbnailCompose(filePath = file.fileName)
+                else {
+                    Box(modifier = Modifier.align(Alignment.Center)) {
+                        Column (horizontalAlignment = Alignment.CenterHorizontally){
+                            OtherFileThumbnailCompose(filePath = file.fileName)
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = vm.getFileInfo(file),
+                                modifier = Modifier.padding(16.dp),
+                                fontSize = 18.sp,
+                            )
+                        }
+                    }
+                }
             }
 
             PopupCompose(show = infoPopUpVisibility.value, onPopupDismissed = {

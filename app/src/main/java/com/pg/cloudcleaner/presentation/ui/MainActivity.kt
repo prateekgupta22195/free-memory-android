@@ -122,16 +122,6 @@ class MainActivity : AppCompatActivity() {
             OneTimeWorkRequestBuilder<ReadFileWorker>().setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .addTag("abc").build(),
         )
-
-        val periodicWorkRequest = PeriodicWorkRequestBuilder<UpdateChecksumWorker>(
-            15, TimeUnit.MINUTES
-        ).build()
-
-        workManager.enqueueUniquePeriodicWork(
-            "checksum-worker",
-            ExistingPeriodicWorkPolicy.KEEP,
-            periodicWorkRequest
-        )
     }
 
 

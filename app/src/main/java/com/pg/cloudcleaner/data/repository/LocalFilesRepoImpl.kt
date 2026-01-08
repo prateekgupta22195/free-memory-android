@@ -1,12 +1,10 @@
 package com.pg.cloudcleaner.data.repository
 
 import androidx.sqlite.db.SimpleSQLiteQuery
-import coil.size.Size
 import com.pg.cloudcleaner.data.db.dao.LocalFilesDao
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.domain.repository.LocalFilesRepo
 import kotlinx.coroutines.flow.Flow
-import kotlin.math.min
 
 class LocalFilesRepoImpl(private val dao: LocalFilesDao) : LocalFilesRepo {
 

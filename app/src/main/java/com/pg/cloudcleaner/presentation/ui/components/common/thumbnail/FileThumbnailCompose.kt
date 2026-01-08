@@ -10,8 +10,8 @@ import com.pg.cloudcleaner.utils.isVideo
 
 @Composable
 fun FileThumbnailCompose(
+    model: Any,
     modifier: Modifier = Modifier,
-    model: Any
 ) {
 
     val modifierWithClip = modifier.clip(RoundedCornerShape(8.dp))
