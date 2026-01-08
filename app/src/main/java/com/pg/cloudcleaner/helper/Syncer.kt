@@ -54,7 +54,7 @@ class ReadFileWorker(private val context: Context, workerParameters: WorkerParam
 
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
             "checksum-worker",
-            ExistingPeriodicWorkPolicy.KEEP,
+            ExistingPeriodicWorkPolicy.REPLACE,
             periodicWorkRequest
         )
         return Result.success()

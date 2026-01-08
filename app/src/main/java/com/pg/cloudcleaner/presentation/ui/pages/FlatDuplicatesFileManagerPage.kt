@@ -1,25 +1,32 @@
 package com.pg.cloudcleaner.presentation.ui.pages
 
-import android.content.res.Configuration
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pg.cloudcleaner.app.itemSpacing
+import com.pg.cloudcleaner.app.thumbnailSize
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIconCompose
 import com.pg.cloudcleaner.presentation.ui.components.SelectableFileItem
@@ -86,31 +93,22 @@ fun FileListView(vm: FlatDuplicatesFileManagerVM = viewModel()) {
         }
     })
 
-
-    val configuration = LocalConfiguration.current
-    val columns = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 3 else 6
-
-    val thumbnailSize = configuration.screenWidthDp.dp
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(columns),
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(itemSpacing),
-    ) {
+    LazyColumn {
         items(list.value.keys.size) {
             val key = list.value.keys.toList()[it]
             key(key) {
-                HorizontalDuplicateFiles(list.value[key]!!, thumbnailSize)
+                HorizontalDuplicateFiles(list.value[key]!!)
             }
         }
+
     }
 }
 
 
 @Composable
 fun HorizontalDuplicateFiles(
-    data: List<LocalFile>, thumbnailSize: Dp, vm: FlatDuplicatesFileManagerVM = viewModel()
+    data: List<LocalFile>, vm: FlatDuplicatesFileManagerVM = viewModel()
 ) {
-
     Column(modifier = Modifier.padding(bottom = 16.dp)) {
         Text("${data.size - 1} Duplicates", modifier = Modifier.padding(start = 16.dp))
         Spacer(modifier = Modifier.height(4.dp))
@@ -124,8 +122,7 @@ fun HorizontalDuplicateFiles(
                     vm.selectedFileIds
                 }
                 SelectableFileItem(
-                    data[it],
-                    thumbnailSize = thumbnailSize,
+                    data[it], thumbnailSize = thumbnailSize,
                     isSelected = selectedFileIds.value.contains(data[it].id),
                     onCheckedChangeListener = { checked ->
                         if (checked) {
