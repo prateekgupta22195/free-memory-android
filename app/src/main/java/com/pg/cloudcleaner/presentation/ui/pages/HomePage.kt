@@ -52,7 +52,7 @@ fun HomeComposable(viewModel: HomeVM = viewModel()) {
             ) {
 
                 if (uiState !is StorageUiState.Error) {
-                    item {
+                    item(key = "storage_meter") {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -73,7 +73,7 @@ fun HomeComposable(viewModel: HomeVM = viewModel()) {
                 }
 
                 if (scanStatus != null && scanStatus is WorkerUIState.InProgress) {
-                    item {
+                    item(key = "scan_status") {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -92,19 +92,19 @@ fun HomeComposable(viewModel: HomeVM = viewModel()) {
                     }
                 }
 
-                item {
+                item(key = "category_duplicates") {
                     CategoryDuplicateFilesCompose()
                 }
 
-                item {
+                item(key = "category_images") {
                     CategoryImagesCompose()
                 }
 
-                item {
+                item(key = "category_videos") {
                     CategoryVideosCompose()
                 }
 
-                item {
+                item(key = "category_large_files") {
                     CategoryLargeFileCompose()
                 }
 
