@@ -1,6 +1,5 @@
 package com.pg.cloudcleaner.domain.interactors
 
-import coil.size.Size
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.domain.repository.LocalFilesRepo
 import kotlinx.coroutines.Dispatchers
@@ -58,6 +57,4 @@ class HomeUseCases(private val repo: LocalFilesRepo) {
         val query = "SELECT COALESCE(SUM(size), 0) FROM localfile WHERE mimeType LIKE '$mimeTypePattern' AND size > $minSize"
         return repo.getFilesSizeSumViaQuery(query).flowOn(Dispatchers.IO)
     }
-
-
 }

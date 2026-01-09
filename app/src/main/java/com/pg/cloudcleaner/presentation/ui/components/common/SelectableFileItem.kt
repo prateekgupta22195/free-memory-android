@@ -10,6 +10,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.Routes
 import com.pg.cloudcleaner.app.ui.IconModifier
@@ -19,14 +20,18 @@ import com.pg.cloudcleaner.presentation.ui.components.common.FileItemCompose
 @Composable
 fun SelectableFileItem(
     file: LocalFile,
+    thumbnailSize: Dp,
     isSelected: Boolean = false,
     enabled: Boolean = true,
     showInfo: (() -> Unit)? = null,
     onCheckedChangeListener: ((Boolean) -> Unit)? = null,
-    onLongClickOnItem: (() -> Unit)? = null
+    onLongClickOnItem: (() -> Unit)? = null,
 ) {
     Box(contentAlignment = Alignment.Center) {
-        FileItemCompose(file = file, onClick = {
+        FileItemCompose(
+            file = file,
+            thumbnailSize = thumbnailSize,
+            onClick = {
             if(!enabled) {
                 val navController = App.instance.navController()
                 val fileUrl = Uri.encode(file.id)

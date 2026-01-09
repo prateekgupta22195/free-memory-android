@@ -1,75 +1,62 @@
 package com.pg.cloudcleaner.helper
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
-import android.os.Environment
-import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
-import androidx.work.ForegroundInfo
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import com.pg.cloudcleaner.R
+import androidx.work.workDataOf
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.data.repository.LocalFilesRepoImpl
 import com.pg.cloudcleaner.domain.interactors.FileUseCases
-import kotlinx.coroutines.*
+import com.pg.cloudcleaner.utils.StorageHelper
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 
-class ReadFileWorker(context: Context, workerParameters: WorkerParameters) :
-
-    CoroutineWorker(context, workerParameters), WorkerNotification {
+class ReadFileWorker(private val context: Context, workerParameters: WorkerParameters) :
+    CoroutineWorker(context, workerParameters) {
 
     companion object {
-        private const val NOTIFICATION_CHANNEL_ID = "11"
-        private const val NOTIFICATION_CHANNEL_NAME = "Work Service"
+        const val KEY_PROGRESS_MESSAGE = "KEY_PROGRESS_MESSAGE"
     }
 
     override suspend fun doWork(): Result {
+        setProgress(workDataOf(KEY_PROGRESS_MESSAGE to "Starting file scan..."))
         val startTime = System.currentTimeMillis()
         val fileUseCases = FileUseCases(LocalFilesRepoImpl(App.instance.db.localFilesDao()))
 
+        val storageHelper = StorageHelper()
+        val pathsToScan = storageHelper.getStoragePaths(applicationContext)
 
-        fileUseCases.syncAllFilesToDb(Environment.getExternalStorageDirectory().absolutePath)
-        Timber.d("Time for filling DB ${System.currentTimeMillis() - startTime}")
+        if (pathsToScan.isEmpty()) {
+            Timber.e("No storage paths found to scan.")
+            setProgress(workDataOf(KEY_PROGRESS_MESSAGE to "No storage paths found to scan."))
+            return Result.failure()
+        }
+
+        // Scan each storage volume found.
+        pathsToScan.forEach { path ->
+            Timber.d("Starting scan on path: $path")
+            setProgress(workDataOf(KEY_PROGRESS_MESSAGE to "Scanning: $path"))
+            fileUseCases.syncAllFilesToDb(path)
+        }
+
+        val timeTaken = System.currentTimeMillis() - startTime
+        Timber.d("Time for filling DB $timeTaken")
+        setProgress(workDataOf(KEY_PROGRESS_MESSAGE to "Scan finished. Took ${timeTaken / 1000} seconds."))
+
+        val periodicWorkRequest = PeriodicWorkRequestBuilder<UpdateChecksumWorker>(
+            6, TimeUnit.HOURS
+        ).build()
+
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            "checksum-worker",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            periodicWorkRequest
+        )
         return Result.success()
     }
-
-    override suspend fun getForegroundInfo(): ForegroundInfo {
-        return ForegroundInfo(
-            System.currentTimeMillis().toInt(), setForegroundNotification()
-        )
-    }
-
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun createChannel() {
-        val notificationManager =
-            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val channel = NotificationChannel(
-            NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH
-        )
-        notificationManager.createNotificationChannel(channel)
-    }
-
-
-    override fun getNotification(): Notification {
-        return NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher).setOngoing(true).setAutoCancel(true)
-            .setProgress(100, 0, true).setPriority(NotificationCompat.PRIORITY_MIN)
-            .setContentTitle(applicationContext.getString(R.string.app_name)).setLocalOnly(true)
-            .setVisibility(NotificationCompat.VISIBILITY_SECRET).setContentText("Scanning Files")
-            .build()
-    }
-
-    override fun setForegroundNotification(): Notification {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createChannel()
-        }
-        return getNotification()
-    }
-
 }
