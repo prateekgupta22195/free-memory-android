@@ -22,12 +22,11 @@ FlatDuplicatesFileManagerVM : ViewModel() {
         FileUseCases(LocalFilesRepoImpl(App.instance.db.localFilesDao()))
 
     fun readFiles(): Flow<Map<String, List<LocalFile>>> {
-        return fileUseCases.getMediaFiles().flowOn(Dispatchers.Default).map { it ->
-            it.groupBy { localFile ->
-                localFile.md5CheckSum
-            }.filter {
-                it.value.size > 1
-            }
+        return fileUseCases.getMediaFiles().flowOn(Dispatchers.Default).map { files ->
+            files
+                .filter { it.md5CheckSum != null } // Don't group files without a checksum
+                .groupBy { it.md5CheckSum!! } // Group by the non-null checksum
+                .filter { it.value.size > 1 } // Only keep groups with more than one file
         }
     }
 

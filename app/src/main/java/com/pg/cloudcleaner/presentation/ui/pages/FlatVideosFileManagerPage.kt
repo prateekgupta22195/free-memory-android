@@ -2,6 +2,7 @@ package com.pg.cloudcleaner.presentation.ui.pages
 
 import FlatFileManagerDeleteComposable
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIconCompose
@@ -34,6 +36,11 @@ fun FlatVideosFileManager(vm: FlatVideosFileManagerVM = viewModel()) {
     val selectedModeOn = remember { vm.selectedModeOn }
 
     val files = vm.getVideoFiles().collectAsState(initial = listOf())
+
+    val configuration = LocalConfiguration.current
+    val columns = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 3 else 6
+    val thumbnailSize = configuration.screenWidthDp.dp/columns
+
 
     Scaffold(topBar = {
         TopAppBar(title = {
@@ -59,7 +66,7 @@ fun FlatVideosFileManager(vm: FlatVideosFileManagerVM = viewModel()) {
                 .fillMaxSize()
                 .padding(it)
         ) {
-            FlatFileManagerContent(files.value, vm)
+            FlatFileManagerContent(files.value, columns, thumbnailSize, vm)
         }
     }
 }
