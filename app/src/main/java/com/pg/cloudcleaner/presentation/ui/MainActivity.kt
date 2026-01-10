@@ -118,7 +118,7 @@ class MainActivity : AppCompatActivity() {
         val workManager = WorkManager.getInstance(applicationContext)
         workManager.enqueueUniqueWork(
             "file reader",
-            ExistingWorkPolicy.KEEP,
+            ExistingWorkPolicy.REPLACE,
             OneTimeWorkRequestBuilder<ReadFileWorker>().setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .addTag("abc").build(),
         )
