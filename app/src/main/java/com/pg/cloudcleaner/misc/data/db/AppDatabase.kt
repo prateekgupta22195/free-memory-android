@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.pg.cloudcleaner.misc.data.db.dao.DriveFileDao
 import com.pg.cloudcleaner.misc.model.DriveFile
 
-@Database(entities = [DriveFile::class], version = 1, exportSchema = false)
+@Database(entities = [DriveFile::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun driveFileDao(): DriveFileDao
 
@@ -24,7 +24,7 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context,
                     AppDatabase::class.java, "database-name"
-                ).fallbackToDestructiveMigration(true).build()
+                ).build()
                 INSTANCE = instance
                 return instance
             }
