@@ -17,6 +17,11 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.rememberNavController
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -25,12 +30,12 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.google.android.material.snackbar.Snackbar
 import com.pg.cloudcleaner.BuildConfig
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.CloudCleanerApp
 import com.pg.cloudcleaner.helper.ReadFileWorker
 import com.pg.cloudcleaner.helper.UpdateChecksumWorker
+import com.pg.cloudcleaner.presentation.ui.pages.PermissionRequiredComposable
 import java.util.concurrent.TimeUnit
 
 
@@ -39,35 +44,48 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Intent>
 
+    private val hasStoragePermissionState = mutableStateOf(false)
+
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        setContent {
-            App.instance.initNavController(rememberNavController())
-            CloudCleanerApp()
-        }
+        hasStoragePermissionState.value = isStoragePermissionGranted()
 
         requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { _ ->
 //             TODO: change this later and check why callback not working properly
-            if (isStoragePermissionGranted()) {
+            hasStoragePermissionState.value = isStoragePermissionGranted()
+
+            if (hasStoragePermissionState.value) {
                 // Permission granted
                 onStoragePermissionGranted()
-            } else {
-                // Permission denied
-                seekStoragePermission()
             }
         }
 
+        setContent {
+            val hasStoragePermission by hasStoragePermissionState
 
-        if (!isStoragePermissionGranted()) {
-            seekStoragePermission()
-        } else {
-            onStoragePermissionGranted()
+            LaunchedEffect(hasStoragePermission) {
+                if (hasStoragePermission) {
+                    onStoragePermissionGranted()
+                }
+            }
+
+            if (!hasStoragePermission) {
+                PermissionRequiredComposable(
+                    onRequestPermission = { seekStoragePermission() },
+                    onRefreshPermissionState = {
+                        hasStoragePermissionState.value = isStoragePermissionGranted()
+                    }
+                )
+            } else {
+                App.instance.initNavController(rememberNavController())
+                CloudCleanerApp()
+            }
         }
 
     }
@@ -88,23 +106,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun seekStoragePermission() {
         if (SDK_INT >= Build.VERSION_CODES.R) {
-            Snackbar.make(
-                findViewById(android.R.id.content),
-                "Allow Free Memory to access files",
-                Snackbar.LENGTH_INDEFINITE
-            ).setAction("Settings") {
-                val intent: Intent = try {
-                    val uri: Uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID)
-                    Intent(
-                        Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri
-                    )
-                } catch (ex: Exception) {
-                    Intent().apply {
-                        action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
-                    }
+            val intent: Intent = try {
+                val uri: Uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID)
+                Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri)
+            } catch (ex: Exception) {
+                Intent().apply {
+                    action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
                 }
-                requestPermissionLauncher.launch(intent)
-            }.show()
+            }
+            requestPermissionLauncher.launch(intent)
         } else {
             if (SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(arrayOf(WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE), 123)
@@ -129,9 +139,17 @@ class MainActivity : AppCompatActivity() {
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         if (requestCode == 123 && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+            hasStoragePermissionState.value = true
             onStoragePermissionGranted()
+        } else {
+            hasStoragePermissionState.value = isStoragePermissionGranted()
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        hasStoragePermissionState.value = isStoragePermissionGranted()
     }
 
 }
