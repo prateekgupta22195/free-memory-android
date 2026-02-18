@@ -59,7 +59,6 @@ fun HomeComposable(viewModel: HomeVM = viewModel()) {
                     state = lazyState,
                     modifier = Modifier
                         .fillMaxSize(),
-                    contentPadding = PaddingValues(all = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
 
                 ) {
