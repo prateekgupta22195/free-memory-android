@@ -21,6 +21,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.text.DecimalFormat
 
+private object StorageMeterAnimationSession {
+    var hasAnimated: Boolean = false
+}
+
 /**
  * An animated linear progress meter to display storage usage, matching the app's modern UI.
  *
@@ -42,13 +46,20 @@ fun AnimatedStorageMeter(
     val animatedPercentage = remember { Animatable(0f) }
     val decimalFormat = remember { DecimalFormat("#.#") }
 
-    LaunchedEffect(usedPercentage) {
-        // Only animate if not loading
-        if (!isLoading) {
+    LaunchedEffect(usedPercentage, isLoading) {
+        if (isLoading) {
+            animatedPercentage.snapTo(0f)
+            return@LaunchedEffect
+        }
+
+        if (!StorageMeterAnimationSession.hasAnimated) {
+            StorageMeterAnimationSession.hasAnimated = true
             animatedPercentage.animateTo(
                 targetValue = usedPercentage,
                 animationSpec = tween(durationMillis = 1800)
             )
+        } else {
+            animatedPercentage.snapTo(usedPercentage)
         }
     }
 

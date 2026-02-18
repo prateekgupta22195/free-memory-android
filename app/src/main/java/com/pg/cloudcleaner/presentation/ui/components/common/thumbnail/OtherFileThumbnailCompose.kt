@@ -40,62 +40,6 @@ fun OtherFileThumbnailCompose(
         )
     }
 }
-
-//@Composable
-//fun PdfThumbnail(filePath: String, modifier: Modifier = Modifier) {
-//    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
-//    var renderFailed by remember { mutableStateOf(false) }
-//
-//    // When rendering fails, fall back to the file type icon
-//    if (renderFailed) {
-//        FileTypeIcon(extension = "PDF", modifier = modifier)
-//        return
-//    }
-//
-//    LaunchedEffect(filePath) {
-//        launch(Dispatchers.IO) {
-//            try {
-//                val file = File(filePath)
-//                val fileDescriptor =
-//                    ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
-//                val pdfRenderer = PdfRenderer(fileDescriptor)
-//
-//                if (pdfRenderer.pageCount > 0) {
-//                    val page = pdfRenderer.openPage(0)
-//
-//                    val targetWidth = 200
-//                    val targetHeight = (targetWidth * page.height / page.width)
-//                    val newBitmap =
-//                        Bitmap.createBitmap(targetWidth, targetHeight, Bitmap.Config.ARGB_8888)
-//
-//                    // Fill with a white background in case the PDF is transparent
-//                    newBitmap.eraseColor(android.graphics.Color.WHITE)
-//
-//                    page.render(newBitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-//                    bitmap = newBitmap
-//                    page.close()
-//                }
-//                pdfRenderer.close()
-//                fileDescriptor.close()
-//            } catch (e: Exception) {
-//                renderFailed = true
-//            }
-//        }
-//    }
-//
-//    if (bitmap != null) {
-//        Image(
-//            bitmap = bitmap!!.asImageBitmap(),
-//            contentDescription = "PDF Thumbnail",
-//            modifier = modifier,
-//            contentScale = ContentScale.Crop // This should fill the space
-//        )
-//    } else {
-//        // Placeholder while loading
-//        FileTypeIcon(extension = "PDF", modifier = modifier)
-//    }
-//}
-
 @Composable
 fun FileTypeIcon(extension: String, modifier: Modifier = Modifier) {
     val backgroundColor = fileTypeColor(extension)
