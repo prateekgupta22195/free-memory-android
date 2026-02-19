@@ -24,6 +24,7 @@ class ReadFileWorker(private val context: Context, workerParameters: WorkerParam
     }
 
     override suspend fun doWork(): Result {
+        App.instance.db.clearAllTables()
         setProgress(workDataOf(KEY_PROGRESS_MESSAGE to "Starting file scan..."))
         val startTime = System.currentTimeMillis()
         val fileUseCases = FileUseCases(LocalFilesRepoImpl(App.instance.db.localFilesDao()))
