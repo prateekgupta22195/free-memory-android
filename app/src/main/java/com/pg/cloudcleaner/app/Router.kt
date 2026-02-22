@@ -36,13 +36,17 @@ val router: NavGraphBuilder.() -> Unit = {
         FlatLargeFilesManager()
     }
     composable(
-        "$FILE_DETAIL_VIEWER?url={url}", arguments = listOf(
+        "$FILE_DETAIL_VIEWER?url={url}&category={category}&md5={md5}", arguments = listOf(
             navArgument("url") { type = NavType.StringType },
+            navArgument("category") { type = NavType.StringType },
+            navArgument("md5") { type = NavType.StringType; nullable = true; defaultValue = null },
         )
     ) { backStackEntry ->
         val url = backStackEntry.arguments?.getString("url")!!
+        val category = backStackEntry.arguments?.getString("category") ?: ""
+        val md5 = backStackEntry.arguments?.getString("md5")
         val resolvedUrl = Uri.decode(url)
-        FileDetailViewerCompose(resolvedUrl)
+        FileDetailViewerCompose(resolvedUrl, category = category, md5 = md5)
     }
 }
 

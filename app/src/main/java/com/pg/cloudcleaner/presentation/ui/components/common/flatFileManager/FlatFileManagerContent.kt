@@ -23,7 +23,8 @@ import kotlin.collections.plus
 fun FlatFileManagerContent(files: List<LocalFile>,
                            columns: Int,
                            thumbnailSize: Dp,
-                           vm: SelectableDeletableVM) {
+                           vm: SelectableDeletableVM,
+                           category: String = "") {
     val selectedModeOn = remember { vm.selectedModeOn }
     val selectedFiles = remember { vm.selectedFiles }
 
@@ -46,7 +47,8 @@ fun FlatFileManagerContent(files: List<LocalFile>,
                     if (!selectedModeOn.value) {
                         selectedModeOn.value = true
                     }
-                }
+                },
+                category = category
             )
         }
     }

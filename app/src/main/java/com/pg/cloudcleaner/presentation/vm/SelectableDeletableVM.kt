@@ -17,22 +17,38 @@ open class SelectableDeletableVM: ViewModel() {
     val selectedModeOn = mutableStateOf(false)
 
     val selectedFiles = mutableStateOf(setOf<String>())
+    
+    val showDeleteDialog = mutableStateOf(false)
 
     fun deleteFiles(ids: Set<String>) {
+        showDeleteDialog.value = true
+        pendingDeleteFiles = ids
+    }
+
+    fun confirmDeleteFiles() {
         viewModelScope.launch(Dispatchers.IO) {
             launch {
-                fileUseCases.deleteFiles(ids.toList())
+                fileUseCases.deleteFiles(pendingDeleteFiles.toList())
             }.join()
 
             launch {
-                ids.forEach { filePath ->
+                pendingDeleteFiles.forEach { filePath ->
                     File(filePath).apply {
                         if (exists()) delete()
                     }
                 }
             }.join()
-            selectedFiles.value -= ids
+            selectedFiles.value -= pendingDeleteFiles
+            showDeleteDialog.value = false
+            selectedModeOn.value = false
         }
     }
+
+    fun cancelDelete() {
+        showDeleteDialog.value = false
+        pendingDeleteFiles = emptySet()
+    }
+
+    private var pendingDeleteFiles = emptySet<String>()
 
 }

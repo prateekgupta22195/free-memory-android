@@ -1,6 +1,5 @@
 package com.pg.cloudcleaner.presentation.ui.pages
 
-import FlatFileManagerDeleteComposable
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +17,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIconCompose
+import com.pg.cloudcleaner.presentation.ui.components.CATEGORY_LARGE_FILES
 import com.pg.cloudcleaner.presentation.ui.components.common.flatFileManager.FlatFileManagerContent
+import com.pg.cloudcleaner.presentation.ui.components.common.flatFileManager.FlatFileManagerDeleteComposable
 import com.pg.cloudcleaner.presentation.vm.FlatImagesFileManagerVM
 import com.pg.cloudcleaner.presentation.vm.FlatLargeFileManagerVM
 
@@ -59,7 +60,7 @@ fun FlatLargeFilesManager(vm: FlatLargeFileManagerVM = viewModel()) {
                 .fillMaxSize()
                 .padding(it)
         ) {
-            FlatFileManagerContent(files.value, columns, thumbnailSize, vm)
+            FlatFileManagerContent(files.value, columns, thumbnailSize, vm, category = CATEGORY_LARGE_FILES)
         }
     }
 }

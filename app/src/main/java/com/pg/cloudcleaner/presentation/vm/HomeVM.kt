@@ -71,16 +71,16 @@ class HomeVM : ViewModel() {
         return homeUseCases.getVideoFile()
     }
 
-    fun getVideoFiles(): Flow<List<LocalFile>> {
-        return homeUseCases.getVideoFiles()
+    fun getNVideoFiles(n : Int?=null): Flow<List<LocalFile>> {
+        return homeUseCases.getNVideoFiles(limit = n)
     }
 
     fun getLargeFiles(): Flow<List<LocalFile>> {
         return homeUseCases.getLargeFiles()
     }
 
-    fun getImageFiles(): Flow<List<LocalFile>> {
-        return homeUseCases.getImageFiles()
+    fun getNImageFiles(n: Int? = null): Flow<List<LocalFile>> {
+        return homeUseCases.getImageFiles(n)
     }
 
     fun getTotalSizeOfMimeType(mimeType: String): Flow<Long> {

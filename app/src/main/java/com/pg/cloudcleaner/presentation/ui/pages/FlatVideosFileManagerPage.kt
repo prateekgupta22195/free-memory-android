@@ -1,6 +1,5 @@
 package com.pg.cloudcleaner.presentation.ui.pages
 
-import FlatFileManagerDeleteComposable
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
@@ -23,7 +22,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIconCompose
+import com.pg.cloudcleaner.presentation.ui.components.CATEGORY_VIDEOS
 import com.pg.cloudcleaner.presentation.ui.components.common.flatFileManager.FlatFileManagerContent
+import com.pg.cloudcleaner.presentation.ui.components.common.flatFileManager.FlatFileManagerDeleteComposable
 import com.pg.cloudcleaner.presentation.vm.FlatVideosFileManagerVM
 import com.pg.cloudcleaner.presentation.vm.SelectableDeletableVM
 import kotlinx.coroutines.launch
@@ -66,7 +67,7 @@ fun FlatVideosFileManager(vm: FlatVideosFileManagerVM = viewModel()) {
                 .fillMaxSize()
                 .padding(it)
         ) {
-            FlatFileManagerContent(files.value, columns, thumbnailSize, vm)
+            FlatFileManagerContent(files.value, columns, thumbnailSize, vm, category = CATEGORY_VIDEOS)
         }
     }
 }

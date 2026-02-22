@@ -17,12 +17,12 @@ import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.Routes
 import com.pg.cloudcleaner.app.itemSpacing
 import com.pg.cloudcleaner.app.thumbnailSize
-import com.pg.cloudcleaner.presentation.ui.components.common.FileItemCompose
+import com.pg.cloudcleaner.presentation.ui.components.SelectableFileItem
 import com.pg.cloudcleaner.presentation.vm.HomeVM
 
 @Composable
 fun CategoryVideosCompose(vm: HomeVM = viewModel()) {
-    val videoFile = vm.getVideoFiles().collectAsState(initial = null)
+    val videoFile = vm.getNVideoFiles(5).collectAsState(initial = null)
 
     CategoryWrapperCompose(
         title = "Video Files",
@@ -42,9 +42,11 @@ fun CategoryVideosCompose(vm: HomeVM = viewModel()) {
                     items(videoFile.value!!.size) {
                         val file = videoFile.value!![it]
                         key(file.id) {
-                            FileItemCompose(
-                                videoFile.value!![it],
-                                thumbnailSize = thumbnailSize
+                            SelectableFileItem(
+                                file = videoFile.value!![it],
+                                thumbnailSize = thumbnailSize,
+                                enabled = false,
+                                category = "category_videos"
                             )
                         }
                     }

@@ -28,6 +28,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pg.cloudcleaner.presentation.WorkerUIState
+import com.pg.cloudcleaner.presentation.ui.components.CATEGORY_DUPLICATES
+import com.pg.cloudcleaner.presentation.ui.components.CATEGORY_IMAGES
+import com.pg.cloudcleaner.presentation.ui.components.CATEGORY_LARGE_FILES
+import com.pg.cloudcleaner.presentation.ui.components.CATEGORY_VIDEOS
 import com.pg.cloudcleaner.presentation.ui.components.home.AnimatedStorageMeter
 import com.pg.cloudcleaner.presentation.ui.components.home.CategoryDuplicateFilesCompose
 import com.pg.cloudcleaner.presentation.ui.components.home.CategoryImagesCompose
@@ -104,26 +108,23 @@ fun HomeComposable(viewModel: HomeVM = viewModel()) {
                         }
                     }
 
-                    item(key = "category_duplicates") {
+                    item(key = CATEGORY_DUPLICATES) {
                         CategoryDuplicateFilesCompose()
                     }
 
-                    item(key = "category_images") {
+                    item(key = CATEGORY_IMAGES) {
                         CategoryImagesCompose()
                     }
 
-                    item(key = "category_videos") {
+                    item(key = CATEGORY_VIDEOS) {
                         CategoryVideosCompose()
                     }
 
-                    item(key = "category_large_files") {
+                    item(key = CATEGORY_LARGE_FILES) {
                         CategoryLargeFileCompose()
                     }
-
                 }
-
             }
         }
     }
-
 }

@@ -17,6 +17,7 @@ FlatDuplicatesFileManagerVM : ViewModel() {
 
      val selectedFileIds =  mutableStateOf(setOf<String>())
     val uncheckedFiles = mutableSetOf<String>()
+    val showDeleteDialog = mutableStateOf(false)
 
     private val fileUseCases =
         FileUseCases(LocalFilesRepoImpl(App.instance.db.localFilesDao()))
@@ -31,11 +32,94 @@ FlatDuplicatesFileManagerVM : ViewModel() {
     }
 
     suspend fun selectDuplicateFiles() {
-        fileUseCases.getDuplicateFileIds().distinctUntilChanged().collect {
-            it.filter {
-                !uncheckedFiles.contains(it)
+        readFiles().collect { duplicateGroups ->
+            val allFilesExceptFirst = mutableSetOf<String>()
+            
+            // Iterate through each duplicate group
+            duplicateGroups.values.forEach { files ->
+                // Add all files except the first one to the selection
+                if (files.size > 1) {
+                    files.drop(1).forEach { file ->
+                        allFilesExceptFirst.add(file.id)
+                    }
+                }
             }
-            selectedFileIds.value += it
+            
+            // Filter out any unchecked files and update selection
+            val finalSelection = allFilesExceptFirst.filter { !uncheckedFiles.contains(it) }
+            selectedFileIds.value = finalSelection.toSet()
+        }
+    }
+
+    fun toggleGroupSelection(groupFiles: List<LocalFile>) {
+        if (groupFiles.size <= 1) return
+        
+        val filesExceptFirst = groupFiles.drop(1)
+        val currentSelection = selectedFileIds.value
+        val allExceptFirstSelected = filesExceptFirst.all { file -> 
+            currentSelection.contains(file.id) 
+        }
+        
+        if (allExceptFirstSelected) {
+            // Deselect all files except first
+            filesExceptFirst.forEach { file ->
+                selectedFileIds.value -= file.id
+                uncheckedFiles.add(file.id)
+            }
+        } else {
+            // Select all files except first
+            filesExceptFirst.forEach { file ->
+                // Remove from uncheckedFiles and add to selection
+                uncheckedFiles.remove(file.id)
+                selectedFileIds.value += file.id
+            }
+        }
+    }
+
+    fun areAllExceptFirstSelected(groupFiles: List<LocalFile>): Boolean {
+        if (groupFiles.size <= 1) return false
+        
+        val filesExceptFirst = groupFiles.drop(1)
+        val currentSelection = selectedFileIds.value
+        
+        return filesExceptFirst.all { file ->
+            currentSelection.contains(file.id)
+        }
+    }
+
+    suspend fun toggleAllGroups() {
+        readFiles().collect { duplicateGroups ->
+            val allFilesExceptFirst = mutableSetOf<String>()
+            val currentSelection = selectedFileIds.value
+            
+            // Check if all groups are currently selected
+            val allGroupsSelected = duplicateGroups.values.all { group ->
+                if (group.size <= 1) return@all true
+                val filesExceptFirst = group.drop(1)
+                filesExceptFirst.all { file -> currentSelection.contains(file.id) }
+            }
+            
+            if (allGroupsSelected) {
+                // Deselect all files except first in each group
+                duplicateGroups.values.forEach { group ->
+                    if (group.size > 1) {
+                        group.drop(1).forEach { file ->
+                            selectedFileIds.value -= file.id
+                            uncheckedFiles.add(file.id)
+                        }
+                    }
+                }
+            } else {
+                // Select all files except first in each group
+                duplicateGroups.values.forEach { group ->
+                    if (group.size > 1) {
+                        group.drop(1).forEach { file ->
+                            uncheckedFiles.remove(file.id)
+                            selectedFileIds.value += file.id
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -53,21 +137,34 @@ FlatDuplicatesFileManagerVM : ViewModel() {
         }
     }
 
-    suspend fun deleteFiles(ids: Set<String>) {
+    fun deleteFiles(ids: Set<String>) {
+        showDeleteDialog.value = true
+        pendingDeleteFiles = ids
+    }
+
+    fun confirmDeleteFiles() {
         viewModelScope.launch(Dispatchers.IO) {
             launch {
-                fileUseCases.deleteFiles(ids.toList())
+                fileUseCases.deleteFiles(pendingDeleteFiles.toList())
             }.join()
 
             launch {
-                ids.forEach { filePath ->
+                pendingDeleteFiles.forEach { filePath ->
                     File(filePath).apply {
                         if (exists()) delete()
                     }
                 }
             }.join()
-            selectedFileIds.value -= ids
+            selectedFileIds.value -= pendingDeleteFiles
+            showDeleteDialog.value = false
         }
     }
+
+    fun cancelDelete() {
+        showDeleteDialog.value = false
+        pendingDeleteFiles = emptySet()
+    }
+
+    private var pendingDeleteFiles = emptySet<String>()
 
 }

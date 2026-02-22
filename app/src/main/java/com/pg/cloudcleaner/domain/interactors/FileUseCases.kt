@@ -11,6 +11,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import timber.log.Timber
 import java.io.File
 import java.util.Date
@@ -51,6 +52,23 @@ class FileUseCases(private val repo: LocalFilesRepo) {
 
     fun getDuplicateFileIds(): Flow<List<String>> {
         return repo.getDuplicateFileIds()
+    }
+
+    suspend fun getFilesByCategory(category: String): List<LocalFile> {
+        return when (category) {
+            "category_images" -> getImageFiles().first()
+            "category_videos" -> getVideoFiles().first()
+            "category_large_files" -> getLargeFiles().first()
+            "category_duplicates" -> {
+                val duplicateIds = getDuplicateFileIds().first()
+                duplicateIds.mapNotNull { getFileById(it) }
+            }
+            else -> emptyList()
+        }
+    }
+
+    suspend fun getFilesByMd5(md5: String): List<LocalFile> {
+        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE md5 = '$md5'").first()
     }
 
     fun getFileInfo(fileId: String): String {

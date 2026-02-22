@@ -13,10 +13,7 @@ fun PopupCompose(
     onPopupDismissed: (() -> Unit)? = null,
     popUpBody: @Composable () -> Unit,
 ) {
-
-    val popupVisibility = remember { show }
-
-    BackHandler(enabled = popupVisibility) {
+    BackHandler(enabled = show) {
         onPopupDismissed?.invoke()
     }
 
@@ -27,7 +24,6 @@ fun PopupCompose(
             }, properties = PopupProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
         )
     }
-
 }
 
 

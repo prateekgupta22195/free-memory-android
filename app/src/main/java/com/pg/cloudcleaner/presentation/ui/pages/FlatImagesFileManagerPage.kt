@@ -1,6 +1,5 @@
 package com.pg.cloudcleaner.presentation.ui.pages
 
-import FlatFileManagerDeleteComposable
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,8 +28,10 @@ import com.pg.cloudcleaner.app.itemSpacing
 import com.pg.cloudcleaner.app.thumbnailSize
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIconCompose
+import com.pg.cloudcleaner.presentation.ui.components.CATEGORY_IMAGES
 import com.pg.cloudcleaner.presentation.ui.components.SelectableFileItem
 import com.pg.cloudcleaner.presentation.ui.components.common.flatFileManager.FlatFileManagerContent
+import com.pg.cloudcleaner.presentation.ui.components.common.flatFileManager.FlatFileManagerDeleteComposable
 import com.pg.cloudcleaner.presentation.vm.FlatImagesFileManagerVM
 import kotlinx.coroutines.launch
 
@@ -72,7 +73,7 @@ fun FlatImagesFileManager(vm: FlatImagesFileManagerVM = viewModel()) {
                 .fillMaxSize()
                 .padding(it)
         ) {
-            FlatFileManagerContent(files.value, columns, thumbnailSize, vm)
+            FlatFileManagerContent(files.value, columns, thumbnailSize, vm, category = CATEGORY_IMAGES)
         }
     }
 }

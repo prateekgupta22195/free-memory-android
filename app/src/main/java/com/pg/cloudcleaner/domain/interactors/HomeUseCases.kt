@@ -29,12 +29,16 @@ class HomeUseCases(private val repo: LocalFilesRepo) {
             }
     }
 
-    fun getVideoFiles(): Flow<List<LocalFile>> {
-        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE '%video%'")
+    fun getNVideoFiles(limit: Int?=null): Flow<List<LocalFile>> {
+        val limitClause = if (limit != null) " LIMIT $limit" else ""
+        val query = "SELECT * FROM localfile WHERE mimeType LIKE '%video%'$limitClause"
+        return repo.getFilesViaQuery(query)
     }
 
-    fun getImageFiles(): Flow<List<LocalFile>> {
-        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE '%image%' LIMIT 5")
+    fun getImageFiles(limit: Int? = null): Flow<List<LocalFile>> {
+        val limitClause = if (limit != null) " LIMIT $limit" else ""
+        val query = "SELECT * FROM localfile WHERE mimeType LIKE '%image%'$limitClause"
+        return repo.getFilesViaQuery(query)
     }
 
     fun getLargeFiles(): Flow<List<LocalFile>> {
