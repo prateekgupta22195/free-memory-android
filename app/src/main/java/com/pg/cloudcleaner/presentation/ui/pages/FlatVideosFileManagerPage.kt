@@ -59,7 +59,7 @@ fun FlatVideosFileManager(vm: FlatVideosFileManagerVM = viewModel()) {
                 Text("Cancel")
             }
         }, navigationIcon = { BackNavigationIconCompose() })
-    }, bottomBar = {
+    }, floatingActionButton = {
         if (selectedModeOn.value) FlatFileManagerDeleteComposable(vm)
     }) {
         Box(

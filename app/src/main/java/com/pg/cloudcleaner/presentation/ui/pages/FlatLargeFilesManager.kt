@@ -51,7 +51,7 @@ fun FlatLargeFilesManager(vm: FlatLargeFileManagerVM = viewModel()) {
                 Text("Cancel")
             }
         }, navigationIcon = { BackNavigationIconCompose() })
-    }, bottomBar = {
+    }, floatingActionButton = {
         if (selectedModeOn.value) FlatFileManagerDeleteComposable(vm)
     }) {
 

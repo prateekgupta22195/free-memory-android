@@ -26,8 +26,6 @@ fun FlatFileManagerDeleteComposable(vm: SelectableDeletableVM) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .windowInsetsPadding(androidx.compose.foundation.layout.WindowInsets.navigationBars)
-            .padding(16.dp)
     ) {
         Button(
             onClick = {

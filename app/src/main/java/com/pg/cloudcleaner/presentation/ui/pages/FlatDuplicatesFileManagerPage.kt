@@ -79,7 +79,7 @@ fun FlatFileManager(vm: FlatDuplicatesFileManagerVM = viewModel()) {
                 }
             }
         )
-    }, bottomBar = {
+    }, floatingActionButton = {
         DeleteButton()
     }) { padding ->
         Box(modifier = Modifier.padding(padding)) { FileListView() }
@@ -96,8 +96,6 @@ fun DeleteButton(vm: FlatDuplicatesFileManagerVM = viewModel()) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .windowInsetsPadding(androidx.compose.foundation.layout.WindowInsets.navigationBars)
-            .padding(16.dp)
     ) {
 
         Button(

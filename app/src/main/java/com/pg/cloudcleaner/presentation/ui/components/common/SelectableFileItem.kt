@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Checkbox
@@ -50,19 +51,13 @@ fun SelectableFileItem(
                 navController.navigate(Routes.FILE_DETAIL_VIEWER + "?url=$fileUrl&category=$encodedCategory$duplicateParam")
             }, onLongClick = onLongClickOnItem )
         if (enabled) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp)
-                    .clickable {
-                        onCheckedChangeListener?.invoke(!isSelected)
-                    }
-            ) {
-                Checkbox(
-                    checked = isSelected,
-                    onCheckedChange = null // We handle the click through the Box's clickable modifier
-                )
-            }
+            Checkbox(
+                modifier = Modifier.size(40.dp).align(Alignment.TopEnd),
+                checked = isSelected,
+                onCheckedChange = {
+                    onCheckedChangeListener?.invoke(!isSelected)
+                } // We handle the click through the Box's clickable modifier
+            )
         }
         if (showInfo != null) Icon(Icons.Filled.Info, "info", modifier = IconModifier
             .clickable {

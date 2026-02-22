@@ -64,7 +64,7 @@ fun FlatImagesFileManager(vm: FlatImagesFileManagerVM = viewModel()) {
                 Text("Cancel")
             }
         }, navigationIcon = { BackNavigationIconCompose() })
-    }, bottomBar = {
+    }, floatingActionButton = {
         if (selectedModeOn.value) FlatFileManagerDeleteComposable(vm)
     }) {
 

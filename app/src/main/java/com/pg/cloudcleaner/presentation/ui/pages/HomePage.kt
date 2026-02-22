@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
@@ -23,10 +24,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.AsyncImage
+import com.pg.cloudcleaner.R
 import com.pg.cloudcleaner.presentation.WorkerUIState
 import com.pg.cloudcleaner.presentation.ui.components.CATEGORY_DUPLICATES
 import com.pg.cloudcleaner.presentation.ui.components.CATEGORY_IMAGES
@@ -49,7 +53,20 @@ fun HomeComposable(viewModel: HomeVM = viewModel()) {
     MaterialTheme {
         Scaffold (topBar = {
             TopAppBar(
-                title = { Text(text = "FreeMemory") },
+                title = { 
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        AsyncImage(
+                            model = R.drawable.logo,
+                            contentDescription = "App Logo",
+                            modifier = Modifier.size(48.dp),
+                            contentScale = ContentScale.Fit
+                        )
+                        Text(text = "FreeMemory") 
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
                     titleContentColor = MaterialTheme.colorScheme.onBackground,
