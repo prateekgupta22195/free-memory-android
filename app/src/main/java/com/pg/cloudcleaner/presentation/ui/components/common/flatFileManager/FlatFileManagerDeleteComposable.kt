@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -27,15 +25,10 @@ fun FlatFileManagerDeleteComposable(vm: SelectableDeletableVM) {
     ) {
         Button(
             onClick = {
-                println("Delete button clicked, files: ${selectedFileIds.value.size}")
                 vm.deleteFiles(selectedFileIds.value)
             },
             enabled = selectedFileIds.value.isNotEmpty(),
-            modifier = Modifier.align(Alignment.Center),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-            ),
+            modifier = Modifier.align(Alignment.Center)
         ) {
             Text(text = if (selectedFileIds.value.isEmpty()) "Delete" else "Delete ${selectedFileIds.value.size} Files")
         }
@@ -52,7 +45,6 @@ fun FlatFileManagerDeleteComposable(vm: SelectableDeletableVM) {
                 },
                 confirmButton = {
                     TextButton(onClick = {
-                        println("Confirm delete clicked")
                         vm.confirmDeleteFiles()
                     }) {
                         Text("Delete", color = Color.Red)
@@ -60,7 +52,6 @@ fun FlatFileManagerDeleteComposable(vm: SelectableDeletableVM) {
                 },
                 dismissButton = {
                     TextButton(onClick = {
-                        println("Cancel delete clicked")
                         vm.cancelDelete()
                     }) { Text("Cancel") }
                 }
