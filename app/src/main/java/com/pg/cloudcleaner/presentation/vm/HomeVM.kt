@@ -8,6 +8,7 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.pg.cloudcleaner.app.App
+import io.sentry.Sentry
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.data.repository.LocalFilesRepoImpl
 import com.pg.cloudcleaner.domain.interactors.HomeUseCases
@@ -36,8 +37,11 @@ class HomeVM : ViewModel() {
     private val _isDatabaseEmpty = MutableStateFlow(true)
     val isDatabaseEmpty = _isDatabaseEmpty.asStateFlow()
 
-    private val _scanUIStatus = MutableStateFlow<WorkerUIState?>(null)
+    private val _scanUIStatus = MutableStateFlow<WorkerUIState>(WorkerUIState.Initial)
     val scanUIStatus = _scanUIStatus.asStateFlow()
+
+    // True while we are intentionally replacing a running scan (REPLACE policy cancels the old one)
+    private var isRestarting = false
 
     private val homeUseCases by lazy { HomeUseCases(LocalFilesRepoImpl(App.instance.db.localFilesDao())) }
 
@@ -58,12 +62,23 @@ class HomeVM : ViewModel() {
                             WorkerUIState.Success(progressMessage ?: "Scan finished successfully.")
                         }
 
-                        WorkInfo.State.FAILED -> WorkerUIState.Failed("Scan failed.")
-                        WorkInfo.State.CANCELLED -> WorkerUIState.Cancelled("Scan cancelled.")
-                        else -> WorkerUIState.InProgress(progressMessage ?: "Scan is in progress...", progress)
+                        WorkInfo.State.FAILED -> {
+                            Sentry.captureException(Exception("ReadFileWorker failed. workId=${workInfo.id}"))
+                            WorkerUIState.Failed("Scan failed.")
+                        }
+                        WorkInfo.State.CANCELLED -> {
+                            if (!isRestarting) {
+                                Sentry.captureException(Exception("ReadFileWorker cancelled unexpectedly. workId=${workInfo.id}"))
+                            }
+                            WorkerUIState.Cancelled("Scan cancelled.")
+                        }
+                        else -> {
+                            if (workInfo.state == WorkInfo.State.RUNNING) isRestarting = false
+                            WorkerUIState.InProgress(progressMessage ?: "Scan is in progress...", progress)
+                        }
                     }
                 } else {
-                    _scanUIStatus.value = null
+                    _scanUIStatus.value = WorkerUIState.Initial
                 }
             }
         }
@@ -108,6 +123,7 @@ class HomeVM : ViewModel() {
     fun getLargeFilesCount(): Flow<Int> = homeUseCases.getLargeFilesCount()
 
     fun restartScan() {
+        isRestarting = true
         workManager.enqueueUniqueWork(
             uniqueWorkName,
             ExistingWorkPolicy.REPLACE,

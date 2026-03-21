@@ -4,6 +4,7 @@ package com.pg.cloudcleaner.presentation
 
 sealed interface WorkerUIState {
 
+    data object Initial : WorkerUIState
 
     data class InProgress(val message: String, val progress: Int = 0) : WorkerUIState
 
