@@ -9,6 +9,7 @@ import com.pg.cloudcleaner.utils.getMimeType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -142,6 +143,8 @@ class FileUseCases(private val repo: LocalFilesRepo) {
                 try {
                     repo.insertAll(chunk)
                     repeat(chunk.size) { onFileProcessed?.invoke() }
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (e: Exception) {
                     Timber.e(e, "Failed to insert files in: ${currentDir.absolutePath}")
                 }
