@@ -51,7 +51,6 @@ class ReadFileWorker(private val context: Context, workerParameters: WorkerParam
         pathsToScan.forEach { path ->
             Timber.d("Starting scan on path: $path")
             fileUseCases.syncAllFilesToDb(path) {
-                kotlinx.coroutines.delay(500) // TODO: remove before release
                 val processed = processedFiles.incrementAndGet()
                 val progress = if (totalFiles > 0) (processed * 100 / totalFiles).coerceIn(0, 100) else 0
                 if (progress != lastReportedProgress) {
