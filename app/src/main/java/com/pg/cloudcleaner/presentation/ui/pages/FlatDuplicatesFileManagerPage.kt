@@ -8,21 +8,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -55,14 +46,14 @@ import timber.log.Timber
 fun FlatFileManager(vm: FlatDuplicatesFileManagerVM = viewModel()) {
     val scope = rememberCoroutineScope()
     val list = vm.readFiles().collectAsState(initial = emptyMap())
-    
+
     // Check if all groups are selected for button text
     val allGroupsSelected = list.value.values.all { group ->
         if (group.size <= 1) return@all true
         val filesExceptFirst = group.drop(1)
         filesExceptFirst.all { file -> vm.selectedFileIds.value.contains(file.id) }
     }
-    
+
     Scaffold(topBar = {
         TopAppBar(
             title = { Text(text = "Duplicate Files") },
@@ -107,11 +98,7 @@ fun DeleteButton(vm: FlatDuplicatesFileManagerVM = viewModel()) {
                 }
             },
             enabled = selectedFileIds.value.isNotEmpty(),
-            modifier = Modifier.align(Alignment.Center),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-            ),
+            modifier = Modifier.align(Alignment.Center)
         ) {
             Text(text = if (selectedFileIds.value.isEmpty()) "Delete" else "Delete ${selectedFileIds.value.size} Files")
         }
@@ -123,12 +110,12 @@ fun DeleteButton(vm: FlatDuplicatesFileManagerVM = viewModel()) {
             AlertDialog(
                 onDismissRequest = { vm.cancelDelete() },
                 title = { Text("Delete Files") },
-                text = { 
-                    Text("Are you sure you want to delete ${selectedFileIds.value.size} files? You will not be able to recover them.") 
+                text = {
+                    Text("Are you sure you want to delete ${selectedFileIds.value.size} files? You will not be able to recover them.")
                 },
                 confirmButton = {
-                    TextButton(onClick = { vm.confirmDeleteFiles() }) { 
-                        Text("Delete", color = androidx.compose.ui.graphics.Color.Red) 
+                    TextButton(onClick = { vm.confirmDeleteFiles() }) {
+                        Text("Delete", color = androidx.compose.ui.graphics.Color.Red)
                     }
                 },
                 dismissButton = { TextButton(onClick = { vm.cancelDelete() }) { Text("Cancel") } }
@@ -169,7 +156,9 @@ fun HorizontalDuplicateFiles(
 ) {
     Column(modifier = Modifier.padding(bottom = 16.dp)) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -210,7 +199,8 @@ fun HorizontalDuplicateFiles(
                             selectedFileIds.value -= data[it].id
                         }
                     },
-                    category = "category_duplicates")
+                    category = "category_duplicates"
+                )
             }
         }
     }
