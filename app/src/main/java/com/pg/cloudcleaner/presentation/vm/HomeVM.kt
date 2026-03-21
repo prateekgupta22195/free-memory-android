@@ -2,6 +2,9 @@ package com.pg.cloudcleaner.presentation.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.pg.cloudcleaner.app.App
@@ -15,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -48,6 +52,7 @@ class HomeVM : ViewModel() {
                 val workInfo = workInfos.firstOrNull()
                 if (workInfo != null) {
                     val progressMessage = workInfo.progress.getString(ReadFileWorker.KEY_PROGRESS_MESSAGE)
+                    val progress = workInfo.progress.getInt(ReadFileWorker.KEY_PROGRESS, 0)
                     _scanUIStatus.value = when (workInfo.state) {
                         WorkInfo.State.SUCCEEDED -> {
                             WorkerUIState.Success(progressMessage ?: "Scan finished successfully.")
@@ -55,7 +60,7 @@ class HomeVM : ViewModel() {
 
                         WorkInfo.State.FAILED -> WorkerUIState.Failed("Scan failed.")
                         WorkInfo.State.CANCELLED -> WorkerUIState.Cancelled("Scan cancelled.")
-                        else -> WorkerUIState.InProgress( progressMessage?: "Scan is in progress...")
+                        else -> WorkerUIState.InProgress(progressMessage ?: "Scan is in progress...", progress)
                     }
                 } else {
                     _scanUIStatus.value = null
@@ -93,6 +98,31 @@ class HomeVM : ViewModel() {
         // returning size in kbs but we store size in mbs
         return homeUseCases.getTotalSizeOfLargeFiles().map { size -> size * 1024 }
     }
+
+    fun getDuplicatesCount(): Flow<Int> = homeUseCases.getDuplicatesCount()
+
+    fun getImagesCount(): Flow<Int> = homeUseCases.getImagesCount()
+
+    fun getVideosCount(): Flow<Int> = homeUseCases.getVideosCount()
+
+    fun getLargeFilesCount(): Flow<Int> = homeUseCases.getLargeFilesCount()
+
+    fun restartScan() {
+        workManager.enqueueUniqueWork(
+            uniqueWorkName,
+            ExistingWorkPolicy.REPLACE,
+            OneTimeWorkRequestBuilder<ReadFileWorker>()
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .addTag("abc")
+                .build()
+        )
+    }
+
+    fun getTotalFreeableSpaceBytes(): Flow<Long> = combine(
+        homeUseCases.getTotalSizeOfMimeType("%image%"),
+        homeUseCases.getTotalSizeOfMimeType("%video%"),
+        homeUseCases.getTotalSizeOfLargeFiles()
+    ) { img, vid, large -> (img + vid + large) * 1024L }
 
     /**
      * Fetches storage details using the StorageHelper on a background thread

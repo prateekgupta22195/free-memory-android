@@ -18,8 +18,25 @@ import java.util.Date
 
 class FileUseCases(private val repo: LocalFilesRepo) {
 
-    suspend fun syncAllFilesToDb(directoryName: String) {
-        exploreDirectory(directoryName)
+    suspend fun countFiles(directoryName: String): Int {
+        var count = 0
+        val queue = ArrayDeque<File>()
+        val root = File(directoryName)
+        if (root.exists() && root.isDirectory) queue.add(root)
+        while (queue.isNotEmpty()) {
+            val dir = queue.removeFirstOrNull() ?: continue
+            val entries = dir.listFiles() ?: continue
+            count += entries.count { it.isFile }
+            entries.filter { it.isDirectory }.forEach { queue.add(it) }
+        }
+        return count
+    }
+
+    suspend fun syncAllFilesToDb(
+        directoryName: String,
+        onFileProcessed: (suspend () -> Unit)? = null,
+    ) {
+        exploreDirectory(directoryName, onFileProcessed)
     }
 
     suspend fun getFileById(fileId: String): LocalFile? {
@@ -95,8 +112,10 @@ class FileUseCases(private val repo: LocalFilesRepo) {
                 }"
     }
 
-    private suspend fun exploreDirectory(directoryPath: String) = coroutineScope {
-        // Use a queue for non-recursive directory traversal
+    private suspend fun exploreDirectory(
+        directoryPath: String,
+        onFileProcessed: (suspend () -> Unit)? = null,
+    ) = coroutineScope {
         val directoryQueue = ArrayDeque<File>()
         val initialDir = File(directoryPath)
 
@@ -104,29 +123,25 @@ class FileUseCases(private val repo: LocalFilesRepo) {
             directoryQueue.add(initialDir)
         }
 
-        // Process directories from the queue until it's empty
         while (directoryQueue.isNotEmpty()) {
             val currentDir = directoryQueue.removeFirstOrNull() ?: continue
             val files = currentDir.listFiles() ?: continue
 
-            // Use async for CPU-bound tasks (MD5 hashing) and await them in batches
             val fileProcessingJobs = files.filter { it.isFile }.map { file ->
-                async(Dispatchers.Default) { // Use Default dispatcher for CPU work
+                async(Dispatchers.Default) {
                     try {
-                        // Check if file exists and insert in one transaction if possible
                         repo.insertFile(file.toLocalFile(duplicate = false, md5 = null))
+                        onFileProcessed?.invoke()
                     } catch (e: Exception) {
                         Timber.e(e, "Failed to process file: ${file.absolutePath}")
                     }
                 }
             }
 
-            // Add subdirectories to the queue to be processed
             files.filter { it.isDirectory }.forEach { subDir ->
                 directoryQueue.add(subDir)
             }
 
-            // Wait for all files in the current directory to finish processing before moving on
             fileProcessingJobs.awaitAll()
         }
     }

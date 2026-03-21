@@ -61,4 +61,25 @@ class HomeUseCases(private val repo: LocalFilesRepo) {
         val query = "SELECT COALESCE(SUM(size), 0) FROM localfile WHERE mimeType LIKE '$mimeTypePattern' AND size > $minSize"
         return repo.getFilesSizeSumViaQuery(query).flowOn(Dispatchers.IO)
     }
+
+    // COUNT queries — efficient, no full list loaded into memory
+    fun getDuplicatesCount(): Flow<Int> {
+        val query = "SELECT COUNT(*) FROM localfile WHERE md5 IN (SELECT md5 FROM localfile GROUP BY md5 HAVING COUNT(*) >= 2) AND mimeType LIKE '%image%'"
+        return repo.getFilesSizeSumViaQuery(query).flowOn(Dispatchers.IO).map { it.toInt() }
+    }
+
+    fun getImagesCount(): Flow<Int> {
+        return repo.getFilesSizeSumViaQuery("SELECT COUNT(*) FROM localfile WHERE mimeType LIKE '%image%'")
+            .flowOn(Dispatchers.IO).map { it.toInt() }
+    }
+
+    fun getVideosCount(): Flow<Int> {
+        return repo.getFilesSizeSumViaQuery("SELECT COUNT(*) FROM localfile WHERE mimeType LIKE '%video%'")
+            .flowOn(Dispatchers.IO).map { it.toInt() }
+    }
+
+    fun getLargeFilesCount(): Flow<Int> {
+        return repo.getFilesSizeSumViaQuery("SELECT COUNT(*) FROM localfile WHERE size > 5000")
+            .flowOn(Dispatchers.IO).map { it.toInt() }
+    }
 }

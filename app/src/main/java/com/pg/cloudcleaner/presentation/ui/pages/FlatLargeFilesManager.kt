@@ -20,7 +20,6 @@ import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIconCompose
 import com.pg.cloudcleaner.presentation.ui.components.CATEGORY_LARGE_FILES
 import com.pg.cloudcleaner.presentation.ui.components.common.flatFileManager.FlatFileManagerContent
 import com.pg.cloudcleaner.presentation.ui.components.common.flatFileManager.FlatFileManagerDeleteComposable
-import com.pg.cloudcleaner.presentation.vm.FlatImagesFileManagerVM
 import com.pg.cloudcleaner.presentation.vm.FlatLargeFileManagerVM
 
 @OptIn(ExperimentalMaterial3Api::class)
