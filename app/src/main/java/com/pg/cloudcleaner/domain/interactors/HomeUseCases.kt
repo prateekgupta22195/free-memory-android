@@ -64,7 +64,10 @@ class HomeUseCases(private val repo: LocalFilesRepo) {
 
     // COUNT queries — efficient, no full list loaded into memory
     fun getDuplicatesCount(): Flow<Int> {
-        val query = "SELECT COUNT(*) FROM localfile WHERE md5 IN (SELECT md5 FROM localfile GROUP BY md5 HAVING COUNT(*) >= 2) AND mimeType LIKE '%image%'"
+        val query = "SELECT COUNT(*) FROM localfile f1 " +
+                "WHERE f1.mimeType LIKE '%image%' " +
+                "AND EXISTS (SELECT 1 FROM localfile f2 " +
+                "WHERE f2.md5 = f1.md5 AND f2.id < f1.id)"
         return repo.getFilesSizeSumViaQuery(query).flowOn(Dispatchers.IO).map { it.toInt() }
     }
 
