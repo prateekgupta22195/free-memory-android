@@ -136,22 +136,20 @@ class FileUseCases(private val repo: LocalFilesRepo) {
             val currentDir = directoryQueue.removeFirstOrNull() ?: continue
             val files = currentDir.listFiles() ?: continue
 
-            val fileProcessingJobs = files.filter { it.isFile }.map { file ->
-                async(Dispatchers.Default) {
-                    try {
-                        repo.insertFile(file.toLocalFile(duplicate = false, md5 = null))
-                        onFileProcessed?.invoke()
-                    } catch (e: Exception) {
-                        Timber.e(e, "Failed to process file: ${file.absolutePath}")
-                    }
+            val localFiles = files.filter { it.isFile }.map { it.toLocalFile(duplicate = false, md5 = null) }
+
+            localFiles.chunked(100).forEach { chunk ->
+                try {
+                    repo.insertAll(chunk)
+                    repeat(chunk.size) { onFileProcessed?.invoke() }
+                } catch (e: Exception) {
+                    Timber.e(e, "Failed to insert files in: ${currentDir.absolutePath}")
                 }
             }
 
             files.filter { it.isDirectory }.forEach { subDir ->
                 directoryQueue.add(subDir)
             }
-
-            fileProcessingJobs.awaitAll()
         }
     }
 }
