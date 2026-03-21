@@ -12,24 +12,33 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 import java.util.Date
 
 class FileUseCases(private val repo: LocalFilesRepo) {
 
-    suspend fun countFiles(directoryName: String): Int {
-        var count = 0
-        val queue = ArrayDeque<File>()
-        val root = File(directoryName)
-        if (root.exists() && root.isDirectory) queue.add(root)
-        while (queue.isNotEmpty()) {
-            val dir = queue.removeFirstOrNull() ?: continue
-            val entries = dir.listFiles() ?: continue
-            count += entries.count { it.isFile }
-            entries.filter { it.isDirectory }.forEach { queue.add(it) }
+    suspend fun countFiles(directoryName: String): Int = coroutineScope {
+        suspend fun countDir(dir: File): Int = withContext(Dispatchers.IO) {
+            val entries = dir.listFiles() ?: return@withContext 0
+            val fileCount = entries.count { it.isFile }
+            val subdirs = entries.filter { it.isDirectory }
+
+            if (subdirs.isEmpty()) return@withContext fileCount
+
+            // Process subdirectories in parallel
+            val subCounts = subdirs.map { subdir ->
+                async { countDir(subdir) }
+            }.awaitAll()
+
+            fileCount + subCounts.sum()
         }
-        return count
+
+        val root = File(directoryName)
+        if (root.exists() && root.isDirectory) {
+            countDir(root)
+        } else 0
     }
 
     suspend fun syncAllFilesToDb(
