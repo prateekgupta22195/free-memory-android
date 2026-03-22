@@ -22,16 +22,15 @@ fun File.md5(): String? {
     return try {
         val md = MessageDigest.getInstance("MD5")
         FileInputStream(this).use { fis ->
-            val buffer = ByteArray(8192)
+            val buffer = ByteArray(65536)
             var read: Int
             while (fis.read(buffer).also { read = it } != -1) {
                 md.update(buffer, 0, read)
             }
         }
-        val hashBytes = md.digest()
-        val sb = StringBuilder()
-        for (hashByte in hashBytes) {
-            sb.append(((hashByte.toInt() and 0xff) + 0x100).toString(16).substring(1))
+        val sb = StringBuilder(32)
+        for (hashByte in md.digest()) {
+            sb.append("%02x".format(hashByte.toInt() and 0xff))
         }
         sb.toString()
     } catch (e: IOException) {
