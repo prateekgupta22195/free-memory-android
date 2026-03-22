@@ -9,20 +9,21 @@ import kotlinx.coroutines.flow.map
 
 class HomeUseCases(private val repo: LocalFilesRepo) {
 
-    fun getAnyTwoDuplicates(): Flow<Pair<LocalFile, LocalFile>?> {
-
-        return repo.getFilesViaQuery(
-
-            "SELECT * \n" + "FROM localfile \n" + "WHERE md5 IN \n" + "    (SELECT md5 \n" + "     FROM localfile \n" + "     GROUP BY md5 \n" + "     HAVING COUNT(*) >= 2) \n" + "AND mimeType Like '%image%'" + "LIMIT 2;"
-
-        ).flowOn(Dispatchers.IO).map {
-            if (it.size == 2) Pair(it.first(), it.last())
-            else null
-        }
+    fun getAnyThreeDuplicateGroups(): Flow<List<LocalFile>> {
+        // Get the first copy of each duplicate group (same EXISTS pattern as getDuplicatesCount)
+        // - NOT EXISTS(...id < f1.id): this is the lowest-id file for its md5 (the "original")
+        // - EXISTS(...id != f1.id): at least one other file shares the same md5 (confirmed duplicate)
+        val query = "SELECT * FROM localfile f1 " +
+                "WHERE f1.mimeType LIKE 'image/%' " +
+                "AND NOT EXISTS (SELECT 1 FROM localfile f2 WHERE f2.md5 = f1.md5 AND f2.id < f1.id) " +
+                "AND EXISTS (SELECT 1 FROM localfile f2 WHERE f2.md5 = f1.md5 AND f2.id != f1.id) " +
+                "ORDER BY f1.id " +
+                "LIMIT 3"
+        return repo.getFilesViaQuery(query).flowOn(Dispatchers.IO)
     }
 
     fun getVideoFile(): Flow<LocalFile?> {
-        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE '%video%' limit 2")
+        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE 'video/%' limit 2")
             .flowOn(Dispatchers.IO).map {
                 if (it.isEmpty()) null
                 else it[0]
@@ -31,18 +32,19 @@ class HomeUseCases(private val repo: LocalFilesRepo) {
 
     fun getNVideoFiles(limit: Int?=null): Flow<List<LocalFile>> {
         val limitClause = if (limit != null) " LIMIT $limit" else ""
-        val query = "SELECT * FROM localfile WHERE mimeType LIKE '%video%'$limitClause"
-        return repo.getFilesViaQuery(query)
+        val query = "SELECT * FROM localfile WHERE mimeType LIKE 'video/%' ORDER BY id$limitClause"
+        return repo.getFilesViaQuery(query).flowOn(Dispatchers.IO)
     }
 
     fun getImageFiles(limit: Int? = null): Flow<List<LocalFile>> {
         val limitClause = if (limit != null) " LIMIT $limit" else ""
-        val query = "SELECT * FROM localfile WHERE mimeType LIKE '%image%'$limitClause"
-        return repo.getFilesViaQuery(query)
+        val query = "SELECT * FROM localfile WHERE mimeType LIKE 'image/%' ORDER BY id$limitClause"
+        return repo.getFilesViaQuery(query).flowOn(Dispatchers.IO)
     }
 
-    fun getLargeFiles(): Flow<List<LocalFile>> {
-        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE size > 5000")
+    fun getLargeFiles(limit: Int? = null): Flow<List<LocalFile>> {
+        val limitClause = if (limit != null) " LIMIT $limit" else ""
+        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE size > 5000 ORDER BY id$limitClause").flowOn(Dispatchers.IO)
     }
 
     fun getTotalSizeOfMimeType(mimeTypePattern: String): Flow<Long> {
@@ -63,21 +65,29 @@ class HomeUseCases(private val repo: LocalFilesRepo) {
     }
 
     // COUNT queries — efficient, no full list loaded into memory
+    fun getTotalSizeOfDuplicates(): Flow<Long> {
+        val query = "SELECT COALESCE(SUM(size), 0) FROM localfile f1 " +
+                "WHERE f1.mimeType LIKE 'image/%' " +
+                "AND EXISTS (SELECT 1 FROM localfile f2 " +
+                "WHERE f2.md5 = f1.md5 AND f2.id < f1.id)"
+        return repo.getFilesSizeSumViaQuery(query).flowOn(Dispatchers.IO)
+    }
+
     fun getDuplicatesCount(): Flow<Int> {
         val query = "SELECT COUNT(*) FROM localfile f1 " +
-                "WHERE f1.mimeType LIKE '%image%' " +
+                "WHERE f1.mimeType LIKE 'image/%' " +
                 "AND EXISTS (SELECT 1 FROM localfile f2 " +
                 "WHERE f2.md5 = f1.md5 AND f2.id < f1.id)"
         return repo.getFilesSizeSumViaQuery(query).flowOn(Dispatchers.IO).map { it.toInt() }
     }
 
     fun getImagesCount(): Flow<Int> {
-        return repo.getFilesSizeSumViaQuery("SELECT COUNT(*) FROM localfile WHERE mimeType LIKE '%image%'")
+        return repo.getFilesSizeSumViaQuery("SELECT COUNT(*) FROM localfile WHERE mimeType LIKE 'image/%'")
             .flowOn(Dispatchers.IO).map { it.toInt() }
     }
 
     fun getVideosCount(): Flow<Int> {
-        return repo.getFilesSizeSumViaQuery("SELECT COUNT(*) FROM localfile WHERE mimeType LIKE '%video%'")
+        return repo.getFilesSizeSumViaQuery("SELECT COUNT(*) FROM localfile WHERE mimeType LIKE 'video/%'")
             .flowOn(Dispatchers.IO).map { it.toInt() }
     }
 

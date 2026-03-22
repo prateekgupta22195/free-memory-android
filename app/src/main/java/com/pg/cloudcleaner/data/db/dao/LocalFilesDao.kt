@@ -40,7 +40,7 @@ interface LocalFilesDao {
     @Query("SELECT EXISTS(SELECT 1 FROM localfile WHERE id = :id)")
     fun fileExists(id: String): Boolean
 
-    @Query("SELECT id FROM localfile WHERE duplicate = 1 AND (mimeType LIKE '%image%' OR mimeType LIKE '%video%')")
+    @Query("SELECT id FROM localfile WHERE duplicate = 1 AND (mimeType LIKE 'image/%' OR mimeType LIKE 'video/%')")
     fun getDuplicateFilesId(): Flow<List<String>>
 
     @RawQuery(observedEntities = [LocalFile::class])

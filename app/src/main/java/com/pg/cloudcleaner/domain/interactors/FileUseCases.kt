@@ -62,19 +62,19 @@ class FileUseCases(private val repo: LocalFilesRepo) {
     }
 
     fun getMediaFiles(): Flow<List<LocalFile>> {
-        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE '%image%' OR mimeType LIKE '%video%'")
+        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE 'image/%' OR mimeType LIKE 'video/%' ORDER BY id")
     }
 
     fun getLargeFiles(): Flow<List<LocalFile>> {
-        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE size > 5000")
+        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE size > 5000 ORDER BY id")
     }
 
     fun getVideoFiles(): Flow<List<LocalFile>> {
-        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE '%video%'")
+        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE 'video/%' ORDER BY id")
     }
 
     fun getImageFiles(): Flow<List<LocalFile>> {
-        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE '%image%'")
+        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE 'image/%' ORDER BY id")
     }
 
     fun getDuplicateFileIds(): Flow<List<String>> {

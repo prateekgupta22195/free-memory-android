@@ -10,7 +10,7 @@ import java.io.File
 
 @Entity
 open class LocalFile(
-    @ColumnInfo(name = "mimeType") @SerializedName("mimeType") val fileType: String?,
+    @ColumnInfo(name = "mimeType", index = true) @SerializedName("mimeType") val fileType: String?,
     @ColumnInfo(name = "modifiedTime") @SerializedName("modifiedTime") val modifiedTime: Long?,
     @ColumnInfo(name = "originalFilename") @SerializedName("originalFilename") val fileName: String?,
     @ColumnInfo(name = "size") @SerializedName("size") val size: Long,

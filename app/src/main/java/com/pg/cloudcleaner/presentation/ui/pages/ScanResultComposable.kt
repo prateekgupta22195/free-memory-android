@@ -1,6 +1,7 @@
 package com.pg.cloudcleaner.presentation.ui.pages
 
 import android.text.format.Formatter
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -33,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,21 +57,21 @@ import com.pg.cloudcleaner.presentation.vm.HomeVM
 fun ScanResultComposable(vm: HomeVM = viewModel()) {
     val context = LocalContext.current
 
-    val totalFreeableBytes by vm.getTotalFreeableSpaceBytes().collectAsState(initial = 0L)
-    val duplicateFiles by vm.getAnyTwoDuplicateFiles().collectAsState(initial = null)
-    val imageFiles by vm.getNImageFiles(3).collectAsState(initial = emptyList())
-    val videoFiles by vm.getNVideoFiles(3).collectAsState(initial = emptyList())
-    val largeFiles by vm.getLargeFiles().collectAsState(initial = emptyList())
+    val totalFreeableBytes by remember { vm.getTotalFreeableSpaceBytes() }.collectAsState(initial = 0L)
+    val duplicateThumbnails by remember { vm.getDuplicateThumbnails() }.collectAsState(initial = emptyList())
+    val imageFiles by remember { vm.getNImageFiles(3) }.collectAsState(initial = emptyList())
+    val videoFiles by remember { vm.getNVideoFiles(3) }.collectAsState(initial = emptyList())
+    val largeFiles by remember { vm.getLargeFiles(3) }.collectAsState(initial = emptyList())
 
-    val duplicatesCount by vm.getDuplicatesCount().collectAsState(initial = 0)
-    val imagesCount by vm.getImagesCount().collectAsState(initial = 0)
-    val videosCount by vm.getVideosCount().collectAsState(initial = 0)
-    val largeFilesCount by vm.getLargeFilesCount().collectAsState(initial = 0)
+    val duplicatesCount by remember { vm.getDuplicatesCount() }.collectAsState(initial = 0)
+    val imagesCount by remember { vm.getImagesCount() }.collectAsState(initial = 0)
+    val videosCount by remember { vm.getVideosCount() }.collectAsState(initial = 0)
+    val largeFilesCount by remember { vm.getLargeFilesCount() }.collectAsState(initial = 0)
 
-    val imageSizeBytes by vm.getTotalSizeOfMimeType("%image%").collectAsState(initial = 0L)
-    val videoSizeBytes by vm.getTotalSizeOfMimeType("%video%").collectAsState(initial = 0L)
-    val largeSizeBytes by vm.getTotalSizeOfLargeFiles().collectAsState(initial = 0L)
-
+    val duplicateSizeBytes by remember { vm.getTotalSizeOfDuplicates() }.collectAsState(initial = 0L)
+    val imageSizeBytes by remember { vm.getTotalSizeOfMimeType("image/%") }.collectAsState(initial = 0L)
+    val videoSizeBytes by remember { vm.getTotalSizeOfMimeType("video/%") }.collectAsState(initial = 0L)
+    val largeSizeBytes by remember { vm.getTotalSizeOfLargeFiles() }.collectAsState(initial = 0L)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -123,7 +125,10 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
                                 MaterialTheme.colorScheme.primary,
                             ),
                             start = androidx.compose.ui.geometry.Offset(0f, 0f),
-                            end = androidx.compose.ui.geometry.Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY),
+                            end = androidx.compose.ui.geometry.Offset(
+                                Float.POSITIVE_INFINITY,
+                                Float.POSITIVE_INFINITY
+                            ),
                         )
                     )
                     .padding(24.dp),
@@ -180,10 +185,10 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
             // Duplicate Photos
             ScanResultCategoryCard(
                 title = "Duplicate Photos",
-                subtitle = "$duplicatesCount files • ${Formatter.formatFileSize(context, imageSizeBytes)}",
+                subtitle = "$duplicatesCount files • ${Formatter.formatFileSize(context, duplicateSizeBytes)}",
                 accentColor = MaterialTheme.colorScheme.primary,
                 icon = Icons.Outlined.ContentCopy,
-                thumbnails = listOfNotNull(duplicateFiles?.first, duplicateFiles?.second),
+                thumbnails = duplicateThumbnails,
                 onReviewClick = {
                     App.instance.navController().navigate(Routes.FLAT_DUPLICATES_FILE_MANAGER)
                 },
@@ -219,7 +224,7 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
                 subtitle = "$largeFilesCount files • ${Formatter.formatFileSize(context, largeSizeBytes)}",
                 accentColor = MaterialTheme.colorScheme.onErrorContainer,
                 icon = Icons.Outlined.FolderOpen,
-                thumbnails = largeFiles.take(3),
+                thumbnails = largeFiles,
                 onReviewClick = {
                     App.instance.navController().navigate(Routes.FLAT_LARGE_FILE_MANAGER)
                 },

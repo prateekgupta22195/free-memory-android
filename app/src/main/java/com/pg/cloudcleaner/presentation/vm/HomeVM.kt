@@ -83,8 +83,8 @@ class HomeVM : ViewModel() {
             }
         }
     }
-    fun getAnyTwoDuplicateFiles(): Flow<Pair<LocalFile, LocalFile>?> {
-        return homeUseCases.getAnyTwoDuplicates()
+    fun getDuplicateThumbnails(): Flow<List<LocalFile>> {
+        return homeUseCases.getAnyThreeDuplicateGroups()
     }
 
     fun getVideoFile(): Flow<LocalFile?> {
@@ -95,8 +95,8 @@ class HomeVM : ViewModel() {
         return homeUseCases.getNVideoFiles(limit = n)
     }
 
-    fun getLargeFiles(): Flow<List<LocalFile>> {
-        return homeUseCases.getLargeFiles()
+    fun getLargeFiles(limit: Int? = null): Flow<List<LocalFile>> {
+        return homeUseCases.getLargeFiles(limit)
     }
 
     fun getNImageFiles(n: Int? = null): Flow<List<LocalFile>> {
@@ -112,6 +112,10 @@ class HomeVM : ViewModel() {
     fun getTotalSizeOfLargeFiles(): Flow<Long> {
         // returning size in kbs but we store size in mbs
         return homeUseCases.getTotalSizeOfLargeFiles().map { size -> size * 1024 }
+    }
+
+    fun getTotalSizeOfDuplicates(): Flow<Long> {
+        return homeUseCases.getTotalSizeOfDuplicates().map { size -> size * 1024 }
     }
 
     fun getDuplicatesCount(): Flow<Int> = homeUseCases.getDuplicatesCount()
@@ -135,8 +139,8 @@ class HomeVM : ViewModel() {
     }
 
     fun getTotalFreeableSpaceBytes(): Flow<Long> = combine(
-        homeUseCases.getTotalSizeOfMimeType("%image%"),
-        homeUseCases.getTotalSizeOfMimeType("%video%"),
+        homeUseCases.getTotalSizeOfMimeType("image/%"),
+        homeUseCases.getTotalSizeOfMimeType("video/%"),
         homeUseCases.getTotalSizeOfLargeFiles()
     ) { img, vid, large -> (img + vid + large) * 1024L }
 

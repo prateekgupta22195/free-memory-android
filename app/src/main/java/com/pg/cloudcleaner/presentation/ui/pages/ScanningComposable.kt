@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,10 +49,10 @@ fun ScanningComposable(
     message: String,
     vm: HomeVM = viewModel(),
 ) {
-    val duplicatesCount by vm.getDuplicatesCount().collectAsState(initial = 0)
-    val imagesCount by vm.getImagesCount().collectAsState(initial = 0)
-    val largeFilesCount by vm.getLargeFilesCount().collectAsState(initial = 0)
-    val videosCount by vm.getVideosCount().collectAsState(initial = 0)
+    val duplicatesCount by remember { vm.getDuplicatesCount() }.collectAsState(initial = 0)
+    val imagesCount by remember { vm.getImagesCount() }.collectAsState(initial = 0)
+    val largeFilesCount by remember { vm.getLargeFilesCount() }.collectAsState(initial = 0)
+    val videosCount by remember { vm.getVideosCount() }.collectAsState(initial = 0)
 
     Column(
         modifier = Modifier

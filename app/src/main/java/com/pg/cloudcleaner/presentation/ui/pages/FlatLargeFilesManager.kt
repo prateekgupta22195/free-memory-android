@@ -28,7 +28,7 @@ fun FlatLargeFilesManager(vm: FlatLargeFileManagerVM = viewModel()) {
 
     val selectedModeOn = remember { vm.selectedModeOn }
 
-    val files = vm.getLargeFiles().collectAsState(initial = listOf())
+    val files = vm.getLargeFiles().collectAsState(initial = null)
 
     val configuration = LocalConfiguration.current
     val columns = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 3 else 6
