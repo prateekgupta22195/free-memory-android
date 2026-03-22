@@ -6,12 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.Button
@@ -19,7 +16,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -35,17 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.pg.cloudcleaner.R
 import com.pg.cloudcleaner.presentation.WorkerUIState
-import com.pg.cloudcleaner.presentation.ui.components.CATEGORY_DUPLICATES
-import com.pg.cloudcleaner.presentation.ui.components.CATEGORY_IMAGES
-import com.pg.cloudcleaner.presentation.ui.components.CATEGORY_LARGE_FILES
-import com.pg.cloudcleaner.presentation.ui.components.CATEGORY_VIDEOS
-import com.pg.cloudcleaner.presentation.ui.components.home.AnimatedStorageMeter
-import com.pg.cloudcleaner.presentation.ui.components.home.CategoryDuplicateFilesCompose
-import com.pg.cloudcleaner.presentation.ui.components.home.CategoryImagesCompose
-import com.pg.cloudcleaner.presentation.ui.components.home.CategoryLargeFileCompose
-import com.pg.cloudcleaner.presentation.ui.components.home.CategoryVideosCompose
 import com.pg.cloudcleaner.presentation.vm.HomeVM
-import com.pg.cloudcleaner.presentation.vm.StorageUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,7 +62,9 @@ fun HomeComposable(viewModel: HomeVM = viewModel()) {
             )
         }
     ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)) {
             when (scanStatus) {
                 // ── Not yet scanned ───────────────────────────────────────
                 is WorkerUIState.Initial -> {
