@@ -5,7 +5,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.data.model.LocalFile
-import com.pg.cloudcleaner.data.model.toLocalFile
 import com.pg.cloudcleaner.utils.md5
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -40,36 +39,8 @@ class UpdateChecksumWorker(context: Context, workerParameters: WorkerParameters)
                 coroutineScope {
                     val updatedFiles = filesToUpdate.map { localFile ->
                         async(Dispatchers.IO) {
-                            try {
-                                val file = File(localFile.id)
-                                if (!file.exists()) {
-                                    Timber.w("File does not exist: ${localFile.id}")
-                                    // Create a placeholder with empty checksum to skip this file in future
-                                    LocalFile(
-                                        localFile.fileType,
-                                        localFile.modifiedTime,
-                                        localFile.fileName,
-                                        localFile.size,
-                                        "", // empty checksum
-                                        localFile.id,
-                                        localFile.duplicate
-                                    )
-                                } else {
-                                    file.toLocalFile(false, file.md5())
-                                }
-                            } catch (e: Exception) {
-                                Timber.e(e, "Failed to process file: ${localFile.id}")
-                                // Create a placeholder with empty checksum to skip this file in future
-                                LocalFile(
-                                    localFile.fileType,
-                                    localFile.modifiedTime,
-                                    localFile.fileName,
-                                    localFile.size,
-                                    "", // empty checksum
-                                    localFile.id,
-                                    localFile.duplicate
-                                )
-                            }
+                            val md5 = File(localFile.id).md5() ?: ""
+                            LocalFile(localFile.fileType, localFile.modifiedTime, localFile.fileName, localFile.size, md5, localFile.id, localFile.duplicate)
                         }
                     }.awaitAll()
 

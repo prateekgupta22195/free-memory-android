@@ -9,17 +9,44 @@ import com.pg.cloudcleaner.utils.getMimeType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 import java.util.Date
 
 class FileUseCases(private val repo: LocalFilesRepo) {
 
-    suspend fun syncAllFilesToDb(directoryName: String) {
-        exploreDirectory(directoryName)
+    suspend fun countFiles(directoryName: String): Int = coroutineScope {
+        suspend fun countDir(dir: File): Int = withContext(Dispatchers.IO) {
+            val entries = dir.listFiles() ?: return@withContext 0
+            val fileCount = entries.count { it.isFile }
+            val subdirs = entries.filter { it.isDirectory }
+
+            if (subdirs.isEmpty()) return@withContext fileCount
+
+            // Process subdirectories in parallel
+            val subCounts = subdirs.map { subdir ->
+                async { countDir(subdir) }
+            }.awaitAll()
+
+            fileCount + subCounts.sum()
+        }
+
+        val root = File(directoryName)
+        if (root.exists() && root.isDirectory) {
+            countDir(root)
+        } else 0
+    }
+
+    suspend fun syncAllFilesToDb(
+        directoryName: String,
+        onFileProcessed: (suspend () -> Unit)? = null,
+    ) {
+        exploreDirectory(directoryName, onFileProcessed)
     }
 
     suspend fun getFileById(fileId: String): LocalFile? {
@@ -35,19 +62,19 @@ class FileUseCases(private val repo: LocalFilesRepo) {
     }
 
     fun getMediaFiles(): Flow<List<LocalFile>> {
-        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE '%image%' OR mimeType LIKE '%video%'")
+        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE 'image/%' OR mimeType LIKE 'video/%' ORDER BY id")
     }
 
     fun getLargeFiles(): Flow<List<LocalFile>> {
-        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE size > 5000")
+        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE size > 5000 ORDER BY id")
     }
 
     fun getVideoFiles(): Flow<List<LocalFile>> {
-        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE '%video%'")
+        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE 'video/%' ORDER BY id")
     }
 
     fun getImageFiles(): Flow<List<LocalFile>> {
-        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE '%image%'")
+        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE 'image/%' ORDER BY id")
     }
 
     fun getDuplicateFileIds(): Flow<List<String>> {
@@ -95,8 +122,10 @@ class FileUseCases(private val repo: LocalFilesRepo) {
                 }"
     }
 
-    private suspend fun exploreDirectory(directoryPath: String) = coroutineScope {
-        // Use a queue for non-recursive directory traversal
+    private suspend fun exploreDirectory(
+        directoryPath: String,
+        onFileProcessed: (suspend () -> Unit)? = null,
+    ) = coroutineScope {
         val directoryQueue = ArrayDeque<File>()
         val initialDir = File(directoryPath)
 
@@ -104,30 +133,26 @@ class FileUseCases(private val repo: LocalFilesRepo) {
             directoryQueue.add(initialDir)
         }
 
-        // Process directories from the queue until it's empty
         while (directoryQueue.isNotEmpty()) {
             val currentDir = directoryQueue.removeFirstOrNull() ?: continue
             val files = currentDir.listFiles() ?: continue
 
-            // Use async for CPU-bound tasks (MD5 hashing) and await them in batches
-            val fileProcessingJobs = files.filter { it.isFile }.map { file ->
-                async(Dispatchers.Default) { // Use Default dispatcher for CPU work
-                    try {
-                        // Check if file exists and insert in one transaction if possible
-                        repo.insertFile(file.toLocalFile(duplicate = false, md5 = null))
-                    } catch (e: Exception) {
-                        Timber.e(e, "Failed to process file: ${file.absolutePath}")
-                    }
+            val localFiles = files.filter { it.isFile }.map { it.toLocalFile(duplicate = false, md5 = null) }
+
+            localFiles.chunked(100).forEach { chunk ->
+                try {
+                    repo.insertAll(chunk)
+                    repeat(chunk.size) { onFileProcessed?.invoke() }
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    Timber.e(e, "Failed to insert files in: ${currentDir.absolutePath}")
                 }
             }
 
-            // Add subdirectories to the queue to be processed
             files.filter { it.isDirectory }.forEach { subDir ->
                 directoryQueue.add(subDir)
             }
-
-            // Wait for all files in the current directory to finish processing before moving on
-            fileProcessingJobs.awaitAll()
         }
     }
 }

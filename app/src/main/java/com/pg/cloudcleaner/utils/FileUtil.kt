@@ -1,23 +1,11 @@
 package com.pg.cloudcleaner.utils
 
-import android.content.Context
-import android.content.Intent
-import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.media.ThumbnailUtils
-import android.net.Uri
-import android.provider.MediaStore.Video.Thumbnails
-import android.util.Log
-import android.util.Size
-import android.util.TypedValue
 import android.webkit.MimeTypeMap
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
+import java.io.IOException
 import java.security.MessageDigest
-import java.util.zip.CRC32
-import java.util.zip.CheckedInputStream
 
 fun getMimeType(path: String): String? {
     val extension = MimeTypeMap.getFileExtensionFromUrl(path)
@@ -29,22 +17,28 @@ fun File.size(): Long {
     return length() / 1024
 }
 
-fun File.md5(): String {
-    val md: MessageDigest = MessageDigest.getInstance("MD5")
-    val fis = FileInputStream(this)
-    val buffer = ByteArray(8192)
-    var read: Int
-    while (fis.read(buffer).also { read = it } != -1) {
-        md.update(buffer, 0, read)
+fun File.md5(): String? {
+    if (!exists()) return null
+    return try {
+        val md = MessageDigest.getInstance("MD5")
+        FileInputStream(this).use { fis ->
+            val buffer = ByteArray(65536)
+            var read: Int
+            while (fis.read(buffer).also { read = it } != -1) {
+                md.update(buffer, 0, read)
+            }
+        }
+        val sb = StringBuilder(32)
+        for (hashByte in md.digest()) {
+            sb.append("%02x".format(hashByte.toInt() and 0xff))
+        }
+        sb.toString()
+    } catch (e: IOException) {
+        Timber.w(e, "Could not compute md5 for $absolutePath")
+        null
     }
-    val hashBytes: ByteArray = md.digest()
-    val sb = StringBuilder()
-    for (hashByte in hashBytes) {
-        sb.append(((hashByte.toInt() and 0xff) + 0x100).toString(16).substring(1))
-    }
-    fis.close()
-    return sb.toString()
 }
+
 fun isFileImage(mimeType: String?) = mimeType?.contains("image", ignoreCase = true) == true
 fun isFileVideo(mimeType: String?) = mimeType?.contains("video", ignoreCase = true) == true
 

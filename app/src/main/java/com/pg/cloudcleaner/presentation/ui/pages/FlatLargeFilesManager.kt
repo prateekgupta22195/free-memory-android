@@ -20,7 +20,6 @@ import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIconCompose
 import com.pg.cloudcleaner.presentation.ui.components.CATEGORY_LARGE_FILES
 import com.pg.cloudcleaner.presentation.ui.components.common.flatFileManager.FlatFileManagerContent
 import com.pg.cloudcleaner.presentation.ui.components.common.flatFileManager.FlatFileManagerDeleteComposable
-import com.pg.cloudcleaner.presentation.vm.FlatImagesFileManagerVM
 import com.pg.cloudcleaner.presentation.vm.FlatLargeFileManagerVM
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,7 +28,7 @@ fun FlatLargeFilesManager(vm: FlatLargeFileManagerVM = viewModel()) {
 
     val selectedModeOn = remember { vm.selectedModeOn }
 
-    val files = vm.getLargeFiles().collectAsState(initial = listOf())
+    val files = vm.getLargeFiles().collectAsState(initial = null)
 
     val configuration = LocalConfiguration.current
     val columns = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 3 else 6

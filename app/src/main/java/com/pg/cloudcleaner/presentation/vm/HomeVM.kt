@@ -2,9 +2,13 @@ package com.pg.cloudcleaner.presentation.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.pg.cloudcleaner.app.App
+import io.sentry.Sentry
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.data.repository.LocalFilesRepoImpl
 import com.pg.cloudcleaner.domain.interactors.HomeUseCases
@@ -15,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -32,8 +37,11 @@ class HomeVM : ViewModel() {
     private val _isDatabaseEmpty = MutableStateFlow(true)
     val isDatabaseEmpty = _isDatabaseEmpty.asStateFlow()
 
-    private val _scanUIStatus = MutableStateFlow<WorkerUIState?>(null)
+    private val _scanUIStatus = MutableStateFlow<WorkerUIState>(WorkerUIState.Initial)
     val scanUIStatus = _scanUIStatus.asStateFlow()
+
+    // True while we are intentionally replacing a running scan (REPLACE policy cancels the old one)
+    private var isRestarting = false
 
     private val homeUseCases by lazy { HomeUseCases(LocalFilesRepoImpl(App.instance.db.localFilesDao())) }
 
@@ -48,23 +56,35 @@ class HomeVM : ViewModel() {
                 val workInfo = workInfos.firstOrNull()
                 if (workInfo != null) {
                     val progressMessage = workInfo.progress.getString(ReadFileWorker.KEY_PROGRESS_MESSAGE)
+                    val progress = workInfo.progress.getInt(ReadFileWorker.KEY_PROGRESS, 0)
                     _scanUIStatus.value = when (workInfo.state) {
                         WorkInfo.State.SUCCEEDED -> {
                             WorkerUIState.Success(progressMessage ?: "Scan finished successfully.")
                         }
 
-                        WorkInfo.State.FAILED -> WorkerUIState.Failed("Scan failed.")
-                        WorkInfo.State.CANCELLED -> WorkerUIState.Cancelled("Scan cancelled.")
-                        else -> WorkerUIState.InProgress( progressMessage?: "Scan is in progress...")
+                        WorkInfo.State.FAILED -> {
+                            Sentry.captureException(Exception("ReadFileWorker failed. workId=${workInfo.id}"))
+                            WorkerUIState.Failed("Scan failed.")
+                        }
+                        WorkInfo.State.CANCELLED -> {
+                            if (!isRestarting) {
+                                Sentry.captureException(Exception("ReadFileWorker cancelled unexpectedly. workId=${workInfo.id}"))
+                            }
+                            WorkerUIState.Cancelled("Scan cancelled.")
+                        }
+                        else -> {
+                            if (workInfo.state == WorkInfo.State.RUNNING) isRestarting = false
+                            WorkerUIState.InProgress(progressMessage ?: "Scan is in progress...", progress)
+                        }
                     }
                 } else {
-                    _scanUIStatus.value = null
+                    _scanUIStatus.value = WorkerUIState.Initial
                 }
             }
         }
     }
-    fun getAnyTwoDuplicateFiles(): Flow<Pair<LocalFile, LocalFile>?> {
-        return homeUseCases.getAnyTwoDuplicates()
+    fun getDuplicateThumbnails(): Flow<List<LocalFile>> {
+        return homeUseCases.getAnyThreeDuplicateGroups()
     }
 
     fun getVideoFile(): Flow<LocalFile?> {
@@ -75,8 +95,8 @@ class HomeVM : ViewModel() {
         return homeUseCases.getNVideoFiles(limit = n)
     }
 
-    fun getLargeFiles(): Flow<List<LocalFile>> {
-        return homeUseCases.getLargeFiles()
+    fun getLargeFiles(limit: Int? = null): Flow<List<LocalFile>> {
+        return homeUseCases.getLargeFiles(limit)
     }
 
     fun getNImageFiles(n: Int? = null): Flow<List<LocalFile>> {
@@ -93,6 +113,36 @@ class HomeVM : ViewModel() {
         // returning size in kbs but we store size in mbs
         return homeUseCases.getTotalSizeOfLargeFiles().map { size -> size * 1024 }
     }
+
+    fun getTotalSizeOfDuplicates(): Flow<Long> {
+        return homeUseCases.getTotalSizeOfDuplicates().map { size -> size * 1024 }
+    }
+
+    fun getDuplicatesCount(): Flow<Int> = homeUseCases.getDuplicatesCount()
+
+    fun getImagesCount(): Flow<Int> = homeUseCases.getImagesCount()
+
+    fun getVideosCount(): Flow<Int> = homeUseCases.getVideosCount()
+
+    fun getLargeFilesCount(): Flow<Int> = homeUseCases.getLargeFilesCount()
+
+    fun restartScan() {
+        isRestarting = true
+        workManager.enqueueUniqueWork(
+            uniqueWorkName,
+            ExistingWorkPolicy.REPLACE,
+            OneTimeWorkRequestBuilder<ReadFileWorker>()
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .addTag("abc")
+                .build()
+        )
+    }
+
+    fun getTotalFreeableSpaceBytes(): Flow<Long> = combine(
+        homeUseCases.getTotalSizeOfMimeType("image/%"),
+        homeUseCases.getTotalSizeOfMimeType("video/%"),
+        homeUseCases.getTotalSizeOfLargeFiles()
+    ) { img, vid, large -> (img + vid + large) * 1024L }
 
     /**
      * Fetches storage details using the StorageHelper on a background thread
