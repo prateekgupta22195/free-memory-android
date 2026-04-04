@@ -6,7 +6,7 @@ import com.pg.cloudcleaner.data.db.dao.LocalFilesDao
 import com.pg.cloudcleaner.data.model.LocalFile
 
 
-@Database(entities = [LocalFile::class], version = 5, exportSchema = false)
+@Database(entities = [LocalFile::class], version = 6, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun localFilesDao(): LocalFilesDao
 }

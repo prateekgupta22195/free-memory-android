@@ -14,7 +14,7 @@ open class LocalFile(
     @ColumnInfo(name = "modifiedTime") @SerializedName("modifiedTime") val modifiedTime: Long?,
     @ColumnInfo(name = "originalFilename") @SerializedName("originalFilename") val fileName: String?,
     @ColumnInfo(name = "size") @SerializedName("size") val size: Long,
-    @ColumnInfo(name = "md5") @SerializedName("md5") val md5CheckSum: String?,
+    @ColumnInfo(name = "md5", index = true) @SerializedName("md5") val md5CheckSum: String?,
     @PrimaryKey @SerializedName("id") val id: String,
     @ColumnInfo(
         name = "duplicate",

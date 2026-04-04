@@ -11,15 +11,26 @@ import com.pg.cloudcleaner.app.Routes.Companion.FLAT_IMAGES_FILE_MANAGER
 import com.pg.cloudcleaner.app.Routes.Companion.FLAT_LARGE_FILE_MANAGER
 import com.pg.cloudcleaner.app.Routes.Companion.FLAT_VIDEOS_FILE_MANAGER
 import com.pg.cloudcleaner.app.Routes.Companion.HOME
+import com.pg.cloudcleaner.app.Routes.Companion.ONBOARDING
 import com.pg.cloudcleaner.presentation.ui.pages.HomeComposable
 import com.pg.cloudcleaner.presentation.ui.pages.FileDetailViewerCompose
 import com.pg.cloudcleaner.presentation.ui.pages.FlatFileManager
 import com.pg.cloudcleaner.presentation.ui.pages.FlatImagesFileManager
 import com.pg.cloudcleaner.presentation.ui.pages.FlatLargeFilesManager
 import com.pg.cloudcleaner.presentation.ui.pages.FlatVideosFileManager
+import com.pg.cloudcleaner.presentation.ui.pages.OnboardingPage
 
 
 val router: NavGraphBuilder.() -> Unit = {
+    composable(ONBOARDING) {
+        OnboardingPage(onFinished = {
+            App.instance.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+                .edit().putBoolean("onboarding_shown", true).apply()
+            App.instance.navController().navigate(HOME) {
+                popUpTo(ONBOARDING) { inclusive = true }
+            }
+        })
+    }
     composable(FLAT_DUPLICATES_FILE_MANAGER) {
         FlatFileManager()
     }
@@ -59,6 +70,7 @@ interface Routes {
 
         const val FLAT_LARGE_FILE_MANAGER = "/flat-large-file-manager"
         const val HOME = "/home"
+        const val ONBOARDING = "/onboarding"
         const val FILE_DETAIL_VIEWER = "/file-detail-viewer"
     }
 }

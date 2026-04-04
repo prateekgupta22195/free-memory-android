@@ -83,8 +83,14 @@ class MainActivity : AppCompatActivity() {
                     }
                 )
             } else {
+                val startDestination = remember {
+                    val shown = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+                        .getBoolean("onboarding_shown", false)
+                    if (shown) com.pg.cloudcleaner.app.Routes.HOME
+                    else com.pg.cloudcleaner.app.Routes.ONBOARDING
+                }
                 App.instance.initNavController(rememberNavController())
-                CloudCleanerApp()
+                CloudCleanerApp(startDestination = startDestination)
             }
         }
 

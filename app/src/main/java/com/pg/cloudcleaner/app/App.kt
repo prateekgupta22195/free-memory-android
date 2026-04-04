@@ -7,8 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
 import coil3.ImageLoader
 import coil3.request.CachePolicy
 import coil3.request.crossfade
@@ -47,14 +45,6 @@ class App : Application() {
         db = Room.databaseBuilder(
             instance.applicationContext, AppDatabase::class.java, "database-name"
         ).fallbackToDestructiveMigration(true)
-            .addCallback(object : RoomDatabase.Callback() {
-                override fun onCreate(db: SupportSQLiteDatabase) {
-                    super.onCreate(db)
-                    db.execSQL(
-                        "CREATE INDEX index_localfile_md5 ON localfile(md5) WHERE md5 IS NOT NULL"
-                    )
-                }
-            })
             .build()
     }
 
