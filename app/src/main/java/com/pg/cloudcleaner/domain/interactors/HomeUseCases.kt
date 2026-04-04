@@ -109,6 +109,24 @@ class HomeUseCases(private val repo: LocalFilesRepo) {
             .flowOn(Dispatchers.IO).map { it.toInt() }
     }
 
+    fun getScreenshotsCount(): Flow<Int> {
+        return repo.getFilesSizeSumViaQuery(
+            "SELECT COUNT(*) FROM localfile WHERE mimeType LIKE 'image/%' AND id LIKE '%screenshot%'"
+        ).flowOn(Dispatchers.IO).map { it.toInt() }
+    }
+
+    fun getScreenshotsTotalSize(): Flow<Long> {
+        return repo.getFilesSizeSumViaQuery(
+            "SELECT COALESCE(SUM(size), 0) FROM localfile WHERE mimeType LIKE 'image/%' AND id LIKE '%screenshot%'"
+        ).flowOn(Dispatchers.IO).map { it * 1024 }
+    }
+
+    fun getScreenshotsPreview(limit: Int = 3): Flow<List<LocalFile>> {
+        return repo.getFilesViaQuery(
+            "SELECT * FROM localfile WHERE mimeType LIKE 'image/%' AND id LIKE '%screenshot%' ORDER BY modifiedTime DESC LIMIT $limit"
+        ).flowOn(Dispatchers.IO)
+    }
+
     fun getOptimizableImagesCount(): Flow<Int> {
         return repo.getFilesSizeSumViaQuery(
             "SELECT COUNT(*) FROM localfile WHERE mimeType = 'image/jpeg' AND size > 500 AND isOptimized = 0"

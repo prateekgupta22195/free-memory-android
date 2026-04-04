@@ -24,6 +24,7 @@ import androidx.compose.material.icons.outlined.AutoFixHigh
 import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.FolderOpen
 import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.Screenshot
 import androidx.compose.material.icons.outlined.VideoFile
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -83,6 +84,9 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
     val optimizableCount by vm.optimizableImagesCount.collectAsState()
     val optimizableSizeBytes by vm.optimizableImagesSizeBytes.collectAsState()
     val optimizablePreview by vm.previewOptimizableImages.collectAsState()
+    val screenshotsCount by vm.screenshotsCount.collectAsState()
+    val screenshotsSizeBytes by vm.screenshotsSizeBytes.collectAsState()
+    val screenshotsThumbnails by vm.previewScreenshots.collectAsState()
 
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
@@ -238,6 +242,20 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
                     App.instance.navController().navigate(Routes.FLAT_VIDEOS_FILE_MANAGER)
                 },
             )
+
+            // Screenshots
+            if (screenshotsCount > 0) {
+                ScanResultCategoryCard(
+                    title = "Screenshots",
+                    subtitle = "$screenshotsCount files • ${Formatter.formatFileSize(context, screenshotsSizeBytes)}",
+                    accentColor = MaterialTheme.colorScheme.secondary,
+                    icon = Icons.Outlined.Screenshot,
+                    thumbnails = screenshotsThumbnails,
+                    onReviewClick = {
+                        App.instance.navController().navigate(Routes.FLAT_SCREENSHOTS_FILE_MANAGER)
+                    },
+                )
+            }
 
             // Large Files
             ScanResultCategoryCard(

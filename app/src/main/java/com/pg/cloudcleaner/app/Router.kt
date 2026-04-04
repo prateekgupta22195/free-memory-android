@@ -9,6 +9,7 @@ import com.pg.cloudcleaner.app.Routes.Companion.FILE_DETAIL_VIEWER
 import com.pg.cloudcleaner.app.Routes.Companion.FLAT_DUPLICATES_FILE_MANAGER
 import com.pg.cloudcleaner.app.Routes.Companion.FLAT_IMAGES_FILE_MANAGER
 import com.pg.cloudcleaner.app.Routes.Companion.FLAT_LARGE_FILE_MANAGER
+import com.pg.cloudcleaner.app.Routes.Companion.FLAT_SCREENSHOTS_FILE_MANAGER
 import com.pg.cloudcleaner.app.Routes.Companion.FLAT_VIDEOS_FILE_MANAGER
 import com.pg.cloudcleaner.app.Routes.Companion.HOME
 import com.pg.cloudcleaner.app.Routes.Companion.ONBOARDING
@@ -18,6 +19,7 @@ import com.pg.cloudcleaner.presentation.ui.pages.FileDetailViewerCompose
 import com.pg.cloudcleaner.presentation.ui.pages.FlatFileManager
 import com.pg.cloudcleaner.presentation.ui.pages.FlatImagesFileManager
 import com.pg.cloudcleaner.presentation.ui.pages.FlatLargeFilesManager
+import com.pg.cloudcleaner.presentation.ui.pages.FlatScreenshotsFileManager
 import com.pg.cloudcleaner.presentation.ui.pages.FlatVideosFileManager
 import com.pg.cloudcleaner.presentation.ui.pages.ImageOptimiserPage
 import com.pg.cloudcleaner.presentation.ui.pages.OnboardingPage
@@ -51,6 +53,9 @@ val router: NavGraphBuilder.() -> Unit = {
     composable(route = FLAT_LARGE_FILE_MANAGER) {
         FlatLargeFilesManager()
     }
+    composable(FLAT_SCREENSHOTS_FILE_MANAGER) {
+        FlatScreenshotsFileManager()
+    }
     composable(
         "$FILE_DETAIL_VIEWER?url={url}&category={category}&md5={md5}", arguments = listOf(
             navArgument("url") { type = NavType.StringType },
@@ -74,6 +79,7 @@ interface Routes {
         const val FLAT_VIDEOS_FILE_MANAGER = "/flat-videos-file-manager"
 
         const val FLAT_LARGE_FILE_MANAGER = "/flat-large-file-manager"
+        const val FLAT_SCREENSHOTS_FILE_MANAGER = "/flat-screenshots-file-manager"
         const val HOME = "/home"
         const val ONBOARDING = "/onboarding"
         const val OPTIMISE_IMAGES = "/optimise-images"

@@ -138,6 +138,7 @@ class FileUseCases(private val repo: LocalFilesRepo) {
             "category_images" -> getImageFiles().first()
             "category_videos" -> getVideoFiles().first()
             "category_large_files" -> getLargeFiles().first()
+            "category_screenshots" -> getScreenshotFiles().first()
             "category_duplicates" -> {
                 val duplicateIds = getDuplicateFileIds().first()
                 duplicateIds.mapNotNull { getFileById(it) }
@@ -148,6 +149,12 @@ class FileUseCases(private val repo: LocalFilesRepo) {
 
     suspend fun getFilesByMd5(md5: String): List<LocalFile> {
         return repo.getFilesViaQuery("SELECT * FROM localfile WHERE md5 = '$md5'").first()
+    }
+
+    fun getScreenshotFiles(): Flow<List<LocalFile>> {
+        return repo.getFilesViaQuery(
+            "SELECT * FROM localfile WHERE mimeType LIKE 'image/%' AND id LIKE '%screenshot%' ORDER BY modifiedTime DESC"
+        ).flowOn(Dispatchers.IO)
     }
 
     fun getOptimizableImages(): Flow<List<LocalFile>> {

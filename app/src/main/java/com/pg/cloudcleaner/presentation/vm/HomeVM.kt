@@ -115,6 +115,21 @@ class HomeVM : ViewModel() {
 
     val totalSavedBytes: StateFlow<Long> = SavedMemoryTracker.totalSavedBytes
 
+    val screenshotsCount: StateFlow<Int> by lazy {
+        homeUseCases.getScreenshotsCount()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
+    }
+
+    val screenshotsSizeBytes: StateFlow<Long> by lazy {
+        homeUseCases.getScreenshotsTotalSize()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
+    }
+
+    val previewScreenshots: StateFlow<List<LocalFile>> by lazy {
+        homeUseCases.getScreenshotsPreview()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    }
+
     val optimizableImagesCount: StateFlow<Int> by lazy {
         homeUseCases.getOptimizableImagesCount()
             .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
@@ -132,12 +147,15 @@ class HomeVM : ViewModel() {
 
     val totalFreeableBytes: StateFlow<Long> by lazy {
         combine(
-            duplicateSizeBytes,
-            imageSizeBytes,
-            videoSizeBytes,
-            largeSizeBytes,
-            optimizableImagesSizeBytes,
-        ) { values -> values[0] + values[1] + values[2] + values[3] + (values[4] * 0.5).toLong() }
+            listOf(
+                duplicateSizeBytes,
+                imageSizeBytes,
+                videoSizeBytes,
+                largeSizeBytes,
+                screenshotsSizeBytes,
+                optimizableImagesSizeBytes,
+            )
+        ) { values -> values[0] + values[1] + values[2] + values[3] + values[4] + (values[5] * 0.5).toLong() }
             .stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
     }
 
