@@ -11,6 +11,6 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 class FlatImagesFileManagerVM : SelectableDeletableVM() {
-    fun getImageFiles() = fileUseCases.getImageFiles()
+    fun getImageFiles() = fileUseCases.getLargeImageFiles()
 
 }

@@ -27,6 +27,7 @@ import androidx.compose.material.icons.outlined.VideoFile
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,7 +35,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,11 +46,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 import coil3.compose.AsyncImage
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.Routes
@@ -57,26 +64,31 @@ import com.pg.cloudcleaner.presentation.vm.HomeVM
 fun ScanResultComposable(vm: HomeVM = viewModel()) {
     val context = LocalContext.current
 
-    val totalFreeableBytes by remember { vm.getTotalFreeableSpaceBytes() }.collectAsState(initial = 0L)
-    val duplicateThumbnails by remember { vm.getDuplicateThumbnails() }.collectAsState(initial = emptyList())
-    val imageFiles by remember { vm.getNImageFiles(3) }.collectAsState(initial = emptyList())
-    val videoFiles by remember { vm.getNVideoFiles(3) }.collectAsState(initial = emptyList())
-    val largeFiles by remember { vm.getLargeFiles(3) }.collectAsState(initial = emptyList())
+    val totalFreeableBytes by vm.totalFreeableBytes.collectAsState()
+    val duplicateThumbnails by vm.duplicateThumbnails.collectAsState()
+    val imageFiles by vm.previewImageFiles.collectAsState()
+    val videoFiles by vm.previewVideoFiles.collectAsState()
+    val largeFiles by vm.previewLargeFiles.collectAsState()
 
-    val duplicatesCount by remember { vm.getDuplicatesCount() }.collectAsState(initial = 0)
-    val imagesCount by remember { vm.getImagesCount() }.collectAsState(initial = 0)
-    val videosCount by remember { vm.getVideosCount() }.collectAsState(initial = 0)
-    val largeFilesCount by remember { vm.getLargeFilesCount() }.collectAsState(initial = 0)
+    val duplicatesCount by vm.duplicatesCount.collectAsState()
+    val imagesCount by vm.imagesCount.collectAsState()
+    val videosCount by vm.videosCount.collectAsState()
+    val largeFilesCount by vm.largeFilesCount.collectAsState()
 
-    val duplicateSizeBytes by remember { vm.getTotalSizeOfDuplicates() }.collectAsState(initial = 0L)
-    val imageSizeBytes by remember { vm.getTotalSizeOfMimeType("image/%") }.collectAsState(initial = 0L)
-    val videoSizeBytes by remember { vm.getTotalSizeOfMimeType("video/%") }.collectAsState(initial = 0L)
-    val largeSizeBytes by remember { vm.getTotalSizeOfLargeFiles() }.collectAsState(initial = 0L)
+    val duplicateSizeBytes by vm.duplicateSizeBytes.collectAsState()
+    val imageSizeBytes by vm.imageSizeBytes.collectAsState()
+    val videoSizeBytes by vm.videoSizeBytes.collectAsState()
+    val largeSizeBytes by vm.largeSizeBytes.collectAsState()
+
+    val scrollState = rememberScrollState()
+    val scope = rememberCoroutineScope()
+    var categoriesYOffset by remember { mutableIntStateOf(0) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
     ) {
         // ── Header ────────────────────────────────────────────────────────────
         Column(
@@ -151,7 +163,11 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Button(
-                    onClick = { vm.restartScan() },
+                    onClick = {
+                        scope.launch {
+                            scrollState.animateScrollTo(categoriesYOffset)
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(50),
                     colors = ButtonDefaults.buttonColors(
@@ -160,7 +176,7 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
                     ),
                 ) {
                     Text(
-                        text = "Start scanning again",
+                        text = "Start cleaning",
                         style = MaterialTheme.typography.labelLarge,
                     )
                 }
@@ -173,7 +189,8 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 24.dp)
+                .onGloballyPositioned { categoriesYOffset = it.positionInParent().y.toInt() },
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
@@ -184,7 +201,7 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
 
             // Duplicate Photos
             ScanResultCategoryCard(
-                title = "Duplicate Photos",
+                title = "Duplicate Media",
                 subtitle = "$duplicatesCount files • ${Formatter.formatFileSize(context, duplicateSizeBytes)}",
                 accentColor = MaterialTheme.colorScheme.primary,
                 icon = Icons.Outlined.ContentCopy,
@@ -196,7 +213,7 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
 
             // Old Screenshots / Images
             ScanResultCategoryCard(
-                title = "Images",
+                title = "Large Images",
                 subtitle = "$imagesCount files • ${Formatter.formatFileSize(context, imageSizeBytes)}",
                 accentColor = MaterialTheme.colorScheme.tertiary,
                 icon = Icons.Outlined.Image,
@@ -230,6 +247,20 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
                 },
             )
         }
+        Spacer(modifier = Modifier.height(24.dp))
+
+        TextButton(
+            onClick = { vm.restartScan() },
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(bottom = 8.dp),
+        ) {
+            Text(
+                text = "Scan Again",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
     }
@@ -245,6 +276,7 @@ private fun ScanResultCategoryCard(
     onReviewClick: () -> Unit,
 ) {
     Card(
+        onClick = onReviewClick,
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),

@@ -42,6 +42,12 @@ class HomeUseCases(private val repo: LocalFilesRepo) {
         return repo.getFilesViaQuery(query).flowOn(Dispatchers.IO)
     }
 
+    fun getLargeImageFiles(limit: Int? = null): Flow<List<LocalFile>> {
+        val limitClause = if (limit != null) " LIMIT $limit" else ""
+        val query = "SELECT * FROM localfile WHERE mimeType LIKE 'image/%' AND size > 5000 ORDER BY id$limitClause"
+        return repo.getFilesViaQuery(query).flowOn(Dispatchers.IO)
+    }
+
     fun getLargeFiles(limit: Int? = null): Flow<List<LocalFile>> {
         val limitClause = if (limit != null) " LIMIT $limit" else ""
         return repo.getFilesViaQuery("SELECT * FROM localfile WHERE size > 5000 ORDER BY id$limitClause").flowOn(Dispatchers.IO)
@@ -67,7 +73,8 @@ class HomeUseCases(private val repo: LocalFilesRepo) {
     // COUNT queries — efficient, no full list loaded into memory
     fun getTotalSizeOfDuplicates(): Flow<Long> {
         val query = "SELECT COALESCE(SUM(size), 0) FROM localfile f1 " +
-                "WHERE f1.mimeType LIKE 'image/%' " +
+                "WHERE (f1.mimeType LIKE 'image/%' OR f1.mimeType LIKE 'video/%') " +
+                "AND f1.md5 IS NOT NULL " +
                 "AND EXISTS (SELECT 1 FROM localfile f2 " +
                 "WHERE f2.md5 = f1.md5 AND f2.id < f1.id)"
         return repo.getFilesSizeSumViaQuery(query).flowOn(Dispatchers.IO)
@@ -75,7 +82,8 @@ class HomeUseCases(private val repo: LocalFilesRepo) {
 
     fun getDuplicatesCount(): Flow<Int> {
         val query = "SELECT COUNT(*) FROM localfile f1 " +
-                "WHERE f1.mimeType LIKE 'image/%' " +
+                "WHERE (f1.mimeType LIKE 'image/%' OR f1.mimeType LIKE 'video/%') " +
+                "AND f1.md5 IS NOT NULL " +
                 "AND EXISTS (SELECT 1 FROM localfile f2 " +
                 "WHERE f2.md5 = f1.md5 AND f2.id < f1.id)"
         return repo.getFilesSizeSumViaQuery(query).flowOn(Dispatchers.IO).map { it.toInt() }
@@ -83,6 +91,11 @@ class HomeUseCases(private val repo: LocalFilesRepo) {
 
     fun getImagesCount(): Flow<Int> {
         return repo.getFilesSizeSumViaQuery("SELECT COUNT(*) FROM localfile WHERE mimeType LIKE 'image/%'")
+            .flowOn(Dispatchers.IO).map { it.toInt() }
+    }
+
+    fun getLargeImagesCount(): Flow<Int> {
+        return repo.getFilesSizeSumViaQuery("SELECT COUNT(*) FROM localfile WHERE mimeType LIKE 'image/%' AND size > 5000")
             .flowOn(Dispatchers.IO).map { it.toInt() }
     }
 

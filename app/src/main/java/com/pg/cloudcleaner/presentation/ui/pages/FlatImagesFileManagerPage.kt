@@ -39,7 +39,7 @@ fun FlatImagesFileManager(vm: FlatImagesFileManagerVM = viewModel()) {
 
     Scaffold(topBar = {
         TopAppBar(title = {
-            Text(text = "Images")
+            Text(text = "Large Images")
         }, actions = {
 
             if (!selectedModeOn.value) TextButton(onClick = {
@@ -54,7 +54,10 @@ fun FlatImagesFileManager(vm: FlatImagesFileManagerVM = viewModel()) {
             }
         }, navigationIcon = { BackNavigationIconCompose() })
     }, floatingActionButton = {
-        if (selectedModeOn.value) FlatFileManagerDeleteComposable(vm)
+        if (selectedModeOn.value) {
+            val selectedSize = (files?.filter { it.id in vm.selectedFiles.value }?.sumOf { it.size } ?: 0L) * 1024
+            FlatFileManagerDeleteComposable(vm, selectedSize)
+        }
     }) {
 
         Box(

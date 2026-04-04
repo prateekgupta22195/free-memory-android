@@ -34,9 +34,6 @@ interface LocalFilesDao {
     @Query("DELETE FROM localfile WHERE id = :id")
     fun delete(id: String)
 
-    @Query("DELETE FROM localfile WHERE id IN (:id)")
-    fun delete(id: List<String>)
-
     @Query("SELECT EXISTS(SELECT 1 FROM localfile WHERE id = :id)")
     fun fileExists(id: String): Boolean
 
@@ -48,4 +45,13 @@ interface LocalFilesDao {
 
     @Query("SELECT * FROM localfile WHERE md5 is NULL LIMIT :limit")
     fun getFilesWithoutChecksum(limit: Int): List<LocalFile>
+
+    @Query("SELECT * FROM localfile WHERE (mimeType LIKE 'image/%' OR mimeType LIKE 'video/%') AND md5 IS NOT NULL AND md5 IN (SELECT md5 FROM localfile WHERE (mimeType LIKE 'image/%' OR mimeType LIKE 'video/%') AND md5 IS NOT NULL GROUP BY md5 HAVING COUNT(*) > 1) ORDER BY md5, id")
+    fun getDuplicateMediaFiles(): Flow<List<LocalFile>>
+
+    @Query("SELECT * FROM localfile f1 WHERE (f1.mimeType LIKE 'image/%' OR f1.mimeType LIKE 'video/%') AND f1.md5 IS NOT NULL AND EXISTS (SELECT 1 FROM localfile f2 WHERE f2.md5 = f1.md5 AND f2.id < f1.id) ORDER BY f1.md5, f1.id")
+    fun getDuplicateCopies(): Flow<List<LocalFile>>
+
+    @Query("UPDATE localfile SET md5 = :md5 WHERE id = :id")
+    suspend fun updateMd5(id: String, md5: String)
 }
