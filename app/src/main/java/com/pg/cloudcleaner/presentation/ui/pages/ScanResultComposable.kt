@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForwardIos
+import androidx.compose.material.icons.outlined.AutoFixHigh
 import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.FolderOpen
 import androidx.compose.material.icons.outlined.Image
@@ -79,6 +80,9 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
     val imageSizeBytes by vm.imageSizeBytes.collectAsState()
     val videoSizeBytes by vm.videoSizeBytes.collectAsState()
     val largeSizeBytes by vm.largeSizeBytes.collectAsState()
+    val optimizableCount by vm.optimizableImagesCount.collectAsState()
+    val optimizableSizeBytes by vm.optimizableImagesSizeBytes.collectAsState()
+    val optimizablePreview by vm.previewOptimizableImages.collectAsState()
 
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
@@ -246,6 +250,21 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
                     App.instance.navController().navigate(Routes.FLAT_LARGE_FILE_MANAGER)
                 },
             )
+
+            // Image Optimiser
+            if (optimizableCount > 0) {
+                val estimatedSavings = (optimizableSizeBytes * 0.5).toLong()
+                ScanResultCategoryCard(
+                    title = "Optimise Images",
+                    subtitle = "$optimizableCount JPEG ${if (optimizableCount == 1) "image" else "images"} • ~${Formatter.formatFileSize(context, estimatedSavings)} potential savings",
+                    accentColor = MaterialTheme.colorScheme.tertiary,
+                    icon = Icons.Outlined.AutoFixHigh,
+                    thumbnails = optimizablePreview,
+                    onReviewClick = {
+                        App.instance.navController().navigate(Routes.OPTIMISE_IMAGES)
+                    },
+                )
+            }
         }
         Spacer(modifier = Modifier.height(24.dp))
 

@@ -14,6 +14,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -147,6 +148,20 @@ class FileUseCases(private val repo: LocalFilesRepo) {
 
     suspend fun getFilesByMd5(md5: String): List<LocalFile> {
         return repo.getFilesViaQuery("SELECT * FROM localfile WHERE md5 = '$md5'").first()
+    }
+
+    fun getOptimizableImages(): Flow<List<LocalFile>> {
+        return repo.getFilesViaQuery(
+            "SELECT * FROM localfile WHERE mimeType = 'image/jpeg' AND size > 500 AND isOptimized = 0 ORDER BY size DESC"
+        ).flowOn(Dispatchers.IO)
+    }
+
+    suspend fun updateFileSize(id: String, sizeKb: Long) {
+        repo.updateFileSize(id, sizeKb)
+    }
+
+    suspend fun markFileOptimized(id: String) {
+        repo.markFileOptimized(id)
     }
 
     fun getFileInfo(fileId: String): String {

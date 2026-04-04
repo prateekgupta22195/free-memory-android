@@ -19,6 +19,7 @@ open class LocalFile(
     @ColumnInfo(
         name = "duplicate",
     ) @SerializedName("duplicate") val duplicate: Boolean,
+    @ColumnInfo(name = "isOptimized", defaultValue = "0") val isOptimized: Boolean = false,
 )
 
 fun File.toLocalFile(duplicate: Boolean, md5: String?): LocalFile {

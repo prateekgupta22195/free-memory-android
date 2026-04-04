@@ -108,4 +108,22 @@ class HomeUseCases(private val repo: LocalFilesRepo) {
         return repo.getFilesSizeSumViaQuery("SELECT COUNT(*) FROM localfile WHERE size > 5000")
             .flowOn(Dispatchers.IO).map { it.toInt() }
     }
+
+    fun getOptimizableImagesCount(): Flow<Int> {
+        return repo.getFilesSizeSumViaQuery(
+            "SELECT COUNT(*) FROM localfile WHERE mimeType = 'image/jpeg' AND size > 500 AND isOptimized = 0"
+        ).flowOn(Dispatchers.IO).map { it.toInt() }
+    }
+
+    fun getOptimizableImagesTotalSize(): Flow<Long> {
+        return repo.getFilesSizeSumViaQuery(
+            "SELECT COALESCE(SUM(size), 0) FROM localfile WHERE mimeType = 'image/jpeg' AND size > 500 AND isOptimized = 0"
+        ).flowOn(Dispatchers.IO).map { it * 1024 }
+    }
+
+    fun getOptimizableImagesPreview(limit: Int = 3): Flow<List<com.pg.cloudcleaner.data.model.LocalFile>> {
+        return repo.getFilesViaQuery(
+            "SELECT * FROM localfile WHERE mimeType = 'image/jpeg' AND size > 500 AND isOptimized = 0 ORDER BY size DESC LIMIT $limit"
+        ).flowOn(Dispatchers.IO)
+    }
 }

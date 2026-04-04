@@ -16,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AutoFixHigh
 import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.FolderOpen
 import androidx.compose.material.icons.outlined.Image
@@ -54,6 +55,7 @@ fun ScanningComposable(
     val imagesCount by vm.imagesCount.collectAsState()
     val largeFilesCount by vm.largeFilesCount.collectAsState()
     val videosCount by vm.videosCount.collectAsState()
+    val optimizableImagesCount by vm.optimizableImagesCount.collectAsState()
 
     val view = LocalView.current
     DisposableEffect(Unit) {
@@ -195,6 +197,12 @@ fun ScanningComposable(
                     count = largeFilesCount,
                     accentColor = MaterialTheme.colorScheme.onErrorContainer,
                     icon = Icons.Outlined.FolderOpen,
+                )
+                ScanCategoryRow(
+                    label = "Optimise Images",
+                    count = optimizableImagesCount,
+                    accentColor = MaterialTheme.colorScheme.tertiary,
+                    icon = Icons.Outlined.AutoFixHigh,
                 )
             }
         }

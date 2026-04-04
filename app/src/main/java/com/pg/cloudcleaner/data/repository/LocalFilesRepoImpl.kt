@@ -59,4 +59,12 @@ class LocalFilesRepoImpl(private val dao: LocalFilesDao) : LocalFilesRepo {
     override fun getFilesSizeSumViaQuery(query: String): Flow<Long> {
         return dao.getSumViaQuery(SimpleSQLiteQuery(query))
     }
+
+    override suspend fun updateFileSize(id: String, sizeKb: Long) {
+        dao.updateSize(id, sizeKb)
+    }
+
+    override suspend fun markFileOptimized(id: String) {
+        dao.markOptimized(id)
+    }
 }
