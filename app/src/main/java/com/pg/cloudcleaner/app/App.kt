@@ -14,6 +14,7 @@ import coil3.video.VideoFrameDecoder
 import com.pg.cloudcleaner.BuildConfig
 import com.pg.cloudcleaner.app.uim3.theme.AppTheme
 import com.pg.cloudcleaner.data.db.AppDatabase
+import com.pg.cloudcleaner.utils.SavedMemoryTracker
 import timber.log.Timber
 
 
@@ -39,6 +40,7 @@ class App : Application() {
         instance = this
         initDB()
         initLibraries()
+        SavedMemoryTracker.initialize()
     }
 
     private fun initDB() {

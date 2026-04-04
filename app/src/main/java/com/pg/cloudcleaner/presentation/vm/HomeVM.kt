@@ -14,6 +14,7 @@ import com.pg.cloudcleaner.data.repository.LocalFilesRepoImpl
 import com.pg.cloudcleaner.domain.interactors.HomeUseCases
 import com.pg.cloudcleaner.helper.ReadFileWorker
 import com.pg.cloudcleaner.presentation.WorkerUIState
+import com.pg.cloudcleaner.utils.SavedMemoryTracker
 import com.pg.cloudcleaner.utils.StorageHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -111,6 +112,8 @@ class HomeVM : ViewModel() {
             .map { it * 1024 }
             .stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
     }
+
+    val totalSavedBytes: StateFlow<Long> = SavedMemoryTracker.totalSavedBytes
 
     val totalFreeableBytes: StateFlow<Long> by lazy {
         combine(imageSizeBytes, videoSizeBytes, largeSizeBytes) { img, vid, large -> img + vid + large }

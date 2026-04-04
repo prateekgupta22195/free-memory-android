@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.data.repository.LocalFilesRepoImpl
 import com.pg.cloudcleaner.domain.interactors.FileUseCases
+import com.pg.cloudcleaner.utils.SavedMemoryTracker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -28,6 +29,7 @@ open class SelectableDeletableVM : ViewModel() {
 
     fun confirmDeleteFiles() {
         viewModelScope.launch(Dispatchers.IO) {
+            val totalBytes = pendingDeleteFiles.sumOf { File(it).length() }
             withContext(Dispatchers.Main) { isDeleting.value = true }
             launch {
                 fileUseCases.deleteFiles(pendingDeleteFiles.toList())
@@ -37,6 +39,7 @@ open class SelectableDeletableVM : ViewModel() {
                     File(filePath).apply { if (exists()) delete() }
                 }
             }.join()
+            SavedMemoryTracker.addSavedBytes(totalBytes)
             delay(1000)
             withContext(Dispatchers.Main) {
                 selectedFiles.value -= pendingDeleteFiles
