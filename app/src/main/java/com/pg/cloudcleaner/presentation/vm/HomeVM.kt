@@ -18,9 +18,12 @@ import com.pg.cloudcleaner.utils.StorageHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -44,6 +47,75 @@ class HomeVM : ViewModel() {
     private var isRestarting = false
 
     private val homeUseCases by lazy { HomeUseCases(LocalFilesRepoImpl(App.instance.db.localFilesDao())) }
+
+    val duplicatesCount: StateFlow<Int> by lazy {
+        homeUseCases.getDuplicatesCount()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
+    }
+
+    val imagesCount: StateFlow<Int> by lazy {
+        homeUseCases.getLargeImagesCount()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
+    }
+
+    val videosCount: StateFlow<Int> by lazy {
+        homeUseCases.getVideosCount()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
+    }
+
+    val largeFilesCount: StateFlow<Int> by lazy {
+        homeUseCases.getLargeFilesCount()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
+    }
+
+    val duplicateThumbnails: StateFlow<List<LocalFile>> by lazy {
+        homeUseCases.getAnyThreeDuplicateGroups()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    }
+
+    val previewImageFiles: StateFlow<List<LocalFile>> by lazy {
+        homeUseCases.getLargeImageFiles(3)
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    }
+
+    val previewVideoFiles: StateFlow<List<LocalFile>> by lazy {
+        homeUseCases.getNVideoFiles(3)
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    }
+
+    val previewLargeFiles: StateFlow<List<LocalFile>> by lazy {
+        homeUseCases.getLargeFiles(3)
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    }
+
+    val imageSizeBytes: StateFlow<Long> by lazy {
+        homeUseCases.getCustomTotalSize("image/%", 5000)
+            .map { it * 1024 }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
+    }
+
+    val videoSizeBytes: StateFlow<Long> by lazy {
+        homeUseCases.getTotalSizeOfMimeType("video/%")
+            .map { it * 1024 }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
+    }
+
+    val largeSizeBytes: StateFlow<Long> by lazy {
+        homeUseCases.getTotalSizeOfLargeFiles()
+            .map { it * 1024 }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
+    }
+
+    val duplicateSizeBytes: StateFlow<Long> by lazy {
+        homeUseCases.getTotalSizeOfDuplicates()
+            .map { it * 1024 }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
+    }
+
+    val totalFreeableBytes: StateFlow<Long> by lazy {
+        combine(imageSizeBytes, videoSizeBytes, largeSizeBytes) { img, vid, large -> img + vid + large }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
+    }
 
     init {
         fetchStorageDetails()
@@ -83,15 +155,11 @@ class HomeVM : ViewModel() {
             }
         }
     }
-    fun getDuplicateThumbnails(): Flow<List<LocalFile>> {
-        return homeUseCases.getAnyThreeDuplicateGroups()
-    }
-
     fun getVideoFile(): Flow<LocalFile?> {
         return homeUseCases.getVideoFile()
     }
 
-    fun getNVideoFiles(n : Int?=null): Flow<List<LocalFile>> {
+    fun getNVideoFiles(n: Int? = null): Flow<List<LocalFile>> {
         return homeUseCases.getNVideoFiles(limit = n)
     }
 
@@ -102,29 +170,6 @@ class HomeVM : ViewModel() {
     fun getNImageFiles(n: Int? = null): Flow<List<LocalFile>> {
         return homeUseCases.getImageFiles(n)
     }
-
-    fun getTotalSizeOfMimeType(mimeType: String): Flow<Long> {
-        // returning size in kbs but we store size in mbs
-        return homeUseCases.getTotalSizeOfMimeType(mimeType).map { size -> size * 1024 }
-    }
-
-
-    fun getTotalSizeOfLargeFiles(): Flow<Long> {
-        // returning size in kbs but we store size in mbs
-        return homeUseCases.getTotalSizeOfLargeFiles().map { size -> size * 1024 }
-    }
-
-    fun getTotalSizeOfDuplicates(): Flow<Long> {
-        return homeUseCases.getTotalSizeOfDuplicates().map { size -> size * 1024 }
-    }
-
-    fun getDuplicatesCount(): Flow<Int> = homeUseCases.getDuplicatesCount()
-
-    fun getImagesCount(): Flow<Int> = homeUseCases.getImagesCount()
-
-    fun getVideosCount(): Flow<Int> = homeUseCases.getVideosCount()
-
-    fun getLargeFilesCount(): Flow<Int> = homeUseCases.getLargeFilesCount()
 
     fun restartScan() {
         isRestarting = true
@@ -137,12 +182,6 @@ class HomeVM : ViewModel() {
                 .build()
         )
     }
-
-    fun getTotalFreeableSpaceBytes(): Flow<Long> = combine(
-        homeUseCases.getTotalSizeOfMimeType("image/%"),
-        homeUseCases.getTotalSizeOfMimeType("video/%"),
-        homeUseCases.getTotalSizeOfLargeFiles()
-    ) { img, vid, large -> (img + vid + large) * 1024L }
 
     /**
      * Fetches storage details using the StorageHelper on a background thread

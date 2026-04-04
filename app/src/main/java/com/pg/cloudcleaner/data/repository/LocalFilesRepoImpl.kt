@@ -1,11 +1,12 @@
 package com.pg.cloudcleaner.data.repository
 
+import androidx.room.withTransaction
 import androidx.sqlite.db.SimpleSQLiteQuery
+import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.data.db.dao.LocalFilesDao
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.domain.repository.LocalFilesRepo
 import kotlinx.coroutines.flow.Flow
-import kotlin.math.min
 
 class LocalFilesRepoImpl(private val dao: LocalFilesDao) : LocalFilesRepo {
 
@@ -25,8 +26,10 @@ class LocalFilesRepoImpl(private val dao: LocalFilesDao) : LocalFilesRepo {
         return dao.delete(id)
     }
 
-    override fun deleteFiles(ids: List<String>) {
-        return dao.delete(ids)
+    override suspend fun deleteFiles(ids: List<String>) {
+        App.instance.db.withTransaction {
+            ids.forEach { dao.delete(it) }
+        }
     }
 
     override fun getFilesViaQuery(query: String): Flow<List<LocalFile>> {
@@ -43,6 +46,14 @@ class LocalFilesRepoImpl(private val dao: LocalFilesDao) : LocalFilesRepo {
 
     override fun getDuplicateFileIds(): Flow<List<String>> {
         return dao.getDuplicateFilesId()
+    }
+
+    override fun getDuplicateMediaFiles(): Flow<List<LocalFile>> {
+        return dao.getDuplicateMediaFiles()
+    }
+
+    override fun getDuplicateCopies(): Flow<List<LocalFile>> {
+        return dao.getDuplicateCopies()
     }
 
     override fun getFilesSizeSumViaQuery(query: String): Flow<Long> {

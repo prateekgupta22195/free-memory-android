@@ -54,7 +54,10 @@ fun FlatVideosFileManager(vm: FlatVideosFileManagerVM = viewModel()) {
             }
         }, navigationIcon = { BackNavigationIconCompose() })
     }, floatingActionButton = {
-        if (selectedModeOn.value) FlatFileManagerDeleteComposable(vm)
+        if (selectedModeOn.value) {
+            val selectedSize = (files.value?.filter { it.id in vm.selectedFiles.value }?.sumOf { it.size } ?: 0L) * 1024
+            FlatFileManagerDeleteComposable(vm, selectedSize)
+        }
     }) {
         Box(
             modifier = Modifier

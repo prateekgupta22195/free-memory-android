@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import android.text.format.Formatter
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,13 +31,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,17 +50,12 @@ import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIconCompose
 import com.pg.cloudcleaner.presentation.ui.components.SelectableFileItem
 import com.pg.cloudcleaner.presentation.ui.components.common.PopupCompose
 import com.pg.cloudcleaner.presentation.vm.FlatDuplicatesFileManagerVM
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import timber.log.Timber
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FlatFileManager(vm: FlatDuplicatesFileManagerVM = viewModel()) {
-    val scope = rememberCoroutineScope()
-    val list by remember {vm.readFiles()}.collectAsState(initial = null)
+    val list by vm.duplicateFiles.collectAsState()
 
     // Check if all groups are selected for button text
     val allGroupsSelected = list?.values?.all { group ->
@@ -75,11 +71,7 @@ fun FlatFileManager(vm: FlatDuplicatesFileManagerVM = viewModel()) {
             actions = {
                 if (!list.isNullOrEmpty()) {
                     TextButton(
-                        onClick = {
-                            scope.launch {
-                                vm.toggleAllGroups()
-                            }
-                        }
+                        onClick = { vm.toggleAllGroups() }
                     ) {
                         Text(if (allGroupsSelected == true) "Deselect All" else "Select All")
                     }
@@ -96,43 +88,58 @@ fun FlatFileManager(vm: FlatDuplicatesFileManagerVM = viewModel()) {
 
 @Composable
 fun DeleteButton(vm: FlatDuplicatesFileManagerVM = viewModel()) {
+    val context = LocalContext.current
     val selectedFileIds = remember { vm.selectedFileIds }
     val showDeleteDialog = remember { vm.showDeleteDialog }
+    val isDeleting = remember { vm.isDeleting }
+    val allFiles = vm.duplicateFiles.collectAsState().value?.values?.flatten() ?: emptyList()
+    val selectedSize = allFiles.filter { it.id in selectedFileIds.value }.sumOf { it.size } * 1024
+    val formattedSize = Formatter.formatFileSize(context, selectedSize)
 
-    val scope = rememberCoroutineScope()
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-
+    Box(modifier = Modifier.fillMaxWidth()) {
         Button(
-            onClick = {
-                scope.launch {
-                    vm.deleteFiles(selectedFileIds.value)
-                }
-            },
-            enabled = selectedFileIds.value.isNotEmpty(),
-            modifier = Modifier.align(Alignment.Center)
+            onClick = { vm.deleteFiles(selectedFileIds.value) },
+            enabled = selectedFileIds.value.isNotEmpty() && !isDeleting.value,
+            modifier = Modifier.align(Alignment.Center),
         ) {
-            Text(text = if (selectedFileIds.value.isEmpty()) "Delete" else "Delete ${selectedFileIds.value.size} Files")
+            if (selectedFileIds.value.isEmpty()) {
+                Text("Delete")
+            } else {
+                Text("Delete ${selectedFileIds.value.size} files · $formattedSize")
+            }
         }
     }
 
-    // Delete confirmation dialog
-    if (showDeleteDialog.value) {
-        PopupCompose(show = true, onPopupDismissed = { vm.cancelDelete() }) {
+    if (showDeleteDialog.value || isDeleting.value) {
+        PopupCompose(show = true, onPopupDismissed = { if (!isDeleting.value) vm.cancelDelete() }) {
             AlertDialog(
-                onDismissRequest = { vm.cancelDelete() },
-                title = { Text("Delete Files") },
+                onDismissRequest = { if (!isDeleting.value) vm.cancelDelete() },
+                title = { Text(if (isDeleting.value) "Deleting Files" else "Delete Files") },
                 text = {
-                    Text("Are you sure you want to delete ${selectedFileIds.value.size} files? You will not be able to recover them.")
-                },
-                confirmButton = {
-                    TextButton(onClick = { vm.confirmDeleteFiles() }) {
-                        Text("Delete", color = androidx.compose.ui.graphics.Color.Red)
+                    if (isDeleting.value) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("Deleting ${selectedFileIds.value.size} files, please wait...")
+                            Spacer(modifier = Modifier.height(16.dp))
+                            androidx.compose.material3.CircularProgressIndicator(
+                                color = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+                    } else {
+                        Text("Are you sure you want to delete ${selectedFileIds.value.size} files ($formattedSize)? You will not be able to recover them.")
                     }
                 },
-                dismissButton = { TextButton(onClick = { vm.cancelDelete() }) { Text("Cancel") } }
+                confirmButton = {
+                    if (!isDeleting.value) {
+                        TextButton(onClick = { vm.confirmDeleteFiles() }) {
+                            Text("Delete", color = androidx.compose.ui.graphics.Color.Red)
+                        }
+                    }
+                },
+                dismissButton = {
+                    if (!isDeleting.value) {
+                        TextButton(onClick = { vm.cancelDelete() }) { Text("Cancel") }
+                    }
+                }
             )
         }
     }
@@ -140,17 +147,11 @@ fun DeleteButton(vm: FlatDuplicatesFileManagerVM = viewModel()) {
 
 @Composable
 fun FileListView(vm: FlatDuplicatesFileManagerVM = viewModel()) {
-    val scope = rememberCoroutineScope()
-    val list = vm.readFiles().collectAsState(initial = null)
+    val list = vm.duplicateFiles.collectAsState()
 
-    LaunchedEffect(key1 = Unit, block = {
-        scope.launch(Dispatchers.IO + CoroutineExceptionHandler { a, b ->
-            Timber.d("ABc hello")
-        }) {
-            vm.selectDuplicateFiles()
-            Timber.d("hole" + Thread.currentThread().name)
-        }
-    })
+    LaunchedEffect(key1 = Unit) {
+        vm.selectDuplicateFiles()
+    }
 
     if (list.value == null) {
         DuplicatesShimmer()

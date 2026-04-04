@@ -6,13 +6,16 @@ import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.data.model.toLocalFile
 import com.pg.cloudcleaner.domain.repository.LocalFilesRepo
 import com.pg.cloudcleaner.utils.getMimeType
+import com.pg.cloudcleaner.utils.partialMd5
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
@@ -20,33 +23,68 @@ import java.util.Date
 
 class FileUseCases(private val repo: LocalFilesRepo) {
 
-    suspend fun countFiles(directoryName: String): Int = coroutineScope {
-        suspend fun countDir(dir: File): Int = withContext(Dispatchers.IO) {
-            val entries = dir.listFiles() ?: return@withContext 0
-            val fileCount = entries.count { it.isFile }
-            val subdirs = entries.filter { it.isDirectory }
-
-            if (subdirs.isEmpty()) return@withContext fileCount
-
-            // Process subdirectories in parallel
-            val subCounts = subdirs.map { subdir ->
-                async { countDir(subdir) }
-            }.awaitAll()
-
+    suspend fun countFiles(directoryName: String): Int = withContext(Dispatchers.IO) {
+        suspend fun countDir(dir: File): Int = coroutineScope {
+            val entries = dir.listFiles() ?: return@coroutineScope 0
+            var fileCount = 0
+            val subdirs = mutableListOf<File>()
+            for (entry in entries) {
+                when {
+                    entry.isFile -> fileCount++
+                    entry.isDirectory -> subdirs.add(entry)
+                }
+            }
+            val subCounts = subdirs.map { async { countDir(it) } }.awaitAll()
             fileCount + subCounts.sum()
         }
 
         val root = File(directoryName)
-        if (root.exists() && root.isDirectory) {
-            countDir(root)
-        } else 0
+        if (root.exists() && root.isDirectory) countDir(root) else 0
     }
 
     suspend fun syncAllFilesToDb(
         directoryName: String,
         onFileProcessed: (suspend () -> Unit)? = null,
-    ) {
-        exploreDirectory(directoryName, onFileProcessed)
+    ) = coroutineScope {
+        val channel = Channel<List<LocalFile>>(capacity = Channel.BUFFERED)
+
+        // Producer: traverse directories in parallel, compute partial MD5 inline
+        launch {
+            traverseDir(File(directoryName), channel)
+            channel.close()
+        }
+
+        // Consumer: each batch is its own Room transaction (no long-lived lock)
+        for (batch in channel) {
+            repo.insertAll(batch)
+            repeat(batch.size) { onFileProcessed?.invoke() }
+        }
+    }
+
+    private suspend fun traverseDir(dir: File, channel: Channel<List<LocalFile>>) {
+        if (!dir.exists() || !dir.isDirectory) return
+        val entries = dir.listFiles() ?: return
+        val fileList = mutableListOf<File>()
+        val subDirs = mutableListOf<File>()
+        for (entry in entries) {
+            when {
+                entry.isFile -> fileList.add(entry)
+                entry.isDirectory -> subDirs.add(entry)
+            }
+        }
+
+        if (fileList.isNotEmpty()) {
+            val batch = coroutineScope {
+                fileList.map { file ->
+                    async(Dispatchers.IO) { file.toLocalFile(duplicate = false, md5 = file.partialMd5()) }
+                }.awaitAll()
+            }
+            channel.send(batch)
+        }
+
+        coroutineScope {
+            subDirs.forEach { subDir -> launch { traverseDir(subDir, channel) } }
+        }
     }
 
     suspend fun getFileById(fileId: String): LocalFile? {
@@ -57,7 +95,7 @@ class FileUseCases(private val repo: LocalFilesRepo) {
         return repo.deleteFile(fileIdentity)
     }
 
-    fun deleteFiles(ids: List<String>) {
+    suspend fun deleteFiles(ids: List<String>) {
         return repo.deleteFiles(ids)
     }
 
@@ -77,8 +115,21 @@ class FileUseCases(private val repo: LocalFilesRepo) {
         return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE 'image/%' ORDER BY id")
     }
 
+    fun getLargeImageFiles(): Flow<List<LocalFile>> {
+        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE 'image/%' AND size > 5000 ORDER BY id")
+    }
+
     fun getDuplicateFileIds(): Flow<List<String>> {
         return repo.getDuplicateFileIds()
+    }
+
+    fun getDuplicateMediaFiles(): Flow<Map<String, List<LocalFile>>> {
+        return repo.getDuplicateMediaFiles()
+            .map { files -> files.groupBy { it.md5CheckSum!! } }
+    }
+
+    fun getDuplicateCopies(): Flow<List<LocalFile>> {
+        return repo.getDuplicateCopies()
     }
 
     suspend fun getFilesByCategory(category: String): List<LocalFile> {
@@ -122,37 +173,4 @@ class FileUseCases(private val repo: LocalFilesRepo) {
                 }"
     }
 
-    private suspend fun exploreDirectory(
-        directoryPath: String,
-        onFileProcessed: (suspend () -> Unit)? = null,
-    ) = coroutineScope {
-        val directoryQueue = ArrayDeque<File>()
-        val initialDir = File(directoryPath)
-
-        if (initialDir.exists() && initialDir.isDirectory) {
-            directoryQueue.add(initialDir)
-        }
-
-        while (directoryQueue.isNotEmpty()) {
-            val currentDir = directoryQueue.removeFirstOrNull() ?: continue
-            val files = currentDir.listFiles() ?: continue
-
-            val localFiles = files.filter { it.isFile }.map { it.toLocalFile(duplicate = false, md5 = null) }
-
-            localFiles.chunked(100).forEach { chunk ->
-                try {
-                    repo.insertAll(chunk)
-                    repeat(chunk.size) { onFileProcessed?.invoke() }
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (e: Exception) {
-                    Timber.e(e, "Failed to insert files in: ${currentDir.absolutePath}")
-                }
-            }
-
-            files.filter { it.isDirectory }.forEach { subDir ->
-                directoryQueue.add(subDir)
-            }
-        }
-    }
 }

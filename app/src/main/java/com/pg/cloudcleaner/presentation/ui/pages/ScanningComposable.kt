@@ -28,9 +28,10 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,10 +50,16 @@ fun ScanningComposable(
     message: String,
     vm: HomeVM = viewModel(),
 ) {
-    val duplicatesCount by remember { vm.getDuplicatesCount() }.collectAsState(initial = 0)
-    val imagesCount by remember { vm.getImagesCount() }.collectAsState(initial = 0)
-    val largeFilesCount by remember { vm.getLargeFilesCount() }.collectAsState(initial = 0)
-    val videosCount by remember { vm.getVideosCount() }.collectAsState(initial = 0)
+    val duplicatesCount by vm.duplicatesCount.collectAsState()
+    val imagesCount by vm.imagesCount.collectAsState()
+    val largeFilesCount by vm.largeFilesCount.collectAsState()
+    val videosCount by vm.videosCount.collectAsState()
+
+    val view = LocalView.current
+    DisposableEffect(Unit) {
+        view.keepScreenOn = true
+        onDispose { view.keepScreenOn = false }
+    }
 
     Column(
         modifier = Modifier
@@ -107,7 +114,7 @@ fun ScanningComposable(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "Scanning your device for files you can delete",
+                    text = "Please wait, scanning your device for files you can delete",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -166,13 +173,13 @@ fun ScanningComposable(
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 ScanCategoryRow(
-                    label = "Duplicate Photos",
+                    label = "Duplicate Media",
                     count = duplicatesCount,
                     accentColor = MaterialTheme.colorScheme.primary,
                     icon = Icons.Outlined.ContentCopy,
                 )
                 ScanCategoryRow(
-                    label = "Images",
+                    label = "Large Images",
                     count = imagesCount,
                     accentColor = MaterialTheme.colorScheme.tertiary,
                     icon = Icons.Outlined.Image,

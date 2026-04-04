@@ -1,14 +1,15 @@
 package com.pg.cloudcleaner.helper
 
 import android.content.Context
+import androidx.room.withTransaction
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.pg.cloudcleaner.app.App
-import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.utils.md5
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.coroutineScope
 import timber.log.Timber
 import java.io.File
@@ -37,17 +38,18 @@ class UpdateChecksumWorker(context: Context, workerParameters: WorkerParameters)
 
             try {
                 coroutineScope {
-                    val updatedFiles = filesToUpdate.map { localFile ->
+                    val updates = filesToUpdate.map { localFile ->
                         async(Dispatchers.IO) {
-                            val md5 = File(localFile.id).md5() ?: ""
-                            LocalFile(localFile.fileType, localFile.modifiedTime, localFile.fileName, localFile.size, md5, localFile.id, localFile.duplicate)
+                            Pair(localFile.id, File(localFile.id).md5() ?: "")
                         }
                     }.awaitAll()
 
-                    if (updatedFiles.isNotEmpty()) {
-                        dao.insertAll(updatedFiles)
+                    App.instance.db.withTransaction {
+                        updates.forEach { (id, md5) -> dao.updateMd5(id, md5) }
                     }
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 Timber.e(e, "Error processing batch.")
                 return Result.retry()

@@ -14,7 +14,7 @@ interface LocalFilesRepo {
 
     suspend fun deleteFile(id: String)
 
-    fun deleteFiles(ids: List<String>)
+    suspend fun deleteFiles(ids: List<String>)
 
     fun getFilesViaQuery(query: String): Flow<List<LocalFile>>
 
@@ -23,6 +23,10 @@ interface LocalFilesRepo {
     suspend fun getFileById(id: String): LocalFile?
 
     fun getDuplicateFileIds() : Flow<List<String>>
+
+    fun getDuplicateMediaFiles(): Flow<List<LocalFile>>
+
+    fun getDuplicateCopies(): Flow<List<LocalFile>>
 
     fun getFilesSizeSumViaQuery(query: String): Flow<Long>
 
