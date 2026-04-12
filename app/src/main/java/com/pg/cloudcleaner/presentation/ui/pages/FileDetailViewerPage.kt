@@ -1,26 +1,28 @@
 package com.pg.cloudcleaner.presentation.ui.pages
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButtonDefaults.Icon
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -30,10 +32,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -46,19 +46,15 @@ import com.pg.cloudcleaner.presentation.ui.components.common.thumbnail.OtherFile
 import com.pg.cloudcleaner.presentation.vm.FileDetailViewerVM
 import com.pg.cloudcleaner.utils.isFileImage
 import com.pg.cloudcleaner.utils.isFileVideo
-import kotlinx.coroutines.launch
-
-// ... (keep existing imports)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FileDetailViewerCompose(
     filePath: String,
-    category: String, // Add category as a parameter
-    md5: String? = null, // Add optional MD5 parameter
+    category: String,
+    md5: String? = null,
     vm: FileDetailViewerVM = viewModel()
 ) {
-    // 1. Load the list of files for this category or duplicate group
     LaunchedEffect(category, md5) {
         if (category == "category_duplicates" && md5 != null) {
             vm.loadFilesByMd5(md5)
@@ -68,17 +64,15 @@ fun FileDetailViewerCompose(
     }
 
     val files by vm.categoryFiles.collectAsState()
-    val currentFiles = files // stable snapshot for sub-compositions
+    val currentFiles = files
 
-    // 2. Setup Pager State
     val pagerState = rememberPagerState(
         initialPage = 0,
-        pageCount = { currentFiles.size }
+        pageCount = { currentFiles?.size ?: 0 }
     )
 
-    // Update pager to the correct page when files are loaded
     LaunchedEffect(currentFiles, filePath) {
-        if (currentFiles.isNotEmpty()) {
+        if (!currentFiles.isNullOrEmpty()) {
             val index = currentFiles.indexOfFirst { it.id == filePath }
             if (index != -1 && index != pagerState.currentPage) {
                 pagerState.animateScrollToPage(index)
@@ -87,36 +81,52 @@ fun FileDetailViewerCompose(
     }
 
     val infoPopUpVisibility = remember { mutableStateOf(false) }
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
     val navigator = remember { App.instance.navController() }
-    val showDeleteDialog = remember { mutableStateOf(false) }
+    val showDeleteDialog = remember { vm.showDeleteDialog }
+    val isDeleting = remember { vm.isDeleting }
 
-    // Logic for deleting the CURRENT file in view
-    val currentFile = currentFiles.getOrNull(pagerState.currentPage)
+    val currentFile = currentFiles?.getOrNull(pagerState.currentPage)
 
-    if (showDeleteDialog.value && currentFile != null) {
-        AlertDialog(
-            onDismissRequest = { showDeleteDialog.value = false },
-            title = { Text("Delete File") },
-            text = { Text("Are you sure you want to delete ${currentFile.fileName}?") },
-            confirmButton = {
-                TextButton(onClick = {
-                    showDeleteDialog.value = false
-                    scope.launch {
-                        vm.deleteFile(currentFile.id)
-                        snackbarHostState.showSnackbar("Deleted!")
-                        // If it was the last file, go back
-                        if (currentFiles.size <= 1) navigator.navigateUp()
+    if (showDeleteDialog.value || isDeleting.value) {
+        PopupCompose(show = true, onPopupDismissed = { if (!isDeleting.value) vm.cancelDelete() }) {
+            AlertDialog(
+                onDismissRequest = { if (!isDeleting.value) vm.cancelDelete() },
+                title = { Text(if (isDeleting.value) "Deleting…" else "Delete File") },
+                text = {
+                    if (isDeleting.value) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                        ) {
+                            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                            Text("Please wait…")
+                        }
+                    } else {
+                        Text("Are you sure you want to delete ${currentFile?.fileName}? You will not be able to recover it.")
                     }
-                }) { Text("Delete", color = Color.Red) }
-            },
-            dismissButton = { TextButton(onClick = { showDeleteDialog.value = false }) { Text("Cancel") } }
-        )
+                },
+                confirmButton = {
+                    if (!isDeleting.value) {
+                        TextButton(onClick = {
+                            currentFile?.let { file ->
+                                vm.confirmDelete(file.id) {
+                                    if ((currentFiles?.size ?: 0) <= 1) navigator.navigateUp()
+                                }
+                            }
+                        }) { Text("Delete", color = MaterialTheme.colorScheme.error) }
+                    }
+                },
+                dismissButton = {
+                    if (!isDeleting.value) {
+                        TextButton(onClick = { vm.cancelDelete() }) { Text("Cancel") }
+                    }
+                }
+            )
+        }
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(currentFile?.fileName ?: "", fontSize = 14.sp) },
@@ -135,7 +145,7 @@ fun FileDetailViewerCompose(
                             contentDescription = "delete",
                             modifier = Modifier
                                 .padding(8.dp)
-                                .clickable { showDeleteDialog.value = true }
+                                .clickable { vm.requestDelete() }
                         )
                     }
                 },
@@ -143,15 +153,18 @@ fun FileDetailViewerCompose(
         }
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-            // 3. The Pager implementation
+            if (currentFiles == null) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                return@Scaffold
+            }
+
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize(),
-                pageSpacing = 16.dp // Visual gap between files
+                pageSpacing = 16.dp
             ) { pageIndex ->
                 val file = currentFiles.getOrNull(pageIndex) ?: return@HorizontalPager
 
-                // Display content based on file type (Extracted logic)
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     when {
                         isFileImage(file.fileType) -> ImageViewer(file.id)
@@ -171,7 +184,6 @@ fun FileDetailViewerCompose(
                 }
             }
 
-            // Info Popup for the specific file currently visible
             if (infoPopUpVisibility.value && currentFile != null) {
                 PopupCompose(show = true, onPopupDismissed = { infoPopUpVisibility.value = false }) {
                     Card(modifier = Modifier.width(300.dp)) {

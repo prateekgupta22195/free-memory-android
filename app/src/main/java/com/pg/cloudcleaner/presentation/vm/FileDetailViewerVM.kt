@@ -7,10 +7,14 @@ import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.data.repository.LocalFilesRepoImpl
 import com.pg.cloudcleaner.domain.interactors.FileUseCases
 import com.pg.cloudcleaner.utils.SavedMemoryTracker
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class FileDetailViewerVM : ViewModel() {
@@ -19,20 +23,29 @@ class FileDetailViewerVM : ViewModel() {
 
     private val fileUseCases = FileUseCases(LocalFilesRepoImpl(App.instance.db.localFilesDao()))
 
-    private val _categoryFiles = MutableStateFlow<List<LocalFile>>(emptyList())
-    val categoryFiles: StateFlow<List<LocalFile>> = _categoryFiles
+    private val _categoryFiles = MutableStateFlow<List<LocalFile>?>(null)
+    val categoryFiles: StateFlow<List<LocalFile>?> = _categoryFiles
+
+    val showDeleteDialog = mutableStateOf(false)
+    val isDeleting = mutableStateOf(false)
+
+    private var filesJob: Job? = null
 
     fun loadFilesByCategory(category: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val files = fileUseCases.getFilesByCategory(category)
-            _categoryFiles.value = files
+        filesJob?.cancel()
+        filesJob = viewModelScope.launch {
+            fileUseCases.getFilesByCategory(category)
+                .flowOn(Dispatchers.IO)
+                .collect { _categoryFiles.value = it }
         }
     }
 
     fun loadFilesByMd5(md5: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val files = fileUseCases.getFilesByMd5(md5)
-            _categoryFiles.value = files
+        filesJob?.cancel()
+        filesJob = viewModelScope.launch {
+            fileUseCases.getFilesByMd5(md5)
+                .flowOn(Dispatchers.IO)
+                .collect { _categoryFiles.value = it }
         }
     }
 
@@ -41,12 +54,26 @@ class FileDetailViewerVM : ViewModel() {
         return fileUseCases.getFileById(fileId)
     }
 
-    fun deleteFile(fileId: String) {
+    fun requestDelete() {
+        showDeleteDialog.value = true
+    }
+
+    fun cancelDelete() {
+        showDeleteDialog.value = false
+    }
+
+    fun confirmDelete(fileId: String, onDeleted: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
+            withContext(Dispatchers.Main) { isDeleting.value = true }
             val sizeBytes = File(fileId).length()
-            launch { fileUseCases.deleteFile(fileId) }.join()
+            fileUseCases.deleteFile(fileId)
             File(fileId).apply { if (exists()) delete() }
             SavedMemoryTracker.addSavedBytes(sizeBytes)
+            withContext(Dispatchers.Main) {
+                isDeleting.value = false
+                showDeleteDialog.value = false
+                onDeleted()
+            }
         }
     }
 

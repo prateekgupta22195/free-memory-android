@@ -141,10 +141,8 @@ fun ScanningComposable(
                     modifier = Modifier.size(96.dp),
                 ) {
                     CircularProgressIndicator(
-                        progress = { progress / 100f },
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.secondary,
-                        trackColor = MaterialTheme.colorScheme.outlineVariant,
                         strokeWidth = 6.dp,
                         strokeCap = StrokeCap.Round,
                     )

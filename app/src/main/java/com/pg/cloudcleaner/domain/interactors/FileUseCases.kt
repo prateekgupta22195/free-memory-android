@@ -13,7 +13,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -133,22 +133,19 @@ class FileUseCases(private val repo: LocalFilesRepo) {
         return repo.getDuplicateCopies()
     }
 
-    suspend fun getFilesByCategory(category: String): List<LocalFile> {
+    fun getFilesByCategory(category: String): Flow<List<LocalFile>> {
         return when (category) {
-            "category_images" -> getImageFiles().first()
-            "category_videos" -> getVideoFiles().first()
-            "category_large_files" -> getLargeFiles().first()
-            "category_screenshots" -> getScreenshotFiles().first()
-            "category_duplicates" -> {
-                val duplicateIds = getDuplicateFileIds().first()
-                duplicateIds.mapNotNull { getFileById(it) }
-            }
-            else -> emptyList()
+            "category_images" -> getImageFiles()
+            "category_videos" -> getVideoFiles()
+            "category_large_files" -> getLargeFiles()
+            "category_screenshots" -> getScreenshotFiles()
+            "category_duplicates" -> getDuplicateCopies()
+            else -> flowOf(emptyList())
         }
     }
 
-    suspend fun getFilesByMd5(md5: String): List<LocalFile> {
-        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE md5 = '$md5'").first()
+    fun getFilesByMd5(md5: String): Flow<List<LocalFile>> {
+        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE md5 = '$md5'")
     }
 
     fun getScreenshotFiles(): Flow<List<LocalFile>> {
@@ -169,6 +166,14 @@ class FileUseCases(private val repo: LocalFilesRepo) {
 
     suspend fun markFileAsOptimised(id: String) {
         repo.markFileAsOptimised(id)
+    }
+
+    suspend fun updateSizeAndMarkAsOptimised(id: String, sizeKb: Long) {
+        repo.updateSizeAndMarkAsOptimised(id, sizeKb)
+    }
+
+    suspend fun applyOptimisationResults(results: List<Pair<String, Long?>>) {
+        repo.applyOptimisationResults(results)
     }
 
 fun getFileInfo(fileId: String): String {

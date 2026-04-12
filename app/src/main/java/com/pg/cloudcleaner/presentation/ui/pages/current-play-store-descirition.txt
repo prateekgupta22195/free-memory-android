@@ -1,0 +1,27 @@
+Unlock valuable storage on your Android device with FreeMemory – Clean Your Phone Storage. This open-source, privacy-first tool helps you reclaim space, organize your files, and keep your device running smoothly.
+
+Key Features
+
+1. Smart Duplicate File Remover
+Automatically detect and delete duplicate photos, videos, and files. Clean up clutter in seconds and enjoy a lighter, more organized gallery.
+
+2. Easy File Management
+Select and delete multiple files with ease. Sort, organize, and clean your storage using a simple, intuitive file organizer designed for efficient cleanup.
+
+3. Clean, User-Friendly Interface
+Navigate effortlessly with a modern, clutter-free design that makes managing your storage fast and frustration-free.
+
+4. Open-Source Transparency & Security
+FreeMemory is fully open-source—audited by the community for trust, transparency, and safety. Your files never leave your device.
+
+5. Fast & Reliable Performance
+Built for speed and efficiency, ensuring smooth scanning, quick cleanup, and responsive performance at every step.
+
+6. Privacy You Can Depend On
+All processing happens locally on your device. Nothing is uploaded. Nothing is shared. Your data stays yours, always.
+
+7. Constantly Improving
+Benefit from ongoing enhancements and new features driven by an active open-source community.
+
+Take control of your storage today with FreeMemory – Clean Your Phone Storage.
+Delete duplicate photos, organize your files, and free up space—quickly and effortlessly.

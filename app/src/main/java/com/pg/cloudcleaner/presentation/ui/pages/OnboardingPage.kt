@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,15 +20,25 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.BatteryFull
+import androidx.compose.material.icons.filled.Block
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.SentimentSatisfied
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -42,6 +53,7 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
@@ -69,6 +81,23 @@ private sealed interface PhoneContent {
         val mainText: String,
         val subText: String = "",
     ) : PhoneContent
+
+    data class DuplicateCard(
+        val fileCount: String,
+        val totalSize: String,
+    ) : PhoneContent
+
+    data class LargeFilesCard(
+        val totalSize: String,
+        val fileCount: String,
+    ) : PhoneContent
+
+    object MediaOptimizerCard : PhoneContent
+    object PrivacyGuardCard : PhoneContent
+    object TrulyFreeCard : PhoneContent
+    object OfflineFirstCard : PhoneContent
+    object FamilySafeCard : PhoneContent
+    object NativeThemeCard : PhoneContent
 }
 
 private fun buildSlides() = listOf(
@@ -77,12 +106,9 @@ private fun buildSlides() = listOf(
         subtitle = "Intelligently identify and remove redundant media files to free up storage instantly.",
         bgStart = Color(0xFF3A52F5),
         bgEnd = Color(0xFF1F38CC),
-        phoneContent = PhoneContent.AppUI(
-            screenTitle = "Duplicate Media",
-            accentColor = Color(0xFF3A70F5),
-            statLabel = "Potential Savings",
-            statValue = "127.5 MB",
-            statSubtext = "Found 48 duplicate files",
+        phoneContent = PhoneContent.DuplicateCard(
+            fileCount = "127",
+            totalSize = "2.4 GB",
         ),
     ),
     OnboardingSlide(
@@ -90,12 +116,9 @@ private fun buildSlides() = listOf(
         subtitle = "Find massive zip files, videos, and downloads that are taking up precious gigabytes.",
         bgStart = Color(0xFF9B27AF),
         bgEnd = Color(0xFF6A1B9A),
-        phoneContent = PhoneContent.AppUI(
-            screenTitle = "Large Files",
-            accentColor = Color(0xFF9B27AF),
-            statLabel = "Total Large Files",
-            statValue = "2.2 GB",
-            statSubtext = "Freeing this space will optimize your device",
+        phoneContent = PhoneContent.LargeFilesCard(
+            totalSize = "2.2 GB",
+            fileCount = "34",
         ),
     ),
     OnboardingSlide(
@@ -103,70 +126,42 @@ private fun buildSlides() = listOf(
         subtitle = "Identify oversized images and videos. Keep your memories, lose the storage bloat.",
         bgStart = Color(0xFF27AE60),
         bgEnd = Color(0xFF1B7D45),
-        phoneContent = PhoneContent.AppUI(
-            screenTitle = "Large Images",
-            accentColor = Color(0xFF27AE60),
-            statLabel = "Space Wasted",
-            statValue = "54.9 MB",
-            statSubtext = "",
-        ),
+        phoneContent = PhoneContent.MediaOptimizerCard,
     ),
     OnboardingSlide(
         title = "Privacy Guard",
         subtitle = "Your data stays on your tablet. No internet, no tracking. Total local security.",
         bgStart = Color(0xFF1A2035),
         bgEnd = Color(0xFF0D1322),
-        phoneContent = PhoneContent.IconDisplay(
-            icon = Icons.Filled.VerifiedUser,
-            iconBg = Color(0xFF2F80ED),
-            mainText = "Your Data,\nYour Privacy",
-        ),
+        phoneContent = PhoneContent.PrivacyGuardCard,
     ),
     OnboardingSlide(
         title = "Truly Free",
         subtitle = "No advertisements, no subscriptions, no hidden costs. A pure utility for the community.",
         bgStart = Color(0xFFE05252),
         bgEnd = Color(0xFFC0302B),
-        phoneContent = PhoneContent.IconDisplay(
-            icon = Icons.Filled.SentimentSatisfied,
-            iconBg = Color(0xFF27AE60),
-            mainText = "100% Free\nForever",
-        ),
+        phoneContent = PhoneContent.TrulyFreeCard,
     ),
     OnboardingSlide(
         title = "Offline First",
         subtitle = "Clean your device anywhere, anytime. No active internet connection or data usage required.",
         bgStart = Color(0xFF29ABE2),
         bgEnd = Color(0xFF0D7FC0),
-        phoneContent = PhoneContent.IconDisplay(
-            icon = Icons.Filled.WifiOff,
-            iconBg = Color(0xFF1E2540),
-            mainText = "No Internet\nNeeded",
-        ),
+        phoneContent = PhoneContent.OfflineFirstCard,
     ),
     OnboardingSlide(
         title = "Family Safe",
         subtitle = "Committed to Google Play Family Policy. Safe for all ages with no risky permissions.",
         bgStart = Color(0xFFE91E8C),
         bgEnd = Color(0xFF9C27B0),
-        phoneContent = PhoneContent.IconDisplay(
-            icon = Icons.Filled.Security,
-            iconBg = Color(0xFFE91E63),
-            mainText = "Play Family Policy",
-            subText = "No data collection. No tracking.",
-        ),
+        phoneContent = PhoneContent.FamilySafeCard,
     ),
     OnboardingSlide(
         title = "Native Theme",
         subtitle = "Full support for light and dark modes. Designed to look stunning on high-resolution tablet displays.",
         bgStart = Color(0xFF1A237E),
         bgEnd = Color(0xFF0D47A1),
-        phoneContent = PhoneContent.IconDisplay(
-            icon = Icons.Filled.DarkMode,
-            iconBg = Color(0xFF1565C0),
-            mainText = "Native Dark Mode",
-            subText = "A beautifully optimized dark mode",
-        ),
+        phoneContent = PhoneContent.NativeThemeCard,
     ),
 )
 
@@ -333,6 +328,576 @@ private fun PhoneMockup(modifier: Modifier = Modifier, content: PhoneContent) {
         when (content) {
             is PhoneContent.AppUI -> AppUIContent(content)
             is PhoneContent.IconDisplay -> IconDisplayContent(content)
+            is PhoneContent.DuplicateCard -> DuplicateCardContent(content)
+            is PhoneContent.LargeFilesCard -> LargeFilesCardContent(content)
+            PhoneContent.MediaOptimizerCard -> MediaOptimizerCardContent()
+            PhoneContent.PrivacyGuardCard -> PrivacyGuardCardContent()
+            PhoneContent.TrulyFreeCard -> TrulyFreeCardContent()
+            PhoneContent.OfflineFirstCard -> OfflineFirstCardContent()
+            PhoneContent.FamilySafeCard -> FamilySafeCardContent()
+            PhoneContent.NativeThemeCard -> NativeThemeCardContent()
+        }
+    }
+}
+
+@Composable
+private fun DuplicateCardContent(content: PhoneContent.DuplicateCard) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.White),
+        ) {
+            // Photo grid
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(72.dp),
+                horizontalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .background(Brush.verticalGradient(listOf(Color(0xFF4A7C59), Color(0xFF2E5E3E)))),
+                )
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .background(Brush.verticalGradient(listOf(Color(0xFF0E4D8C), Color(0xFF1A7DC4)))),
+                )
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .background(Brush.verticalGradient(listOf(Color(0xFF1A0A2E), Color(0xFF6A2085)))),
+                )
+            }
+
+            // Info row
+            Row(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .background(Color(0xFFE8F0FE), RoundedCornerShape(8.dp))
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ContentCopy,
+                        contentDescription = null,
+                        tint = Color(0xFF2F6FED),
+                        modifier = Modifier.size(15.dp),
+                    )
+                }
+                Spacer(Modifier.width(8.dp))
+                Column {
+                    Text(
+                        text = "Duplicate Photos",
+                        color = Color(0xFF1A1A1A),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = "${content.fileCount} files • ${content.totalSize}",
+                        color = Color(0xFF666666),
+                        fontSize = 8.sp,
+                    )
+                }
+            }
+
+            // Button
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .padding(bottom = 12.dp)
+                    .fillMaxWidth()
+                    .background(Color(0xFF2F6FED), RoundedCornerShape(10.dp))
+                    .padding(vertical = 8.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Text(
+                        text = "Review & Clean",
+                        color = Color.White,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(11.dp),
+                    )
+                }
+            }
+        }
+    }
+}
+
+private data class LargeFileRow(val icon: ImageVector, val iconTint: Color, val name: String, val size: String)
+
+@Composable
+private fun LargeFilesCardContent(content: PhoneContent.LargeFilesCard) {
+    val files = listOf(
+        LargeFileRow(Icons.Filled.Movie, Color(0xFFE53935), "vacation_2024.mp4", "1.2 GB"),
+        LargeFileRow(Icons.Filled.Folder, Color(0xFFFF8F00), "project_backup.zip", "650 MB"),
+        LargeFileRow(Icons.Filled.Image, Color(0xFF6A1B9A), "raw_photos.tar", "380 MB"),
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.White)
+                .padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            // Header
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "Large Files",
+                    color = Color(0xFF1A1A1A),
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Box(
+                    modifier = Modifier
+                        .background(Color(0xFFF3E5F5), RoundedCornerShape(6.dp))
+                        .padding(horizontal = 6.dp, vertical = 2.dp),
+                ) {
+                    Text(
+                        text = content.totalSize,
+                        color = Color(0xFF7B1FA2),
+                        fontSize = 8.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            }
+
+            // File rows
+            files.forEach { file ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFFF8F8F8), RoundedCornerShape(8.dp))
+                        .clip(RoundedCornerShape(8.dp))
+                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Icon(
+                            imageVector = file.icon,
+                            contentDescription = null,
+                            tint = file.iconTint,
+                            modifier = Modifier.size(14.dp),
+                        )
+                        Text(
+                            text = file.name,
+                            color = Color(0xFF333333),
+                            fontSize = 8.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                    Text(
+                        text = file.size,
+                        color = Color(0xFF888888),
+                        fontSize = 8.sp,
+                        fontWeight = FontWeight.Medium,
+                    )
+                }
+            }
+
+            // Button
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF8E24AA), RoundedCornerShape(10.dp))
+                    .padding(vertical = 8.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Text(
+                        text = "Find Large Files",
+                        color = Color.White,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(11.dp),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MediaOptimizerCardContent() {
+    Box(
+        modifier = Modifier.fillMaxSize().padding(10.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.White)
+                .padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Text("Image Optimiser", color = Color(0xFF1A1A1A), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+
+            // Before / After row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp)
+                            .background(Brush.verticalGradient(listOf(Color(0xFF4A7C59), Color(0xFF2E5E3E)))),
+                    )
+                    Text("Original", color = Color(0xFF888888), fontSize = 7.sp)
+                    Text("2.4 MB", color = Color(0xFFE53935), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                }
+                Icon(Icons.AutoMirrored.Filled.ArrowForward, null, tint = Color(0xFF27AE60), modifier = Modifier.size(18.dp).align(Alignment.CenterVertically))
+                Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp)
+                            .background(Brush.verticalGradient(listOf(Color(0xFF4A7C59), Color(0xFF2E5E3E)))),
+                    )
+                    Text("Optimised", color = Color(0xFF888888), fontSize = 7.sp)
+                    Text("580 KB", color = Color(0xFF27AE60), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+
+            // Savings bar
+            Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text("Space saved", color = Color(0xFF888888), fontSize = 7.sp)
+                    Text("76%", color = Color(0xFF27AE60), fontSize = 7.sp, fontWeight = FontWeight.Bold)
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(6.dp)
+                        .background(Color(0xFFE0E0E0), RoundedCornerShape(50))
+                        .clip(RoundedCornerShape(50)),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.76f)
+                            .fillMaxHeight()
+                            .background(Color(0xFF27AE60)),
+                    )
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF27AE60), RoundedCornerShape(10.dp))
+                    .padding(vertical = 8.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text("Optimise Now", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    Icon(Icons.AutoMirrored.Filled.ArrowForward, null, tint = Color.White, modifier = Modifier.size(11.dp))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PrivacyGuardCardContent() {
+    Box(
+        modifier = Modifier.fillMaxSize().padding(10.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.White),
+        ) {
+            // Dark header
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF0D1322))
+                    .padding(12.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Box(
+                        modifier = Modifier.size(36.dp).background(Color(0xFF2F80ED), RoundedCornerShape(10.dp)),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(Icons.Filled.VerifiedUser, null, tint = Color.White, modifier = Modifier.size(20.dp))
+                    }
+                    Text("100% Local", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+
+            // Feature rows
+            Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                listOf("No Internet Required", "No Data Collection", "No Ad Tracking").forEach { label ->
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Icon(Icons.Filled.CheckCircle, null, tint = Color(0xFF27AE60), modifier = Modifier.size(14.dp))
+                        Text(label, color = Color(0xFF333333), fontSize = 9.sp)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TrulyFreeCardContent() {
+    Box(
+        modifier = Modifier.fillMaxSize().padding(10.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.White)
+                .padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            // FREE badge
+            Box(
+                modifier = Modifier
+                    .background(Color(0xFFFFF3F3), RoundedCornerShape(50))
+                    .padding(horizontal = 20.dp, vertical = 6.dp),
+            ) {
+                Text("100% FREE", color = Color(0xFFE05252), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            }
+            Text("Forever. No catches.", color = Color(0xFF888888), fontSize = 8.sp)
+
+            // No X items
+            listOf("No Advertisements", "No Subscription", "No Hidden Costs").forEach { label ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFFFFF5F5), RoundedCornerShape(8.dp))
+                        .padding(horizontal = 10.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Icon(Icons.Filled.Block, null, tint = Color(0xFFE05252), modifier = Modifier.size(12.dp))
+                    Text(label, color = Color(0xFF333333), fontSize = 9.sp)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun OfflineFirstCardContent() {
+    Box(
+        modifier = Modifier.fillMaxSize().padding(10.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.White)
+                .padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            // Wifi-off badge
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(Color(0xFF1E2540), RoundedCornerShape(14.dp)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(Icons.Filled.WifiOff, null, tint = Color(0xFF29ABE2), modifier = Modifier.size(26.dp))
+            }
+            Text("Works Anywhere", color = Color(0xFF1A1A1A), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+
+            // Location rows
+            listOf(
+                Triple(Icons.Filled.LocationOn, Color(0xFF29ABE2), "In-flight mode"),
+                Triple(Icons.Filled.LocationOn, Color(0xFF27AE60), "Remote outdoors"),
+                Triple(Icons.Filled.LocationOn, Color(0xFF9B27AF), "Underground subway"),
+            ).forEach { (icon, tint, label) ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFFF4F9FF), RoundedCornerShape(8.dp))
+                        .padding(horizontal = 10.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Icon(icon, null, tint = tint, modifier = Modifier.size(12.dp))
+                    Text(label, color = Color(0xFF333333), fontSize = 9.sp)
+                    Spacer(Modifier.weight(1f))
+                    Icon(Icons.Filled.CheckCircle, null, tint = Color(0xFF27AE60), modifier = Modifier.size(12.dp))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FamilySafeCardContent() {
+    Box(
+        modifier = Modifier.fillMaxSize().padding(10.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.White)
+                .padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                Box(
+                    modifier = Modifier.size(28.dp).background(Color(0xFFFFE0F0), RoundedCornerShape(8.dp)),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(Icons.Filled.Security, null, tint = Color(0xFFE91E8C), modifier = Modifier.size(16.dp))
+                }
+                Text("Family Policy", color = Color(0xFF1A1A1A), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            }
+
+            // Star rating
+            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                repeat(5) {
+                    Icon(Icons.Filled.Star, null, tint = Color(0xFFFFB300), modifier = Modifier.size(14.dp))
+                }
+            }
+
+            // Safety items
+            listOf("Safe for all ages", "No data collection", "No risky permissions", "No ads or purchases").forEach { label ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFFFFF0F8), RoundedCornerShape(8.dp))
+                        .padding(horizontal = 10.dp, vertical = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Icon(Icons.Filled.CheckCircle, null, tint = Color(0xFFE91E8C), modifier = Modifier.size(11.dp))
+                    Text(label, color = Color(0xFF333333), fontSize = 8.sp)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun NativeThemeCardContent() {
+    Box(
+        modifier = Modifier.fillMaxSize().padding(10.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.White),
+        ) {
+            // Light / Dark split
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(90.dp),
+            ) {
+                // Light side
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .background(Color(0xFFF5F7FF)),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Icon(Icons.Filled.WifiOff, null, tint = Color(0xFFFFB300), modifier = Modifier.size(22.dp))
+                        Text("Light", color = Color(0xFF444444), fontSize = 9.sp, fontWeight = FontWeight.Medium)
+                    }
+                }
+                // Divider
+                Box(modifier = Modifier.width(1.dp).fillMaxHeight().background(Color(0xFFE0E0E0)))
+                // Dark side
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .background(Color(0xFF1A1F2E)),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Icon(Icons.Filled.DarkMode, null, tint = Color(0xFF90CAF9), modifier = Modifier.size(22.dp))
+                        Text("Dark", color = Color(0xFFCCCCCC), fontSize = 9.sp, fontWeight = FontWeight.Medium)
+                    }
+                }
+            }
+
+            // Footer
+            Column(
+                modifier = Modifier.padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Text("Follows System Theme", color = Color(0xFF1A1A1A), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                listOf("Material You design", "High-res tablet optimised").forEach { label ->
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Icon(Icons.Filled.CheckCircle, null, tint = Color(0xFF1A237E), modifier = Modifier.size(11.dp))
+                        Text(label, color = Color(0xFF666666), fontSize = 8.sp)
+                    }
+                }
+            }
         }
     }
 }

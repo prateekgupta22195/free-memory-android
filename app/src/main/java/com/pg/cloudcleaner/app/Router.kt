@@ -12,7 +12,6 @@ import com.pg.cloudcleaner.app.Routes.Companion.FLAT_LARGE_FILE_MANAGER
 import com.pg.cloudcleaner.app.Routes.Companion.FLAT_SCREENSHOTS_FILE_MANAGER
 import com.pg.cloudcleaner.app.Routes.Companion.FLAT_VIDEOS_FILE_MANAGER
 import com.pg.cloudcleaner.app.Routes.Companion.HOME
-import com.pg.cloudcleaner.app.Routes.Companion.ONBOARDING
 import com.pg.cloudcleaner.app.Routes.Companion.OPTIMISE_IMAGES
 import com.pg.cloudcleaner.presentation.ui.pages.HomeComposable
 import com.pg.cloudcleaner.presentation.ui.pages.FileDetailViewerCompose
@@ -22,19 +21,7 @@ import com.pg.cloudcleaner.presentation.ui.pages.FlatLargeFilesManager
 import com.pg.cloudcleaner.presentation.ui.pages.FlatScreenshotsFileManager
 import com.pg.cloudcleaner.presentation.ui.pages.FlatVideosFileManager
 import com.pg.cloudcleaner.presentation.ui.pages.ImageOptimiserPage
-import com.pg.cloudcleaner.presentation.ui.pages.OnboardingPage
-
-
 val router: NavGraphBuilder.() -> Unit = {
-    composable(ONBOARDING) {
-        OnboardingPage(onFinished = {
-            App.instance.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
-                .edit().putBoolean("onboarding_shown", true).apply()
-            App.instance.navController().navigate(HOME) {
-                popUpTo(ONBOARDING) { inclusive = true }
-            }
-        })
-    }
     composable(OPTIMISE_IMAGES) {
         ImageOptimiserPage()
     }

@@ -31,13 +31,6 @@ class ImageOptimiserVM : ViewModel() {
     val optimisedCount = mutableIntStateOf(0)
     val totalToOptimise = mutableIntStateOf(0)
 
-    // Called once when the list first loads to pre-select everything
-    fun initSelection(files: List<LocalFile>) {
-        if (selectedFileIds.value.isEmpty()) {
-            selectedFileIds.value = files.map { it.id }.toSet()
-        }
-    }
-
     fun toggleSelection(id: String) {
         selectedFileIds.value = if (id in selectedFileIds.value)
             selectedFileIds.value - id
@@ -68,17 +61,23 @@ class ImageOptimiserVM : ViewModel() {
                 optimisedCount.intValue = 0
             }
 
+            // Phase 1: compress files, track results — no DB writes yet
+            data class OptimiseResult(val filePath: String, val newSizeKb: Long?)
             var totalSaved = 0L
+            val results = mutableListOf<OptimiseResult>()
             toOptimise.forEach { filePath ->
                 val saved = ImageOptimizer.optimize(filePath)
                 if (saved > 0L) {
                     totalSaved += saved
-                    val newSizeKb = File(filePath).length() / 1024
-                    fileUseCases.updateFileSize(filePath, newSizeKb)
+                    results.add(OptimiseResult(filePath, File(filePath).length() / 1024))
+                } else {
+                    results.add(OptimiseResult(filePath, null))
                 }
-                fileUseCases.markFileAsOptimised(filePath)
                 withContext(Dispatchers.Main) { optimisedCount.intValue++ }
             }
+
+            // Phase 2: single transaction → one Room invalidation for the whole batch
+            fileUseCases.applyOptimisationResults(results.map { it.filePath to it.newSizeKb })
 
             SavedMemoryTracker.addSavedBytes(totalSaved)
 

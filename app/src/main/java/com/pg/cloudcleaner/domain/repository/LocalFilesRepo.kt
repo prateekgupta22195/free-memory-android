@@ -32,4 +32,6 @@ interface LocalFilesRepo {
 
     suspend fun updateFileSize(id: String, sizeKb: Long)
     suspend fun markFileAsOptimised(id: String)
+    suspend fun updateSizeAndMarkAsOptimised(id: String, sizeKb: Long)
+    suspend fun applyOptimisationResults(results: List<Pair<String, Long?>>)
 }

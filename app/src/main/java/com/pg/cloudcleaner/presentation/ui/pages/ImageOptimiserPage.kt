@@ -62,10 +62,6 @@ fun ImageOptimiserPage(vm: ImageOptimiserVM = viewModel()) {
     val isOptimising = remember { vm.isOptimising }
     val showDialog = remember { vm.showConfirmDialog }
 
-    LaunchedEffect(images) {
-        images?.let { vm.initSelection(it) }
-    }
-
     val configuration = LocalConfiguration.current
     val columns = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 3 else 6
     val thumbnailSize = configuration.screenWidthDp.dp / columns
