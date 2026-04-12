@@ -77,7 +77,7 @@ class FileUseCases(private val repo: LocalFilesRepo) {
         if (fileList.isNotEmpty()) {
             val batch = coroutineScope {
                 fileList.map { file ->
-                    async(Dispatchers.IO) { file.toLocalFile(duplicate = false, md5 = file.partialMd5()) }
+                    async(Dispatchers.IO) { file.toLocalFile(md5 = file.partialMd5()) }
                 }.awaitAll()
             }
             channel.send(batch)
@@ -120,10 +120,6 @@ class FileUseCases(private val repo: LocalFilesRepo) {
         return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE 'image/%' AND size > 5000 ORDER BY id")
     }
 
-    fun getDuplicateFileIds(): Flow<List<String>> {
-        return repo.getDuplicateFileIds()
-    }
-
     fun getDuplicateMediaFiles(): Flow<Map<String, List<LocalFile>>> {
         return repo.getDuplicateMediaFiles()
             .map { files -> files.groupBy { it.md5CheckSum!! } }
@@ -159,20 +155,7 @@ class FileUseCases(private val repo: LocalFilesRepo) {
             "SELECT * FROM localfile WHERE mimeType = 'image/jpeg' AND size > 500 AND isOptimised = 0 ORDER BY size DESC"
         ).flowOn(Dispatchers.IO)
     }
-
-    suspend fun updateFileSize(id: String, sizeKb: Long) {
-        repo.updateFileSize(id, sizeKb)
-    }
-
-    suspend fun markFileAsOptimised(id: String) {
-        repo.markFileAsOptimised(id)
-    }
-
-    suspend fun updateSizeAndMarkAsOptimised(id: String, sizeKb: Long) {
-        repo.updateSizeAndMarkAsOptimised(id, sizeKb)
-    }
-
-    suspend fun applyOptimisationResults(results: List<Pair<String, Long?>>) {
+    suspend fun applyOptimisationResults(results: List<Pair<String, Long>>) {
         repo.applyOptimisationResults(results)
     }
 

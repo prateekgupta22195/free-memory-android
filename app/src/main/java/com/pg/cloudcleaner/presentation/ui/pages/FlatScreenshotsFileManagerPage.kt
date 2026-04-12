@@ -15,8 +15,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.pg.cloudcleaner.R
 import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIconCompose
 import com.pg.cloudcleaner.presentation.ui.components.CATEGORY_SCREENSHOTS
 import com.pg.cloudcleaner.presentation.ui.components.common.flatFileManager.FlatFileManagerContent
@@ -36,13 +38,13 @@ fun FlatScreenshotsFileManager(vm: FlatScreenshotsFileManagerVM = viewModel()) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Screenshots") },
+                title = { Text(stringResource(R.string.category_screenshots)) },
                 navigationIcon = { BackNavigationIconCompose() },
                 actions = {
                     if (!selectedModeOn.value) {
-                        TextButton(onClick = { selectedModeOn.value = true }) { Text("Select") }
+                        TextButton(onClick = { selectedModeOn.value = true }) { Text(stringResource(R.string.action_select)) }
                     } else {
-                        TextButton(onClick = { selectedModeOn.value = false }) { Text("Cancel") }
+                        TextButton(onClick = { selectedModeOn.value = false }) { Text(stringResource(R.string.action_cancel)) }
                     }
                 },
             )

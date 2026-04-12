@@ -22,16 +22,10 @@ interface LocalFilesRepo {
 
     suspend fun getFileById(id: String): LocalFile?
 
-    fun getDuplicateFileIds() : Flow<List<String>>
-
     fun getDuplicateMediaFiles(): Flow<List<LocalFile>>
 
     fun getDuplicateCopies(): Flow<List<LocalFile>>
 
     fun getFilesSizeSumViaQuery(query: String): Flow<Long>
-
-    suspend fun updateFileSize(id: String, sizeKb: Long)
-    suspend fun markFileAsOptimised(id: String)
-    suspend fun updateSizeAndMarkAsOptimised(id: String, sizeKb: Long)
-    suspend fun applyOptimisationResults(results: List<Pair<String, Long?>>)
+    suspend fun applyOptimisationResults(results: List<Pair<String, Long>>)
 }

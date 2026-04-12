@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Free Memory</string>
+    <string name="google_client_id">7346449985-910if265a4nglccu79q627fo88snqfbd.apps.googleusercontent.com</string>
+
+    <!-- Permission -->
+    <string name="permission_title">需要存储权限</string>
+    <string name="permission_description">我们需要访问您的设备存储，以扫描文件并显示可清理的内容。</string>
+    <string name="permission_grant_button">授予权限</string>
+
+    <!-- Home -->
+    <string name="home_free_up_title">释放您的空间</string>
+    <string name="home_free_up_description">扫描您的设备，找出重复文件、大文件以及可安全删除的媒体文件。</string>
+    <string name="home_start_scan">开始扫描</string>
+    <string name="home_error_title">出现错误</string>
+    <string name="home_error_description">无法加载存储数据，请重新尝试扫描。</string>
+    <string name="home_scan_again">重新扫描</string>
+    <string name="home_freed_suffix">已释放</string>
+
+    <!-- Scan Complete -->
+    <string name="scan_complete_title">扫描完成</string>
+    <string name="scan_complete_subtitle">已找到可删除以释放空间的文件</string>
+    <string name="scan_total_space_label">可释放的总空间</string>
+    <string name="scan_start_cleaning">开始清理</string>
+    <string name="scan_categories_header">分类</string>
+    <string name="scan_again">重新扫描</string>
+
+    <!-- Categories -->
+    <string name="category_duplicate_media">重复媒体</string>
+    <string name="category_large_images">大图片</string>
+    <string name="category_large_videos">大视频</string>
+    <string name="category_large_files">大文件</string>
+    <string name="category_screenshots">截图</string>
+    <string name="category_optimise_images">优化图片</string>
+
+    <!-- Review -->
+    <string name="review_clean_button">查看并清理</string>
+
+    <!-- Scanning -->
+    <string name="scanning_title">正在分析存储</string>
+    <string name="scanning_default_message">正在查找不必要的文件…</string>
+    <string name="scanning_please_wait">请稍候，正在扫描可删除的文件</string>
+    <string name="scanning_found_so_far">已找到</string>
+    <string name="scanning_files_found">已找到 %d 个文件</string>
+
+    <!-- Detail / Delete -->
+    <string name="detail_delete_title">删除文件</string>
+    <string name="detail_deleting_title">正在删除…</string>
+    <string name="detail_please_wait">请稍候…</string>
+    <string name="detail_delete_confirmation">确定要删除 %s 吗？删除后将无法恢复。</string>
+    <string name="detail_delete_button">删除</string>
+
+    <!-- Actions -->
+    <string name="action_select">选择</string>
+    <string name="action_cancel">取消</string>
+    <string name="action_delete">删除</string>
+    <string name="action_deselect_all">取消全选</string>
+    <string name="action_select_all">全选</string>
+    <string name="action_skip">跳过</string>
+    <string name="action_next">下一步</string>
+    <string name="action_get_started">开始使用</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_info">信息</string>
+    <string name="cd_delete">删除</string>
+    <string name="cd_app_logo">应用图标</string>
+
+    <!-- Delete Files -->
+    <string name="delete_files_title">删除文件</string>
+    <string name="deleting_files_title">正在删除文件</string>
+    <string name="delete_files_confirmation">确定要删除 %1$d 个文件（%2$s）吗？删除后将无法恢复。</string>
+    <string name="deleting_files_progress">正在删除 %1$d 个文件，请稍候…</string>
+
+    <!-- Duplicates -->
+    <string name="duplicates_count_label">%d 个重复项</string>
+
+    <!-- Optimise -->
+    <string name="optimise_title">优化图片</string>
+    <string name="optimise_button">优化</string>
+    <string name="optimise_dialog_title">优化图片</string>
+    <string name="optimising_dialog_title">正在优化…</string>
+    <string name="optimise_progress_text">已优化 %1$d / %2$d 张图片…</string>
+    <string name="optimise_confirm_button">优化</string>
+    <string name="optimise_warning">此操作不可撤销，原始图片将被永久替换。</string>
+    <string name="optimise_all_done_title">所有图片均已优化</string>
+    <string name="optimise_all_done_subtitle">未找到大于 500 KB 的 JPEG 图片。</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_duplicate_title">重复文件清理</string>
+    <string name="onboarding_duplicate_subtitle">智能识别并删除冗余媒体文件，立即释放存储空间。</string>
+    <string name="onboarding_duplicate_photos_label">重复照片</string>
+    <string name="onboarding_large_files_title">大文件管理</string>
+    <string name="onboarding_large_files_subtitle">找出占用大量空间的 ZIP 文件、视频和下载内容。</string>
+    <string name="onboarding_find_large_files">查找大文件</string>
+    <string name="onboarding_media_optimizer_title">媒体优化</string>
+    <string name="onboarding_media_optimizer_subtitle">识别过大的图片和视频，保留珍贵回忆，告别存储臃肿。</string>
+    <string name="onboarding_image_optimiser_label">图片优化器</string>
+    <string name="onboarding_original_label">原始</string>
+    <string name="onboarding_optimised_label">已优化</string>
+    <string name="onboarding_space_saved">已节省空间</string>
+    <string name="onboarding_optimise_now">立即优化</string>
+    <string name="onboarding_privacy_title">隐私保护</string>
+    <string name="onboarding_privacy_subtitle">您的数据完全保留在设备上，无网络连接，无追踪，本地安全有保障。</string>
+    <string name="onboarding_100_local">100% 本地</string>
+    <string name="onboarding_no_internet">无需联网</string>
+    <string name="onboarding_no_data_collection">不收集数据</string>
+    <string name="onboarding_no_ad_tracking">无广告追踪</string>
+    <string name="onboarding_free_title">真正免费</string>
+    <string name="onboarding_free_subtitle">无广告、无订阅、无隐性费用，为用户打造纯粹实用的工具。</string>
+    <string name="onboarding_100_free">100% 免费</string>
+    <string name="onboarding_free_forever">永久免费，没有套路。</string>
+    <string name="onboarding_no_advertisements">无广告</string>
+    <string name="onboarding_no_subscription">无订阅</string>
+    <string name="onboarding_no_hidden_costs">无隐性费用</string>
+    <string name="onboarding_offline_title">离线优先</string>
+    <string name="onboarding_offline_subtitle">随时随地清理设备，无需网络连接，不消耗流量。</string>
+    <string name="onboarding_works_anywhere">随处可用</string>
+    <string name="onboarding_inflight">飞行模式</string>
+    <string name="onboarding_remote_outdoors">偏远户外</string>
+    <string name="onboarding_underground">地铁地下</string>
+    <string name="onboarding_family_title">适合全家</string>
+    <string name="onboarding_family_subtitle">遵守 Google Play 家庭政策，适合所有年龄段，无风险权限。</string>
+    <string name="onboarding_family_policy">家庭政策</string>
+    <string name="onboarding_safe_all_ages">适合所有年龄</string>
+    <string name="onboarding_no_risky_permissions">无风险权限</string>
+    <string name="onboarding_no_ads_or_purchases">无广告或内购</string>
+    <string name="onboarding_theme_title">原生主题</string>
+    <string name="onboarding_theme_subtitle">完整支持浅色与深色模式，专为高分辨率平板显示效果精心设计。</string>
+    <string name="onboarding_follows_system_theme">跟随系统主题</string>
+    <string name="onboarding_material_you">Material You 设计</string>
+    <string name="onboarding_tablet_optimised">高分辨率平板优化</string>
+    <string name="onboarding_light_mode">浅色</string>
+    <string name="onboarding_dark_mode">深色</string>
+</resources>

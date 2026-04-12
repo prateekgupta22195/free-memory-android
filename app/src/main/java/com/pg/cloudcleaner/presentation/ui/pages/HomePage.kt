@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -56,11 +57,11 @@ fun HomeComposable(viewModel: HomeVM = viewModel()) {
                     ) {
                         AsyncImage(
                             model = R.drawable.logo,
-                            contentDescription = "App Logo",
+                            contentDescription = stringResource(R.string.cd_app_logo),
                             modifier = Modifier.size(48.dp),
                             contentScale = ContentScale.Fit
                         )
-                        Text(text = "FreeMemory")
+                        Text(text = stringResource(R.string.app_name))
                     }
                 },
                 actions = {
@@ -96,20 +97,20 @@ fun HomeComposable(viewModel: HomeVM = viewModel()) {
                         )
                         Spacer(modifier = Modifier.height(24.dp))
                         Text(
-                            text = "Free Up Your Space",
+                            text = stringResource(R.string.home_free_up_title),
                             style = MaterialTheme.typography.headlineSmall,
                             color = MaterialTheme.colorScheme.onSurface,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Scan your device to find duplicate files, large files, and media you can safely remove.",
+                            text = stringResource(R.string.home_free_up_description),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
                         )
                         Spacer(modifier = Modifier.height(32.dp))
                         Button(onClick = { viewModel.restartScan() }) {
-                            Text("Start Scan")
+                            Text(stringResource(R.string.home_start_scan))
                         }
                     }
                 }
@@ -146,20 +147,20 @@ fun HomeComposable(viewModel: HomeVM = viewModel()) {
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "Something went wrong",
+                            text = stringResource(R.string.home_error_title),
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.onSurface,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "We couldn't load your storage data. Please try scanning again.",
+                            text = stringResource(R.string.home_error_description),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
                         )
                         Spacer(modifier = Modifier.height(24.dp))
                         Button(onClick = { viewModel.restartScan() }) {
-                            Text("Scan Again")
+                            Text(stringResource(R.string.home_scan_again))
                         }
                     }
                 }
@@ -188,7 +189,7 @@ private fun SavedMemoryBadge(savedBytes: Long) {
                 tint = MaterialTheme.colorScheme.primary,
             )
             Text(
-                text = "${Formatter.formatFileSize(context, savedBytes)} freed",
+                text = "${Formatter.formatFileSize(context, savedBytes)} ${stringResource(R.string.home_freed_suffix)}",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary,

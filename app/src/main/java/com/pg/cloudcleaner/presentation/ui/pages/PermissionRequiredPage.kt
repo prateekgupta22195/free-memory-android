@@ -27,7 +27,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.pg.cloudcleaner.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,7 +59,7 @@ fun PermissionRequiredComposable(
             Scaffold(
                 topBar = {
                     TopAppBar(
-                        title = { Text(text = "FreeMemory") },
+                        title = { Text(text = stringResource(R.string.app_name)) },
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = MaterialTheme.colorScheme.background,
                             titleContentColor = MaterialTheme.colorScheme.onBackground,
@@ -92,13 +94,13 @@ fun PermissionRequiredComposable(
                             )
 
                             Text(
-                                text = "Storage permission needed",
+                                text = stringResource(R.string.permission_title),
                                 style = MaterialTheme.typography.titleLarge,
                                 textAlign = TextAlign.Center,
                             )
 
                             Text(
-                                text = "We need access to your device storage to scan files and show you what can be cleaned.",
+                                text = stringResource(R.string.permission_description),
                                 style = MaterialTheme.typography.bodyMedium,
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -112,7 +114,7 @@ fun PermissionRequiredComposable(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = onRequestPermission,
                     ) {
-                        Text(text = "Grant permission")
+                        Text(text = stringResource(R.string.permission_grant_button))
                     }
                 }
             }

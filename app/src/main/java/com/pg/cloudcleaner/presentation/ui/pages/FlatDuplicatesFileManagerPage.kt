@@ -41,8 +41,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.pg.cloudcleaner.R
 import com.pg.cloudcleaner.app.itemSpacing
 import com.pg.cloudcleaner.app.thumbnailSize
 import com.pg.cloudcleaner.data.model.LocalFile
@@ -66,14 +68,14 @@ fun FlatFileManager(vm: FlatDuplicatesFileManagerVM = viewModel()) {
 
     Scaffold(topBar = {
         TopAppBar(
-            title = { Text(text = "Duplicate Files") },
+            title = { Text(text = stringResource(R.string.category_duplicate_media)) },
             navigationIcon = { BackNavigationIconCompose() },
             actions = {
                 if (!list.isNullOrEmpty()) {
                     TextButton(
                         onClick = { vm.toggleAllGroups() }
                     ) {
-                        Text(if (allGroupsSelected == true) "Deselect All" else "Select All")
+                        Text(if (allGroupsSelected == true) stringResource(R.string.action_deselect_all) else stringResource(R.string.action_select_all))
                     }
                 }
             }
@@ -103,7 +105,7 @@ fun DeleteButton(vm: FlatDuplicatesFileManagerVM = viewModel()) {
             modifier = Modifier.align(Alignment.Center),
         ) {
             if (selectedFileIds.value.isEmpty()) {
-                Text("Delete")
+                Text(stringResource(R.string.action_delete))
             } else {
                 Text("Delete ${selectedFileIds.value.size} files · $formattedSize")
             }
@@ -114,30 +116,30 @@ fun DeleteButton(vm: FlatDuplicatesFileManagerVM = viewModel()) {
         PopupCompose(show = true, onPopupDismissed = { if (!isDeleting.value) vm.cancelDelete() }) {
             AlertDialog(
                 onDismissRequest = { if (!isDeleting.value) vm.cancelDelete() },
-                title = { Text(if (isDeleting.value) "Deleting Files" else "Delete Files") },
+                title = { Text(if (isDeleting.value) stringResource(R.string.deleting_files_title) else stringResource(R.string.delete_files_title)) },
                 text = {
                     if (isDeleting.value) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("Deleting ${selectedFileIds.value.size} files, please wait...")
+                            Text(stringResource(R.string.deleting_files_progress, selectedFileIds.value.size))
                             Spacer(modifier = Modifier.height(16.dp))
                             androidx.compose.material3.CircularProgressIndicator(
                                 color = MaterialTheme.colorScheme.primary,
                             )
                         }
                     } else {
-                        Text("Are you sure you want to delete ${selectedFileIds.value.size} files ($formattedSize)? You will not be able to recover them.")
+                        Text(stringResource(R.string.delete_files_confirmation, selectedFileIds.value.size, formattedSize))
                     }
                 },
                 confirmButton = {
                     if (!isDeleting.value) {
                         TextButton(onClick = { vm.confirmDeleteFiles() }) {
-                            Text("Delete", color = androidx.compose.ui.graphics.Color.Red)
+                            Text(stringResource(R.string.action_delete), color = androidx.compose.ui.graphics.Color.Red)
                         }
                     }
                 },
                 dismissButton = {
                     if (!isDeleting.value) {
-                        TextButton(onClick = { vm.cancelDelete() }) { Text("Cancel") }
+                        TextButton(onClick = { vm.cancelDelete() }) { Text(stringResource(R.string.action_cancel)) }
                     }
                 }
             )
@@ -241,12 +243,12 @@ fun HorizontalDuplicateFiles(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("${data.size - 1} Duplicates")
+            Text(stringResource(R.string.duplicates_count_label, data.size - 1))
             if (data.size > 1) {
                 val buttonText = if (vm.areAllExceptFirstSelected(data)) {
-                    "Deselect All"
+                    stringResource(R.string.action_deselect_all)
                 } else {
-                    "Select All"
+                    stringResource(R.string.action_select_all)
                 }
                 TextButton(
                     onClick = { vm.toggleGroupSelection(data) }

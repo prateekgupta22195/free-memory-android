@@ -42,10 +42,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.pg.cloudcleaner.R
 import com.pg.cloudcleaner.app.itemSpacing
 import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIconCompose
 import com.pg.cloudcleaner.presentation.ui.components.SelectableFileItem
@@ -72,13 +74,13 @@ fun ImageOptimiserPage(vm: ImageOptimiserVM = viewModel()) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Optimise Images") },
+                title = { Text(stringResource(R.string.optimise_title)) },
                 navigationIcon = { BackNavigationIconCompose() },
                 actions = {
                     if (!images.isNullOrEmpty()) {
                         val allSelected = images!!.all { it.id in selectedIds.value }
                         TextButton(onClick = { vm.toggleAll(images!!) }) {
-                            Text(if (allSelected) "Deselect All" else "Select All")
+                            Text(if (allSelected) stringResource(R.string.action_deselect_all) else stringResource(R.string.action_select_all))
                         }
                     }
                 },
@@ -92,7 +94,7 @@ fun ImageOptimiserPage(vm: ImageOptimiserVM = viewModel()) {
                     modifier = Modifier.align(Alignment.Center),
                 ) {
                     if (selectedIds.value.isEmpty()) {
-                        Text("Optimise")
+                        Text(stringResource(R.string.optimise_button))
                     } else {
                         Text(
                             "Optimise ${selectedIds.value.size} ${if (selectedIds.value.size == 1) "image" else "images"}" +
@@ -141,7 +143,7 @@ fun ImageOptimiserPage(vm: ImageOptimiserVM = viewModel()) {
                 onDismissRequest = { if (!isOptimising.value) vm.cancelOptimise() },
                 shape = RoundedCornerShape(16.dp),
                 title = {
-                    Text(if (isOptimising.value) "Optimising…" else "Optimise Images")
+                    Text(if (isOptimising.value) stringResource(R.string.optimising_dialog_title) else stringResource(R.string.optimise_dialog_title))
                 },
                 text = {
                     if (isOptimising.value) {
@@ -152,7 +154,7 @@ fun ImageOptimiserPage(vm: ImageOptimiserVM = viewModel()) {
                         ) {
                             CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                             Text(
-                                "Optimised ${vm.optimisedCount.intValue} of ${vm.totalToOptimise.intValue} images…",
+                                stringResource(R.string.optimise_progress_text, vm.optimisedCount.intValue, vm.totalToOptimise.intValue),
                                 textAlign = TextAlign.Center,
                             )
                         }
@@ -165,7 +167,7 @@ fun ImageOptimiserPage(vm: ImageOptimiserVM = viewModel()) {
                                         "${Formatter.formatFileSize(context, estimatedSavings)}."
                             )
                             Text(
-                                "This action is not reversible. The original images will be permanently replaced.",
+                                stringResource(R.string.optimise_warning),
                                 color = MaterialTheme.colorScheme.error,
                                 fontWeight = FontWeight.Medium,
                             )
@@ -175,13 +177,13 @@ fun ImageOptimiserPage(vm: ImageOptimiserVM = viewModel()) {
                 confirmButton = {
                     if (!isOptimising.value) {
                         TextButton(onClick = { vm.confirmOptimise() }) {
-                            Text("Optimise", color = MaterialTheme.colorScheme.primary)
+                            Text(stringResource(R.string.optimise_confirm_button), color = MaterialTheme.colorScheme.primary)
                         }
                     }
                 },
                 dismissButton = {
                     if (!isOptimising.value) {
-                        TextButton(onClick = { vm.cancelOptimise() }) { Text("Cancel") }
+                        TextButton(onClick = { vm.cancelOptimise() }) { Text(stringResource(R.string.action_cancel)) }
                     }
                 },
             )
@@ -198,13 +200,13 @@ private fun EmptyOptimiserState() {
             modifier = Modifier.padding(32.dp),
         ) {
             Text(
-                "All images are optimised",
+                stringResource(R.string.optimise_all_done_title),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                "No JPEG images larger than 500 KB were found.",
+                stringResource(R.string.optimise_all_done_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,

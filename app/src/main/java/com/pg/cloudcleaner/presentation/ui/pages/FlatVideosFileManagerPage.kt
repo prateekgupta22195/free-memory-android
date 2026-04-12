@@ -15,8 +15,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.pg.cloudcleaner.R
 import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIconCompose
 import com.pg.cloudcleaner.presentation.ui.components.CATEGORY_VIDEOS
 import com.pg.cloudcleaner.presentation.ui.components.common.flatFileManager.FlatFileManagerContent
@@ -39,18 +41,18 @@ fun FlatVideosFileManager(vm: FlatVideosFileManagerVM = viewModel()) {
 
     Scaffold(topBar = {
         TopAppBar(title = {
-            Text(text = "Videos")
+            Text(text = stringResource(R.string.category_large_videos))
         }, actions = {
 
             if (!selectedModeOn.value) TextButton(onClick = {
                 selectedModeOn.value = true
             }) {
-                Text("Select")
+                Text(stringResource(R.string.action_select))
             }
             else TextButton(onClick = {
                 selectedModeOn.value = false
             }) {
-                Text("Cancel")
+                Text(stringResource(R.string.action_cancel))
             }
         }, navigationIcon = { BackNavigationIconCompose() })
     }, floatingActionButton = {

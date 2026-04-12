@@ -37,9 +37,6 @@ interface LocalFilesDao {
     @Query("SELECT EXISTS(SELECT 1 FROM localfile WHERE id = :id)")
     fun fileExists(id: String): Boolean
 
-    @Query("SELECT id FROM localfile WHERE duplicate = 1 AND (mimeType LIKE 'image/%' OR mimeType LIKE 'video/%')")
-    fun getDuplicateFilesId(): Flow<List<String>>
-
     @RawQuery(observedEntities = [LocalFile::class])
     fun getSumViaQuery(query: SupportSQLiteQuery): Flow<Long>
 
@@ -54,13 +51,6 @@ interface LocalFilesDao {
 
     @Query("UPDATE localfile SET md5 = :md5 WHERE id = :id")
     suspend fun updateMd5(id: String, md5: String)
-
-    @Query("UPDATE localfile SET size = :size WHERE id = :id")
-    suspend fun updateSize(id: String, size: Long)
-
-    @Query("UPDATE localfile SET isOptimised = 1 WHERE id = :id")
-    suspend fun markAsOptimised(id: String)
-
     @Query("UPDATE localfile SET size = :size, isOptimised = 1 WHERE id = :id")
     suspend fun updateSizeAndMarkAsOptimised(id: String, size: Long)
 }

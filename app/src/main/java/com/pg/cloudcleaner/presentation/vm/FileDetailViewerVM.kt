@@ -18,9 +18,6 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 class FileDetailViewerVM : ViewModel() {
-
-    var infoPopUpVisible = false
-
     private val fileUseCases = FileUseCases(LocalFilesRepoImpl(App.instance.db.localFilesDao()))
 
     private val _categoryFiles = MutableStateFlow<List<LocalFile>?>(null)
@@ -47,11 +44,6 @@ class FileDetailViewerVM : ViewModel() {
                 .flowOn(Dispatchers.IO)
                 .collect { _categoryFiles.value = it }
         }
-    }
-
-
-    suspend fun getFileById(fileId: String): LocalFile? {
-        return fileUseCases.getFileById(fileId)
     }
 
     fun requestDelete() {

@@ -62,17 +62,13 @@ class ImageOptimiserVM : ViewModel() {
             }
 
             // Phase 1: compress files, track results — no DB writes yet
-            data class OptimiseResult(val filePath: String, val newSizeKb: Long?)
+            data class OptimiseResult(val filePath: String, val newSizeKb: Long)
             var totalSaved = 0L
             val results = mutableListOf<OptimiseResult>()
             toOptimise.forEach { filePath ->
                 val saved = ImageOptimizer.optimize(filePath)
-                if (saved > 0L) {
-                    totalSaved += saved
-                    results.add(OptimiseResult(filePath, File(filePath).length() / 1024))
-                } else {
-                    results.add(OptimiseResult(filePath, null))
-                }
+                totalSaved += saved
+                results.add(OptimiseResult(filePath, File(filePath).length() / 1024))
                 withContext(Dispatchers.Main) { optimisedCount.intValue++ }
             }
 

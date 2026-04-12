@@ -45,6 +45,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
+import com.pg.cloudcleaner.R
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -100,10 +102,11 @@ private sealed interface PhoneContent {
     object NativeThemeCard : PhoneContent
 }
 
+@Composable
 private fun buildSlides() = listOf(
     OnboardingSlide(
-        title = "Duplicate Cleanup",
-        subtitle = "Intelligently identify and remove redundant media files to free up storage instantly.",
+        title = stringResource(R.string.onboarding_duplicate_title),
+        subtitle = stringResource(R.string.onboarding_duplicate_subtitle),
         bgStart = Color(0xFF3A52F5),
         bgEnd = Color(0xFF1F38CC),
         phoneContent = PhoneContent.DuplicateCard(
@@ -112,8 +115,8 @@ private fun buildSlides() = listOf(
         ),
     ),
     OnboardingSlide(
-        title = "Large File Manager",
-        subtitle = "Find massive zip files, videos, and downloads that are taking up precious gigabytes.",
+        title = stringResource(R.string.onboarding_large_files_title),
+        subtitle = stringResource(R.string.onboarding_large_files_subtitle),
         bgStart = Color(0xFF9B27AF),
         bgEnd = Color(0xFF6A1B9A),
         phoneContent = PhoneContent.LargeFilesCard(
@@ -122,43 +125,43 @@ private fun buildSlides() = listOf(
         ),
     ),
     OnboardingSlide(
-        title = "Media Optimizer",
-        subtitle = "Identify oversized images and videos. Keep your memories, lose the storage bloat.",
+        title = stringResource(R.string.onboarding_media_optimizer_title),
+        subtitle = stringResource(R.string.onboarding_media_optimizer_subtitle),
         bgStart = Color(0xFF27AE60),
         bgEnd = Color(0xFF1B7D45),
         phoneContent = PhoneContent.MediaOptimizerCard,
     ),
     OnboardingSlide(
-        title = "Privacy Guard",
-        subtitle = "Your data stays on your tablet. No internet, no tracking. Total local security.",
+        title = stringResource(R.string.onboarding_privacy_title),
+        subtitle = stringResource(R.string.onboarding_privacy_subtitle),
         bgStart = Color(0xFF1A2035),
         bgEnd = Color(0xFF0D1322),
         phoneContent = PhoneContent.PrivacyGuardCard,
     ),
     OnboardingSlide(
-        title = "Truly Free",
-        subtitle = "No advertisements, no subscriptions, no hidden costs. A pure utility for the community.",
+        title = stringResource(R.string.onboarding_free_title),
+        subtitle = stringResource(R.string.onboarding_free_subtitle),
         bgStart = Color(0xFFE05252),
         bgEnd = Color(0xFFC0302B),
         phoneContent = PhoneContent.TrulyFreeCard,
     ),
     OnboardingSlide(
-        title = "Offline First",
-        subtitle = "Clean your device anywhere, anytime. No active internet connection or data usage required.",
+        title = stringResource(R.string.onboarding_offline_title),
+        subtitle = stringResource(R.string.onboarding_offline_subtitle),
         bgStart = Color(0xFF29ABE2),
         bgEnd = Color(0xFF0D7FC0),
         phoneContent = PhoneContent.OfflineFirstCard,
     ),
     OnboardingSlide(
-        title = "Family Safe",
-        subtitle = "Committed to Google Play Family Policy. Safe for all ages with no risky permissions.",
+        title = stringResource(R.string.onboarding_family_title),
+        subtitle = stringResource(R.string.onboarding_family_subtitle),
         bgStart = Color(0xFFE91E8C),
         bgEnd = Color(0xFF9C27B0),
         phoneContent = PhoneContent.FamilySafeCard,
     ),
     OnboardingSlide(
-        title = "Native Theme",
-        subtitle = "Full support for light and dark modes. Designed to look stunning on high-resolution tablet displays.",
+        title = stringResource(R.string.onboarding_theme_title),
+        subtitle = stringResource(R.string.onboarding_theme_subtitle),
         bgStart = Color(0xFF1A237E),
         bgEnd = Color(0xFF0D47A1),
         phoneContent = PhoneContent.NativeThemeCard,
@@ -204,7 +207,7 @@ fun OnboardingPage(onFinished: () -> Unit) {
                     .padding(top = 48.dp, end = 16.dp),
             ) {
                 Text(
-                    text = "Skip",
+                    text = stringResource(R.string.action_skip),
                     color = Color.White.copy(alpha = 0.8f),
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp,
@@ -251,7 +254,7 @@ fun OnboardingPage(onFinished: () -> Unit) {
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
             ) {
                 Text(
-                    text = if (isLast) "Get Started" else "Next",
+                    text = if (isLast) stringResource(R.string.action_get_started) else stringResource(R.string.action_next),
                     color = Color(0xFF1A237E),
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
@@ -403,7 +406,7 @@ private fun DuplicateCardContent(content: PhoneContent.DuplicateCard) {
                 Spacer(Modifier.width(8.dp))
                 Column {
                     Text(
-                        text = "Duplicate Photos",
+                        text = stringResource(R.string.onboarding_duplicate_photos_label),
                         color = Color(0xFF1A1A1A),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
@@ -431,7 +434,7 @@ private fun DuplicateCardContent(content: PhoneContent.DuplicateCard) {
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = "Review & Clean",
+                        text = stringResource(R.string.review_clean_button),
                         color = Color.White,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
@@ -479,7 +482,7 @@ private fun LargeFilesCardContent(content: PhoneContent.LargeFilesCard) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Large Files",
+                    text = stringResource(R.string.category_large_files),
                     color = Color(0xFF1A1A1A),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
@@ -550,7 +553,7 @@ private fun LargeFilesCardContent(content: PhoneContent.LargeFilesCard) {
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = "Find Large Files",
+                        text = stringResource(R.string.onboarding_find_large_files),
                         color = Color.White,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
@@ -581,7 +584,7 @@ private fun MediaOptimizerCardContent() {
                 .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            Text("Image Optimiser", color = Color(0xFF1A1A1A), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.onboarding_image_optimiser_label), color = Color(0xFF1A1A1A), fontSize = 11.sp, fontWeight = FontWeight.Bold)
 
             // Before / After row
             Row(
@@ -595,7 +598,7 @@ private fun MediaOptimizerCardContent() {
                             .height(52.dp)
                             .background(Brush.verticalGradient(listOf(Color(0xFF4A7C59), Color(0xFF2E5E3E)))),
                     )
-                    Text("Original", color = Color(0xFF888888), fontSize = 7.sp)
+                    Text(stringResource(R.string.onboarding_original_label), color = Color(0xFF888888), fontSize = 7.sp)
                     Text("2.4 MB", color = Color(0xFFE53935), fontSize = 9.sp, fontWeight = FontWeight.Bold)
                 }
                 Icon(Icons.AutoMirrored.Filled.ArrowForward, null, tint = Color(0xFF27AE60), modifier = Modifier.size(18.dp).align(Alignment.CenterVertically))
@@ -606,7 +609,7 @@ private fun MediaOptimizerCardContent() {
                             .height(52.dp)
                             .background(Brush.verticalGradient(listOf(Color(0xFF4A7C59), Color(0xFF2E5E3E)))),
                     )
-                    Text("Optimised", color = Color(0xFF888888), fontSize = 7.sp)
+                    Text(stringResource(R.string.onboarding_optimised_label), color = Color(0xFF888888), fontSize = 7.sp)
                     Text("580 KB", color = Color(0xFF27AE60), fontSize = 9.sp, fontWeight = FontWeight.Bold)
                 }
             }
@@ -614,7 +617,7 @@ private fun MediaOptimizerCardContent() {
             // Savings bar
             Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Space saved", color = Color(0xFF888888), fontSize = 7.sp)
+                    Text(stringResource(R.string.onboarding_space_saved), color = Color(0xFF888888), fontSize = 7.sp)
                     Text("76%", color = Color(0xFF27AE60), fontSize = 7.sp, fontWeight = FontWeight.Bold)
                 }
                 Box(
@@ -641,7 +644,7 @@ private fun MediaOptimizerCardContent() {
                 contentAlignment = Alignment.Center,
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("Optimise Now", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.onboarding_optimise_now), color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                     Icon(Icons.AutoMirrored.Filled.ArrowForward, null, tint = Color.White, modifier = Modifier.size(11.dp))
                 }
             }
@@ -676,13 +679,13 @@ private fun PrivacyGuardCardContent() {
                     ) {
                         Icon(Icons.Filled.VerifiedUser, null, tint = Color.White, modifier = Modifier.size(20.dp))
                     }
-                    Text("100% Local", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.onboarding_100_local), color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 }
             }
 
             // Feature rows
             Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                listOf("No Internet Required", "No Data Collection", "No Ad Tracking").forEach { label ->
+                listOf(stringResource(R.string.onboarding_no_internet), stringResource(R.string.onboarding_no_data_collection), stringResource(R.string.onboarding_no_ad_tracking)).forEach { label ->
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Icon(Icons.Filled.CheckCircle, null, tint = Color(0xFF27AE60), modifier = Modifier.size(14.dp))
                         Text(label, color = Color(0xFF333333), fontSize = 9.sp)
@@ -714,12 +717,12 @@ private fun TrulyFreeCardContent() {
                     .background(Color(0xFFFFF3F3), RoundedCornerShape(50))
                     .padding(horizontal = 20.dp, vertical = 6.dp),
             ) {
-                Text("100% FREE", color = Color(0xFFE05252), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.onboarding_100_free), color = Color(0xFFE05252), fontSize = 16.sp, fontWeight = FontWeight.Bold)
             }
-            Text("Forever. No catches.", color = Color(0xFF888888), fontSize = 8.sp)
+            Text(stringResource(R.string.onboarding_free_forever), color = Color(0xFF888888), fontSize = 8.sp)
 
             // No X items
-            listOf("No Advertisements", "No Subscription", "No Hidden Costs").forEach { label ->
+            listOf(stringResource(R.string.onboarding_no_advertisements), stringResource(R.string.onboarding_no_subscription), stringResource(R.string.onboarding_no_hidden_costs)).forEach { label ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -760,13 +763,13 @@ private fun OfflineFirstCardContent() {
             ) {
                 Icon(Icons.Filled.WifiOff, null, tint = Color(0xFF29ABE2), modifier = Modifier.size(26.dp))
             }
-            Text("Works Anywhere", color = Color(0xFF1A1A1A), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.onboarding_works_anywhere), color = Color(0xFF1A1A1A), fontSize = 11.sp, fontWeight = FontWeight.Bold)
 
             // Location rows
             listOf(
-                Triple(Icons.Filled.LocationOn, Color(0xFF29ABE2), "In-flight mode"),
-                Triple(Icons.Filled.LocationOn, Color(0xFF27AE60), "Remote outdoors"),
-                Triple(Icons.Filled.LocationOn, Color(0xFF9B27AF), "Underground subway"),
+                Triple(Icons.Filled.LocationOn, Color(0xFF29ABE2), stringResource(R.string.onboarding_inflight)),
+                Triple(Icons.Filled.LocationOn, Color(0xFF27AE60), stringResource(R.string.onboarding_remote_outdoors)),
+                Triple(Icons.Filled.LocationOn, Color(0xFF9B27AF), stringResource(R.string.onboarding_underground)),
             ).forEach { (icon, tint, label) ->
                 Row(
                     modifier = Modifier
@@ -808,7 +811,7 @@ private fun FamilySafeCardContent() {
                 ) {
                     Icon(Icons.Filled.Security, null, tint = Color(0xFFE91E8C), modifier = Modifier.size(16.dp))
                 }
-                Text("Family Policy", color = Color(0xFF1A1A1A), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.onboarding_family_policy), color = Color(0xFF1A1A1A), fontSize = 11.sp, fontWeight = FontWeight.Bold)
             }
 
             // Star rating
@@ -819,7 +822,7 @@ private fun FamilySafeCardContent() {
             }
 
             // Safety items
-            listOf("Safe for all ages", "No data collection", "No risky permissions", "No ads or purchases").forEach { label ->
+            listOf(stringResource(R.string.onboarding_safe_all_ages), stringResource(R.string.onboarding_no_data_collection), stringResource(R.string.onboarding_no_risky_permissions), stringResource(R.string.onboarding_no_ads_or_purchases)).forEach { label ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -864,7 +867,7 @@ private fun NativeThemeCardContent() {
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Icon(Icons.Filled.WifiOff, null, tint = Color(0xFFFFB300), modifier = Modifier.size(22.dp))
-                        Text("Light", color = Color(0xFF444444), fontSize = 9.sp, fontWeight = FontWeight.Medium)
+                        Text(stringResource(R.string.onboarding_light_mode), color = Color(0xFF444444), fontSize = 9.sp, fontWeight = FontWeight.Medium)
                     }
                 }
                 // Divider
@@ -879,7 +882,7 @@ private fun NativeThemeCardContent() {
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Icon(Icons.Filled.DarkMode, null, tint = Color(0xFF90CAF9), modifier = Modifier.size(22.dp))
-                        Text("Dark", color = Color(0xFFCCCCCC), fontSize = 9.sp, fontWeight = FontWeight.Medium)
+                        Text(stringResource(R.string.onboarding_dark_mode), color = Color(0xFFCCCCCC), fontSize = 9.sp, fontWeight = FontWeight.Medium)
                     }
                 }
             }
@@ -890,8 +893,8 @@ private fun NativeThemeCardContent() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                Text("Follows System Theme", color = Color(0xFF1A1A1A), fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                listOf("Material You design", "High-res tablet optimised").forEach { label ->
+                Text(stringResource(R.string.onboarding_follows_system_theme), color = Color(0xFF1A1A1A), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                listOf(stringResource(R.string.onboarding_material_you), stringResource(R.string.onboarding_tablet_optimised)).forEach { label ->
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Icon(Icons.Filled.CheckCircle, null, tint = Color(0xFF1A237E), modifier = Modifier.size(11.dp))
                         Text(label, color = Color(0xFF666666), fontSize = 8.sp)

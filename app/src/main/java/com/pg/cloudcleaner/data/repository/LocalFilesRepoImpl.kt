@@ -44,10 +44,6 @@ class LocalFilesRepoImpl(private val dao: LocalFilesDao) : LocalFilesRepo {
         return dao.get(id)
     }
 
-    override fun getDuplicateFileIds(): Flow<List<String>> {
-        return dao.getDuplicateFilesId()
-    }
-
     override fun getDuplicateMediaFiles(): Flow<List<LocalFile>> {
         return dao.getDuplicateMediaFiles()
     }
@@ -60,23 +56,10 @@ class LocalFilesRepoImpl(private val dao: LocalFilesDao) : LocalFilesRepo {
         return dao.getSumViaQuery(SimpleSQLiteQuery(query))
     }
 
-    override suspend fun updateFileSize(id: String, sizeKb: Long) {
-        dao.updateSize(id, sizeKb)
-    }
-
-    override suspend fun markFileAsOptimised(id: String) {
-        dao.markAsOptimised(id)
-    }
-
-    override suspend fun updateSizeAndMarkAsOptimised(id: String, sizeKb: Long) {
-        dao.updateSizeAndMarkAsOptimised(id, sizeKb)
-    }
-
-    override suspend fun applyOptimisationResults(results: List<Pair<String, Long?>>) {
+    override suspend fun applyOptimisationResults(results: List<Pair<String, Long>>) {
         App.instance.db.withTransaction {
             results.forEach { (id, newSizeKb) ->
-                if (newSizeKb != null) dao.updateSizeAndMarkAsOptimised(id, newSizeKb)
-                else dao.markAsOptimised(id)
+                dao.updateSizeAndMarkAsOptimised(id, newSizeKb)
             }
         }
     }
