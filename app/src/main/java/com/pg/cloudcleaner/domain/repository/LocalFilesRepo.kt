@@ -31,6 +31,5 @@ interface LocalFilesRepo {
     fun getFilesSizeSumViaQuery(query: String): Flow<Long>
 
     suspend fun updateFileSize(id: String, sizeKb: Long)
-
-    suspend fun markFileOptimized(id: String)
+    suspend fun markFileAsOptimised(id: String)
 }

@@ -2,6 +2,7 @@ package com.pg.cloudcleaner.domain.interactors
 
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.domain.repository.LocalFilesRepo
+import com.pg.cloudcleaner.utils.ImageOptimizer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -129,19 +130,19 @@ class HomeUseCases(private val repo: LocalFilesRepo) {
 
     fun getOptimizableImagesCount(): Flow<Int> {
         return repo.getFilesSizeSumViaQuery(
-            "SELECT COUNT(*) FROM localfile WHERE mimeType = 'image/jpeg' AND size > 500 AND isOptimized = 0"
+            "SELECT COUNT(*) FROM localfile WHERE mimeType = 'image/jpeg' AND size > 500 AND isOptimised = 0"
         ).flowOn(Dispatchers.IO).map { it.toInt() }
     }
 
     fun getOptimizableImagesTotalSize(): Flow<Long> {
         return repo.getFilesSizeSumViaQuery(
-            "SELECT COALESCE(SUM(size), 0) FROM localfile WHERE mimeType = 'image/jpeg' AND size > 500 AND isOptimized = 0"
+            "SELECT COALESCE(SUM(size), 0) FROM localfile WHERE mimeType = 'image/jpeg' AND size > 500 AND isOptimised = 0"
         ).flowOn(Dispatchers.IO).map { it * 1024 }
     }
 
-    fun getOptimizableImagesPreview(limit: Int = 3): Flow<List<com.pg.cloudcleaner.data.model.LocalFile>> {
+    fun getOptimizableImagesPreview(limit: Int = 3): Flow<List<LocalFile>> {
         return repo.getFilesViaQuery(
-            "SELECT * FROM localfile WHERE mimeType = 'image/jpeg' AND size > 500 AND isOptimized = 0 ORDER BY size DESC LIMIT $limit"
+            "SELECT * FROM localfile WHERE mimeType = 'image/jpeg' AND size > 500 AND isOptimised = 0 ORDER BY size DESC LIMIT $limit"
         ).flowOn(Dispatchers.IO)
     }
 }

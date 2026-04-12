@@ -115,21 +115,24 @@ fun ImageOptimiserPage(vm: ImageOptimiserVM = viewModel()) {
             when {
                 images == null -> ImageOptimiserShimmer(columns, thumbnailSize)
                 images!!.isEmpty() -> EmptyOptimiserState()
-                else -> LazyVerticalGrid(
-                    columns = GridCells.Fixed(columns),
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(itemSpacing),
-                ) {
-                    items(images!!.size, key = { images!![it].id }) { index ->
-                        val file = images!![index]
-                        SelectableFileItem(
-                            file = file,
-                            thumbnailSize = thumbnailSize,
-                            isSelected = file.id in selectedIds.value,
-                            enabled = true,
-                            onCheckedChangeListener = { _ -> vm.toggleSelection(file.id) },
-                            category = "category_images",
-                        )
+                else -> {
+                    val currentImages = images!!
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(columns),
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(itemSpacing),
+                    ) {
+                        items(currentImages.size, key = { currentImages[it].id }) { index ->
+                            val file = currentImages[index]
+                            SelectableFileItem(
+                                file = file,
+                                thumbnailSize = thumbnailSize,
+                                isSelected = file.id in selectedIds.value,
+                                enabled = true,
+                                onCheckedChangeListener = { _ -> vm.toggleSelection(file.id) },
+                                category = "category_images",
+                            )
+                        }
                     }
                 }
             }

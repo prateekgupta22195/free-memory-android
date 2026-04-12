@@ -68,17 +68,18 @@ fun FileDetailViewerCompose(
     }
 
     val files by vm.categoryFiles.collectAsState()
+    val currentFiles = files // stable snapshot for sub-compositions
 
     // 2. Setup Pager State
     val pagerState = rememberPagerState(
         initialPage = 0,
-        pageCount = { files.size }
+        pageCount = { currentFiles.size }
     )
 
     // Update pager to the correct page when files are loaded
-    LaunchedEffect(files, filePath) {
-        if (files.isNotEmpty()) {
-            val index = files.indexOfFirst { it.id == filePath }
+    LaunchedEffect(currentFiles, filePath) {
+        if (currentFiles.isNotEmpty()) {
+            val index = currentFiles.indexOfFirst { it.id == filePath }
             if (index != -1 && index != pagerState.currentPage) {
                 pagerState.animateScrollToPage(index)
             }
@@ -92,7 +93,7 @@ fun FileDetailViewerCompose(
     val showDeleteDialog = remember { mutableStateOf(false) }
 
     // Logic for deleting the CURRENT file in view
-    val currentFile = if (files.isNotEmpty()) files[pagerState.currentPage] else null
+    val currentFile = currentFiles.getOrNull(pagerState.currentPage)
 
     if (showDeleteDialog.value && currentFile != null) {
         AlertDialog(
@@ -106,7 +107,7 @@ fun FileDetailViewerCompose(
                         vm.deleteFile(currentFile.id)
                         snackbarHostState.showSnackbar("Deleted!")
                         // If it was the last file, go back
-                        if (files.size <= 1) navigator.navigateUp()
+                        if (currentFiles.size <= 1) navigator.navigateUp()
                     }
                 }) { Text("Delete", color = Color.Red) }
             },
@@ -148,7 +149,7 @@ fun FileDetailViewerCompose(
                 modifier = Modifier.fillMaxSize(),
                 pageSpacing = 16.dp // Visual gap between files
             ) { pageIndex ->
-                val file = files[pageIndex]
+                val file = currentFiles.getOrNull(pageIndex) ?: return@HorizontalPager
 
                 // Display content based on file type (Extracted logic)
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

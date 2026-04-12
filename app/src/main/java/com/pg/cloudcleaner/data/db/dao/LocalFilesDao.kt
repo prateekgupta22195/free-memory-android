@@ -58,6 +58,6 @@ interface LocalFilesDao {
     @Query("UPDATE localfile SET size = :size WHERE id = :id")
     suspend fun updateSize(id: String, size: Long)
 
-    @Query("UPDATE localfile SET isOptimized = 1 WHERE id = :id")
-    suspend fun markOptimized(id: String)
+    @Query("UPDATE localfile SET isOptimised = 1 WHERE id = :id")
+    suspend fun markAsOptimised(id: String)
 }

@@ -2,6 +2,7 @@ package com.pg.cloudcleaner.utils
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.exifinterface.media.ExifInterface
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -9,6 +10,7 @@ import java.io.FileOutputStream
 object ImageOptimizer {
 
     const val QUALITY = 80
+    internal const val EXIF_MARKER = "cc_optimised"
 
     // Returns bytes saved (original − new size), or 0 if optimization failed / not beneficial.
     fun optimize(filePath: String): Long {
@@ -25,14 +27,16 @@ object ImageOptimizer {
             bitmap.recycle()
 
             val newSize = tempFile.length()
-            if (newSize in 1 until originalSize) {
+            return if (newSize < originalSize) {
                 tempFile.renameTo(file)
+                markAsOptimised(filePath)
                 originalSize - newSize
             } else {
                 tempFile.delete()
+                markAsOptimised(filePath)
                 0L
             }
-        } catch (e: OutOfMemoryError) {
+        } catch (_: OutOfMemoryError) {
             Timber.w("OOM optimizing $filePath, skipping")
             tempFile.delete()
             0L
@@ -40,6 +44,16 @@ object ImageOptimizer {
             Timber.e(e, "Failed to optimize $filePath")
             tempFile.delete()
             0L
+        }
+    }
+
+    private fun markAsOptimised(filePath: String) {
+        try {
+            val exif = ExifInterface(filePath)
+            exif.setAttribute(ExifInterface.TAG_USER_COMMENT, EXIF_MARKER)
+            exif.saveAttributes()
+        } catch (e: Exception) {
+            Timber.w(e, "Failed to write optimised marker to $filePath")
         }
     }
 

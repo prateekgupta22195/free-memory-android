@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import com.pg.cloudcleaner.utils.getMimeType
+import com.pg.cloudcleaner.utils.readIsOptimised
 import com.pg.cloudcleaner.utils.size
 import java.io.File
 
@@ -16,14 +17,13 @@ open class LocalFile(
     @ColumnInfo(name = "size") @SerializedName("size") val size: Long,
     @ColumnInfo(name = "md5", index = true) @SerializedName("md5") val md5CheckSum: String?,
     @PrimaryKey @SerializedName("id") val id: String,
-    @ColumnInfo(
-        name = "duplicate",
-    ) @SerializedName("duplicate") val duplicate: Boolean,
-    @ColumnInfo(name = "isOptimized", defaultValue = "0") val isOptimized: Boolean = false,
+    @ColumnInfo(name = "duplicate") @SerializedName("duplicate") val duplicate: Boolean,
+    @ColumnInfo(name = "isOptimised", defaultValue = "0") @SerializedName("isOptimised") val isOptimised: Boolean = false,
 )
 
 fun File.toLocalFile(duplicate: Boolean, md5: String?): LocalFile {
     return LocalFile(
-        getMimeType(absolutePath), lastModified(), name, size(), md5, absolutePath, duplicate
+        getMimeType(absolutePath), lastModified(), name, size(), md5, absolutePath, duplicate,
+        isOptimised = readIsOptimised()
     )
 }

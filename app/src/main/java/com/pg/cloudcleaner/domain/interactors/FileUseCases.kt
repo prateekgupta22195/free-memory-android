@@ -159,7 +159,7 @@ class FileUseCases(private val repo: LocalFilesRepo) {
 
     fun getOptimizableImages(): Flow<List<LocalFile>> {
         return repo.getFilesViaQuery(
-            "SELECT * FROM localfile WHERE mimeType = 'image/jpeg' AND size > 500 AND isOptimized = 0 ORDER BY size DESC"
+            "SELECT * FROM localfile WHERE mimeType = 'image/jpeg' AND size > 500 AND isOptimised = 0 ORDER BY size DESC"
         ).flowOn(Dispatchers.IO)
     }
 
@@ -167,11 +167,11 @@ class FileUseCases(private val repo: LocalFilesRepo) {
         repo.updateFileSize(id, sizeKb)
     }
 
-    suspend fun markFileOptimized(id: String) {
-        repo.markFileOptimized(id)
+    suspend fun markFileAsOptimised(id: String) {
+        repo.markFileAsOptimised(id)
     }
 
-    fun getFileInfo(fileId: String): String {
+fun getFileInfo(fileId: String): String {
 
         val file = File(fileId)
 

@@ -242,21 +242,6 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
                     App.instance.navController().navigate(Routes.FLAT_VIDEOS_FILE_MANAGER)
                 },
             )
-
-            // Screenshots
-            if (screenshotsCount > 0) {
-                ScanResultCategoryCard(
-                    title = "Screenshots",
-                    subtitle = "$screenshotsCount files • ${Formatter.formatFileSize(context, screenshotsSizeBytes)}",
-                    accentColor = MaterialTheme.colorScheme.secondary,
-                    icon = Icons.Outlined.Screenshot,
-                    thumbnails = screenshotsThumbnails,
-                    onReviewClick = {
-                        App.instance.navController().navigate(Routes.FLAT_SCREENSHOTS_FILE_MANAGER)
-                    },
-                )
-            }
-
             // Large Files
             ScanResultCategoryCard(
                 title = "Large Files",
@@ -269,20 +254,30 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
                 },
             )
 
+            // Screenshots
+            ScanResultCategoryCard(
+                title = "Screenshots",
+                subtitle = "$screenshotsCount files • ${Formatter.formatFileSize(context, screenshotsSizeBytes)}",
+                accentColor = MaterialTheme.colorScheme.secondary,
+                icon = Icons.Outlined.Screenshot,
+                thumbnails = screenshotsThumbnails,
+                onReviewClick = {
+                    App.instance.navController().navigate(Routes.FLAT_SCREENSHOTS_FILE_MANAGER)
+                },
+            )
+
             // Image Optimiser
-            if (optimizableCount > 0) {
-                val estimatedSavings = (optimizableSizeBytes * 0.5).toLong()
-                ScanResultCategoryCard(
-                    title = "Optimise Images",
-                    subtitle = "$optimizableCount JPEG ${if (optimizableCount == 1) "image" else "images"} • ~${Formatter.formatFileSize(context, estimatedSavings)} potential savings",
-                    accentColor = MaterialTheme.colorScheme.tertiary,
-                    icon = Icons.Outlined.AutoFixHigh,
-                    thumbnails = optimizablePreview,
-                    onReviewClick = {
-                        App.instance.navController().navigate(Routes.OPTIMISE_IMAGES)
-                    },
-                )
-            }
+            val estimatedSavings = (optimizableSizeBytes * 0.5).toLong()
+            ScanResultCategoryCard(
+                title = "Optimise Images",
+                subtitle = "$optimizableCount JPEG ${if (optimizableCount == 1) "image" else "images"} • ~${Formatter.formatFileSize(context, estimatedSavings)} potential savings",
+                accentColor = MaterialTheme.colorScheme.tertiary,
+                icon = Icons.Outlined.AutoFixHigh,
+                thumbnails = optimizablePreview,
+                onReviewClick = {
+                    App.instance.navController().navigate(Routes.OPTIMISE_IMAGES)
+                },
+            )
         }
         Spacer(modifier = Modifier.height(24.dp))
 

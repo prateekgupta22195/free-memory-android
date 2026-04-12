@@ -9,7 +9,6 @@ import com.pg.cloudcleaner.data.repository.LocalFilesRepoImpl
 import com.pg.cloudcleaner.domain.interactors.FileUseCases
 import com.pg.cloudcleaner.utils.SavedMemoryTracker
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -135,7 +134,6 @@ class FlatDuplicatesFileManagerVM : ViewModel() {
                 duplicateFiles.first { it != snapshotBeforeDelete }
             }
             val validIds = updatedGroups?.values?.flatten()?.map { it.id }?.toSet() ?: emptySet()
-            delay(5000)
             withContext(Dispatchers.Main) {
                 selectedFileIds.value = selectedFileIds.value.intersect(validIds)
                 uncheckedFiles.removeAll(pendingDeleteFiles)

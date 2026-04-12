@@ -8,7 +8,6 @@ import com.pg.cloudcleaner.data.repository.LocalFilesRepoImpl
 import com.pg.cloudcleaner.domain.interactors.FileUseCases
 import com.pg.cloudcleaner.utils.SavedMemoryTracker
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -40,7 +39,6 @@ open class SelectableDeletableVM : ViewModel() {
                 }
             }.join()
             SavedMemoryTracker.addSavedBytes(totalBytes)
-            delay(1000)
             withContext(Dispatchers.Main) {
                 selectedFiles.value -= pendingDeleteFiles
                 pendingDeleteFiles = emptySet()

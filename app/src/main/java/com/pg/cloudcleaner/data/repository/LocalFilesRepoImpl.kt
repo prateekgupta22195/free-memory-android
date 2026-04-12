@@ -64,7 +64,7 @@ class LocalFilesRepoImpl(private val dao: LocalFilesDao) : LocalFilesRepo {
         dao.updateSize(id, sizeKb)
     }
 
-    override suspend fun markFileOptimized(id: String) {
-        dao.markOptimized(id)
+    override suspend fun markFileAsOptimised(id: String) {
+        dao.markAsOptimised(id)
     }
 }

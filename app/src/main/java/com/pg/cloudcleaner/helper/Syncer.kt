@@ -77,7 +77,6 @@ class ReadFileWorker(private val context: Context, workerParameters: WorkerParam
                 val progress = if (totalFiles > 0) (processed * 100 / totalFiles).coerceIn(0, 100) else 0
                 if (lastReportedProgress.getAndSet(progress) != progress) {
                     setProgress(workDataOf(KEY_PROGRESS_MESSAGE to "Scanning files...", KEY_PROGRESS to progress))
-                    kotlinx.coroutines.delay(500)
                 }
             }
         }

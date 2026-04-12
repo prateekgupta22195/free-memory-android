@@ -76,7 +76,7 @@ class ImageOptimiserVM : ViewModel() {
                     val newSizeKb = File(filePath).length() / 1024
                     fileUseCases.updateFileSize(filePath, newSizeKb)
                 }
-                fileUseCases.markFileOptimized(filePath)
+                fileUseCases.markFileAsOptimised(filePath)
                 withContext(Dispatchers.Main) { optimisedCount.intValue++ }
             }
 
