@@ -15,7 +15,6 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.StyledPlayerView
-import timber.log.Timber
 
 @Composable
 fun VideoPlayer(videoUrl: String) {
@@ -48,9 +47,10 @@ fun VideoPlayer(videoUrl: String) {
 
     DisposableEffect(Unit) {
         onDispose {
-            // Release the player when the composable is disposed
-            Timber.d("delete ")
-            player?.release()
+            player?.run {
+                stop()
+                release()
+            }
         }
     }
 }

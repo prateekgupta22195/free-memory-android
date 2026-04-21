@@ -35,6 +35,7 @@ import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.CloudCleanerApp
 import com.pg.cloudcleaner.helper.ReadFileWorker
 import com.pg.cloudcleaner.helper.UpdateChecksumWorker
+import com.pg.cloudcleaner.presentation.ui.pages.OnboardingPage
 import com.pg.cloudcleaner.presentation.ui.pages.PermissionRequiredComposable
 import java.util.concurrent.TimeUnit
 
@@ -66,7 +67,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        val prefs = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+        val onboardingShownState = mutableStateOf(prefs.getBoolean("onboarding_shown", false))
+
         setContent {
+            val onboardingShown by onboardingShownState
             val hasStoragePermission by hasStoragePermissionState
 
             LaunchedEffect(hasStoragePermission) {
@@ -75,16 +80,25 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            if (!hasStoragePermission) {
-                PermissionRequiredComposable(
-                    onRequestPermission = { seekStoragePermission() },
-                    onRefreshPermissionState = {
-                        hasStoragePermissionState.value = isStoragePermissionGranted()
-                    }
-                )
-            } else {
-                App.instance.initNavController(rememberNavController())
-                CloudCleanerApp()
+            when {
+                !onboardingShown -> {
+                    OnboardingPage(onFinished = {
+                        prefs.edit().putBoolean("onboarding_shown", true).apply()
+                        onboardingShownState.value = true
+                    })
+                }
+                !hasStoragePermission -> {
+                    PermissionRequiredComposable(
+                        onRequestPermission = { seekStoragePermission() },
+                        onRefreshPermissionState = {
+                            hasStoragePermissionState.value = isStoragePermissionGranted()
+                        }
+                    )
+                }
+                else -> {
+                    App.instance.initNavController(rememberNavController())
+                    CloudCleanerApp(startDestination = com.pg.cloudcleaner.app.Routes.HOME)
+                }
             }
         }
 

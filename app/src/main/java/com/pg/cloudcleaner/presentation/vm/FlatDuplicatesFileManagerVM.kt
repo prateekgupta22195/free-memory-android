@@ -7,8 +7,8 @@ import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.data.repository.LocalFilesRepoImpl
 import com.pg.cloudcleaner.domain.interactors.FileUseCases
+import com.pg.cloudcleaner.utils.SavedMemoryTracker
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -97,8 +97,10 @@ class FlatDuplicatesFileManagerVM : ViewModel() {
 
     fun deleteFile(localFile: LocalFile) {
         viewModelScope.launch(Dispatchers.IO) {
+            val sizeBytes = File(localFile.id).length()
             launch { fileUseCases.deleteFile(localFile.id) }.join()
             File(localFile.id).apply { if (exists()) delete() }
+            SavedMemoryTracker.addSavedBytes(sizeBytes)
             withContext(Dispatchers.Main) {
                 selectedFileIds.value -= localFile.id
                 uncheckedFiles.remove(localFile.id)
@@ -113,6 +115,7 @@ class FlatDuplicatesFileManagerVM : ViewModel() {
 
     fun confirmDeleteFiles() {
         viewModelScope.launch(Dispatchers.IO) {
+            val totalBytes = pendingDeleteFiles.sumOf { File(it).length() }
             withContext(Dispatchers.Main) { isDeleting.value = true }
             val snapshotBeforeDelete = duplicateFiles.value
             launch {
@@ -125,12 +128,12 @@ class FlatDuplicatesFileManagerVM : ViewModel() {
                     }
                 }
             }.join()
+            SavedMemoryTracker.addSavedBytes(totalBytes)
             // Wait for Room to emit the updated list, with a 3s timeout as safety net
             val updatedGroups = withTimeoutOrNull(3000) {
                 duplicateFiles.first { it != snapshotBeforeDelete }
             }
             val validIds = updatedGroups?.values?.flatten()?.map { it.id }?.toSet() ?: emptySet()
-            delay(5000)
             withContext(Dispatchers.Main) {
                 selectedFileIds.value = selectedFileIds.value.intersect(validIds)
                 uncheckedFiles.removeAll(pendingDeleteFiles)

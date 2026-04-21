@@ -14,6 +14,7 @@ import com.pg.cloudcleaner.data.repository.LocalFilesRepoImpl
 import com.pg.cloudcleaner.domain.interactors.HomeUseCases
 import com.pg.cloudcleaner.helper.ReadFileWorker
 import com.pg.cloudcleaner.presentation.WorkerUIState
+import com.pg.cloudcleaner.utils.SavedMemoryTracker
 import com.pg.cloudcleaner.utils.StorageHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -112,8 +113,49 @@ class HomeVM : ViewModel() {
             .stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
     }
 
+    val totalSavedBytes: StateFlow<Long> = SavedMemoryTracker.totalSavedBytes
+
+    val screenshotsCount: StateFlow<Int> by lazy {
+        homeUseCases.getScreenshotsCount()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
+    }
+
+    val screenshotsSizeBytes: StateFlow<Long> by lazy {
+        homeUseCases.getScreenshotsTotalSize()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
+    }
+
+    val previewScreenshots: StateFlow<List<LocalFile>> by lazy {
+        homeUseCases.getScreenshotsPreview()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    }
+
+    val optimizableImagesCount: StateFlow<Int> by lazy {
+        homeUseCases.getOptimizableImagesCount()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
+    }
+
+    val optimizableImagesSizeBytes: StateFlow<Long> by lazy {
+        homeUseCases.getOptimizableImagesTotalSize()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
+    }
+
+    val previewOptimizableImages: StateFlow<List<LocalFile>> by lazy {
+        homeUseCases.getOptimizableImagesPreview()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    }
+
     val totalFreeableBytes: StateFlow<Long> by lazy {
-        combine(imageSizeBytes, videoSizeBytes, largeSizeBytes) { img, vid, large -> img + vid + large }
+        combine(
+            listOf(
+                duplicateSizeBytes,
+                imageSizeBytes,
+                videoSizeBytes,
+                largeSizeBytes,
+                screenshotsSizeBytes,
+                optimizableImagesSizeBytes,
+            )
+        ) { values -> values[0] + values[1] + values[2] + values[3] + values[4] + (values[5] * 0.5).toLong() }
             .stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
     }
 

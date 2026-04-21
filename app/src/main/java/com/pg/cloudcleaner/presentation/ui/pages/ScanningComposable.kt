@@ -16,6 +16,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AutoFixHigh
+import androidx.compose.material.icons.outlined.Screenshot
 import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.FolderOpen
 import androidx.compose.material.icons.outlined.Image
@@ -42,6 +44,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.res.stringResource
+import com.pg.cloudcleaner.R
 import com.pg.cloudcleaner.presentation.vm.HomeVM
 
 @Composable
@@ -54,6 +58,8 @@ fun ScanningComposable(
     val imagesCount by vm.imagesCount.collectAsState()
     val largeFilesCount by vm.largeFilesCount.collectAsState()
     val videosCount by vm.videosCount.collectAsState()
+    val optimizableImagesCount by vm.optimizableImagesCount.collectAsState()
+    val screenshotsCount by vm.screenshotsCount.collectAsState()
 
     val view = LocalView.current
     DisposableEffect(Unit) {
@@ -76,13 +82,13 @@ fun ScanningComposable(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = "Analyzing Storage",
+                text = stringResource(R.string.scanning_title),
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = if (message == "Scanning files..." || message == "Scan is in progress...")
-                    "Finding unnecessary files..."
+                    stringResource(R.string.scanning_default_message)
                 else message,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -114,7 +120,7 @@ fun ScanningComposable(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "Please wait, scanning your device for files you can delete",
+                    text = stringResource(R.string.scanning_please_wait),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -137,10 +143,8 @@ fun ScanningComposable(
                     modifier = Modifier.size(96.dp),
                 ) {
                     CircularProgressIndicator(
-                        progress = { progress / 100f },
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.secondary,
-                        trackColor = MaterialTheme.colorScheme.outlineVariant,
                         strokeWidth = 6.dp,
                         strokeCap = StrokeCap.Round,
                     )
@@ -166,35 +170,47 @@ fun ScanningComposable(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                text = "Found So Far",
+                text = stringResource(R.string.scanning_found_so_far),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 ScanCategoryRow(
-                    label = "Duplicate Media",
+                    label = stringResource(R.string.category_duplicate_media),
                     count = duplicatesCount,
                     accentColor = MaterialTheme.colorScheme.primary,
                     icon = Icons.Outlined.ContentCopy,
                 )
                 ScanCategoryRow(
-                    label = "Large Images",
+                    label = stringResource(R.string.category_large_images),
                     count = imagesCount,
                     accentColor = MaterialTheme.colorScheme.tertiary,
                     icon = Icons.Outlined.Image,
                 )
                 ScanCategoryRow(
-                    label = "Large Videos",
+                    label = stringResource(R.string.category_large_videos),
                     count = videosCount,
                     accentColor = MaterialTheme.colorScheme.secondary,
                     icon = Icons.Outlined.VideoFile,
                 )
                 ScanCategoryRow(
-                    label = "Large Files",
+                    label = stringResource(R.string.category_large_files),
                     count = largeFilesCount,
                     accentColor = MaterialTheme.colorScheme.onErrorContainer,
                     icon = Icons.Outlined.FolderOpen,
+                )
+                ScanCategoryRow(
+                    label = stringResource(R.string.category_screenshots),
+                    count = screenshotsCount,
+                    accentColor = MaterialTheme.colorScheme.secondary,
+                    icon = Icons.Outlined.Screenshot,
+                )
+                ScanCategoryRow(
+                    label = stringResource(R.string.category_optimise_images),
+                    count = optimizableImagesCount,
+                    accentColor = MaterialTheme.colorScheme.tertiary,
+                    icon = Icons.Outlined.AutoFixHigh,
                 )
             }
         }
@@ -247,7 +263,7 @@ private fun ScanCategoryRow(
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
-                    text = "$count files found",
+                    text = stringResource(R.string.scanning_files_found, count),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

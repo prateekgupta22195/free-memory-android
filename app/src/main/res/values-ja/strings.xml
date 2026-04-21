@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Free Memory</string>
+    <string name="google_client_id">7346449985-910if265a4nglccu79q627fo88snqfbd.apps.googleusercontent.com</string>
+
+    <!-- Permission -->
+    <string name="permission_title">ストレージの許可が必要です</string>
+    <string name="permission_description">ファイルをスキャンしてクリーンアップできる内容を表示するために、デバイスのストレージへのアクセスが必要です。</string>
+    <string name="permission_grant_button">許可する</string>
+
+    <!-- Home -->
+    <string name="home_free_up_title">空き容量を増やしましょう</string>
+    <string name="home_free_up_description">デバイスをスキャンして、重複ファイル・大きなファイル・安全に削除できるメディアを見つけましょう。</string>
+    <string name="home_start_scan">スキャン開始</string>
+    <string name="home_error_title">エラーが発生しました</string>
+    <string name="home_error_description">ストレージデータを読み込めませんでした。もう一度スキャンしてください。</string>
+    <string name="home_scan_again">再スキャン</string>
+    <string name="home_freed_suffix">解放済み</string>
+
+    <!-- Scan Complete -->
+    <string name="scan_complete_title">スキャン完了</string>
+    <string name="scan_complete_subtitle">空き容量を確保するために削除できるファイルが見つかりました</string>
+    <string name="scan_total_space_label">解放できる合計容量</string>
+    <string name="scan_start_cleaning">クリーニング開始</string>
+    <string name="scan_categories_header">カテゴリ</string>
+    <string name="scan_again">再スキャン</string>
+
+    <!-- Categories -->
+    <string name="category_duplicate_media">重複メディア</string>
+    <string name="category_large_images">大きな画像</string>
+    <string name="category_large_videos">大きな動画</string>
+    <string name="category_large_files">大きなファイル</string>
+    <string name="category_screenshots">スクリーンショット</string>
+    <string name="category_optimise_images">画像を最適化</string>
+
+    <!-- Review -->
+    <string name="review_clean_button">確認してクリーン</string>
+
+    <!-- Scanning -->
+    <string name="scanning_title">ストレージを分析中</string>
+    <string name="scanning_default_message">不要なファイルを検索しています…</string>
+    <string name="scanning_please_wait">しばらくお待ちください。削除できるファイルをスキャンしています</string>
+    <string name="scanning_found_so_far">検出済み</string>
+    <string name="scanning_files_found">%d 件のファイルが見つかりました</string>
+
+    <!-- Detail / Delete -->
+    <string name="detail_delete_title">ファイルを削除</string>
+    <string name="detail_deleting_title">削除中…</string>
+    <string name="detail_please_wait">しばらくお待ちください…</string>
+    <string name="detail_delete_confirmation">%s を削除してもよろしいですか？削除後は復元できません。</string>
+    <string name="detail_delete_button">削除</string>
+
+    <!-- Actions -->
+    <string name="action_select">選択</string>
+    <string name="action_cancel">キャンセル</string>
+    <string name="action_delete">削除</string>
+    <string name="action_deselect_all">すべて選択解除</string>
+    <string name="action_select_all">すべて選択</string>
+    <string name="action_skip">スキップ</string>
+    <string name="action_next">次へ</string>
+    <string name="action_get_started">はじめる</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_info">情報</string>
+    <string name="cd_delete">削除</string>
+    <string name="cd_app_logo">アプリロゴ</string>
+
+    <!-- Delete Files -->
+    <string name="delete_files_title">ファイルを削除</string>
+    <string name="deleting_files_title">ファイルを削除中</string>
+    <string name="delete_files_confirmation">%1$d 件のファイル（%2$s）を削除してもよろしいですか？削除後は復元できません。</string>
+    <string name="deleting_files_progress">%1$d 件のファイルを削除中です。しばらくお待ちください…</string>
+
+    <!-- Duplicates -->
+    <string name="duplicates_count_label">%d 件の重複</string>
+
+    <!-- Optimise -->
+    <string name="optimise_title">画像を最適化</string>
+    <string name="optimise_button">最適化</string>
+    <string name="optimise_dialog_title">画像を最適化</string>
+    <string name="optimising_dialog_title">最適化中…</string>
+    <string name="optimise_progress_text">%2$d 枚中 %1$d 枚を最適化しました…</string>
+    <string name="optimise_confirm_button">最適化</string>
+    <string name="optimise_warning">この操作は元に戻せません。元の画像は完全に置き換えられます。</string>
+    <string name="optimise_all_done_title">すべての画像が最適化済みです</string>
+    <string name="optimise_all_done_subtitle">500 KB を超える JPEG 画像は見つかりませんでした。</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_duplicate_title">重複ファイルのクリーンアップ</string>
+    <string name="onboarding_duplicate_subtitle">重複したメディアファイルをインテリジェントに検出・削除して、ストレージをすぐに解放します。</string>
+    <string name="onboarding_duplicate_photos_label">重複写真</string>
+    <string name="onboarding_large_files_title">大容量ファイル管理</string>
+    <string name="onboarding_large_files_subtitle">大きな ZIP ファイル・動画・ダウンロードファイルなど、容量を多く占めているものを見つけます。</string>
+    <string name="onboarding_find_large_files">大きなファイルを探す</string>
+    <string name="onboarding_media_optimizer_title">メディア最適化</string>
+    <string name="onboarding_media_optimizer_subtitle">サイズの大きな画像や動画を特定します。思い出はそのまま、ストレージの無駄をなくしましょう。</string>
+    <string name="onboarding_image_optimiser_label">画像オプティマイザー</string>
+    <string name="onboarding_original_label">オリジナル</string>
+    <string name="onboarding_optimised_label">最適化済み</string>
+    <string name="onboarding_space_saved">節約された容量</string>
+    <string name="onboarding_optimise_now">今すぐ最適化</string>
+    <string name="onboarding_privacy_title">プライバシー保護</string>
+    <string name="onboarding_privacy_subtitle">データはすべてデバイス上に保存されます。インターネット接続なし、トラッキングなし。完全なローカルセキュリティです。</string>
+    <string name="onboarding_100_local">100% ローカル</string>
+    <string name="onboarding_no_internet">インターネット不要</string>
+    <string name="onboarding_no_data_collection">データ収集なし</string>
+    <string name="onboarding_no_ad_tracking">広告トラッキングなし</string>
+    <string name="onboarding_free_title">完全無料</string>
+    <string name="onboarding_free_subtitle">広告なし、サブスクリプションなし、隠れたコストなし。コミュニティのための純粋なユーティリティです。</string>
+    <string name="onboarding_100_free">100% 無料</string>
+    <string name="onboarding_free_forever">永久無料。一切の条件なし。</string>
+    <string name="onboarding_no_advertisements">広告なし</string>
+    <string name="onboarding_no_subscription">サブスクリプションなし</string>
+    <string name="onboarding_no_hidden_costs">隠れた費用なし</string>
+    <string name="onboarding_offline_title">オフライン優先</string>
+    <string name="onboarding_offline_subtitle">いつでもどこでもデバイスをクリーンアップできます。インターネット接続やデータ通信は不要です。</string>
+    <string name="onboarding_works_anywhere">どこでも使える</string>
+    <string name="onboarding_inflight">機内モード</string>
+    <string name="onboarding_remote_outdoors">山奥・野外</string>
+    <string name="onboarding_underground">地下鉄の地下</string>
+    <string name="onboarding_family_title">ファミリー向け</string>
+    <string name="onboarding_family_subtitle">Google Play ファミリーポリシーに準拠。全年齢対象で危険な権限は一切ありません。</string>
+    <string name="onboarding_family_policy">ファミリーポリシー</string>
+    <string name="onboarding_safe_all_ages">全年齢対象</string>
+    <string name="onboarding_no_risky_permissions">危険な権限なし</string>
+    <string name="onboarding_no_ads_or_purchases">広告・課金なし</string>
+    <string name="onboarding_theme_title">ネイティブテーマ</string>
+    <string name="onboarding_theme_subtitle">ライト・ダークモードに完全対応。高解像度タブレットでも美しく表示されるよう設計されています。</string>
+    <string name="onboarding_follows_system_theme">システムテーマに従う</string>
+    <string name="onboarding_material_you">Material You デザイン</string>
+    <string name="onboarding_tablet_optimised">高解像度タブレット最適化</string>
+    <string name="onboarding_light_mode">ライト</string>
+    <string name="onboarding_dark_mode">ダーク</string>
+</resources>

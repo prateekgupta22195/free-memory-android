@@ -13,7 +13,8 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -76,7 +77,7 @@ class FileUseCases(private val repo: LocalFilesRepo) {
         if (fileList.isNotEmpty()) {
             val batch = coroutineScope {
                 fileList.map { file ->
-                    async(Dispatchers.IO) { file.toLocalFile(duplicate = false, md5 = file.partialMd5()) }
+                    async(Dispatchers.IO) { file.toLocalFile(md5 = file.partialMd5()) }
                 }.awaitAll()
             }
             channel.send(batch)
@@ -119,10 +120,6 @@ class FileUseCases(private val repo: LocalFilesRepo) {
         return repo.getFilesViaQuery("SELECT * FROM localfile WHERE mimeType LIKE 'image/%' AND size > 5000 ORDER BY id")
     }
 
-    fun getDuplicateFileIds(): Flow<List<String>> {
-        return repo.getDuplicateFileIds()
-    }
-
     fun getDuplicateMediaFiles(): Flow<Map<String, List<LocalFile>>> {
         return repo.getDuplicateMediaFiles()
             .map { files -> files.groupBy { it.md5CheckSum!! } }
@@ -132,24 +129,37 @@ class FileUseCases(private val repo: LocalFilesRepo) {
         return repo.getDuplicateCopies()
     }
 
-    suspend fun getFilesByCategory(category: String): List<LocalFile> {
+    fun getFilesByCategory(category: String): Flow<List<LocalFile>> {
         return when (category) {
-            "category_images" -> getImageFiles().first()
-            "category_videos" -> getVideoFiles().first()
-            "category_large_files" -> getLargeFiles().first()
-            "category_duplicates" -> {
-                val duplicateIds = getDuplicateFileIds().first()
-                duplicateIds.mapNotNull { getFileById(it) }
-            }
-            else -> emptyList()
+            "category_images" -> getImageFiles()
+            "category_videos" -> getVideoFiles()
+            "category_large_files" -> getLargeFiles()
+            "category_screenshots" -> getScreenshotFiles()
+            "category_duplicates" -> getDuplicateCopies()
+            else -> flowOf(emptyList())
         }
     }
 
-    suspend fun getFilesByMd5(md5: String): List<LocalFile> {
-        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE md5 = '$md5'").first()
+    fun getFilesByMd5(md5: String): Flow<List<LocalFile>> {
+        return repo.getFilesViaQuery("SELECT * FROM localfile WHERE md5 = '$md5'")
     }
 
-    fun getFileInfo(fileId: String): String {
+    fun getScreenshotFiles(): Flow<List<LocalFile>> {
+        return repo.getFilesViaQuery(
+            "SELECT * FROM localfile WHERE mimeType LIKE 'image/%' AND id LIKE '%screenshot%' ORDER BY modifiedTime DESC"
+        ).flowOn(Dispatchers.IO)
+    }
+
+    fun getOptimizableImages(): Flow<List<LocalFile>> {
+        return repo.getFilesViaQuery(
+            "SELECT * FROM localfile WHERE mimeType = 'image/jpeg' AND size > 500 AND isOptimised = 0 ORDER BY size DESC"
+        ).flowOn(Dispatchers.IO)
+    }
+    suspend fun applyOptimisationResults(results: List<Pair<String, Long>>) {
+        repo.applyOptimisationResults(results)
+    }
+
+fun getFileInfo(fileId: String): String {
 
         val file = File(fileId)
 

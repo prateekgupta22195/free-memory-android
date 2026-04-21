@@ -1,11 +1,23 @@
 package com.pg.cloudcleaner.utils
 
 import android.webkit.MimeTypeMap
+import androidx.exifinterface.media.ExifInterface
+import com.pg.cloudcleaner.utils.ImageOptimizer
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 import java.security.MessageDigest
+
+fun File.readIsOptimised(): Boolean {
+    val ext = extension.lowercase()
+    if (ext != "jpg" && ext != "jpeg") return false
+    return try {
+        ExifInterface(absolutePath).getAttribute(ExifInterface.TAG_USER_COMMENT) == ImageOptimizer.EXIF_MARKER
+    } catch (_: Exception) {
+        false
+    }
+}
 
 fun getMimeType(path: String): String? {
     val extension = MimeTypeMap.getFileExtensionFromUrl(path)

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Free Memory</string>
+    <string name="google_client_id">7346449985-910if265a4nglccu79q627fo88snqfbd.apps.googleusercontent.com</string>
+
+    <!-- Permission -->
+    <string name="permission_title">저장소 권한이 필요합니다</string>
+    <string name="permission_description">파일을 스캔하고 정리할 항목을 표시하려면 기기 저장소에 대한 접근 권한이 필요합니다.</string>
+    <string name="permission_grant_button">권한 허용</string>
+
+    <!-- Home -->
+    <string name="home_free_up_title">공간을 확보하세요</string>
+    <string name="home_free_up_description">기기를 스캔하여 중복 파일, 대용량 파일, 안전하게 삭제할 수 있는 미디어를 찾아보십시오.</string>
+    <string name="home_start_scan">스캔 시작</string>
+    <string name="home_error_title">오류가 발생했습니다</string>
+    <string name="home_error_description">저장소 데이터를 불러올 수 없습니다. 다시 스캔해 주십시오.</string>
+    <string name="home_scan_again">다시 스캔</string>
+    <string name="home_freed_suffix">확보됨</string>
+
+    <!-- Scan Complete -->
+    <string name="scan_complete_title">스캔 완료</string>
+    <string name="scan_complete_subtitle">공간 확보를 위해 삭제할 수 있는 파일을 찾았습니다</string>
+    <string name="scan_total_space_label">확보 가능한 총 공간</string>
+    <string name="scan_start_cleaning">정리 시작</string>
+    <string name="scan_categories_header">카테고리</string>
+    <string name="scan_again">다시 스캔</string>
+
+    <!-- Categories -->
+    <string name="category_duplicate_media">중복 미디어</string>
+    <string name="category_large_images">대용량 이미지</string>
+    <string name="category_large_videos">대용량 동영상</string>
+    <string name="category_large_files">대용량 파일</string>
+    <string name="category_screenshots">스크린샷</string>
+    <string name="category_optimise_images">이미지 최적화</string>
+
+    <!-- Review -->
+    <string name="review_clean_button">확인 &amp; 정리</string>
+
+    <!-- Scanning -->
+    <string name="scanning_title">저장소 분석 중</string>
+    <string name="scanning_default_message">불필요한 파일을 찾고 있습니다…</string>
+    <string name="scanning_please_wait">잠시 기다려 주십시오. 삭제 가능한 파일을 스캔하고 있습니다</string>
+    <string name="scanning_found_so_far">지금까지 발견</string>
+    <string name="scanning_files_found">%d개 파일 발견</string>
+
+    <!-- Detail / Delete -->
+    <string name="detail_delete_title">파일 삭제</string>
+    <string name="detail_deleting_title">삭제 중…</string>
+    <string name="detail_please_wait">잠시 기다려 주십시오…</string>
+    <string name="detail_delete_confirmation">%s을(를) 삭제하시겠습니까? 삭제 후에는 복구할 수 없습니다.</string>
+    <string name="detail_delete_button">삭제</string>
+
+    <!-- Actions -->
+    <string name="action_select">선택</string>
+    <string name="action_cancel">취소</string>
+    <string name="action_delete">삭제</string>
+    <string name="action_deselect_all">전체 선택 해제</string>
+    <string name="action_select_all">전체 선택</string>
+    <string name="action_skip">건너뛰기</string>
+    <string name="action_next">다음</string>
+    <string name="action_get_started">시작하기</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_info">정보</string>
+    <string name="cd_delete">삭제</string>
+    <string name="cd_app_logo">앱 로고</string>
+
+    <!-- Delete Files -->
+    <string name="delete_files_title">파일 삭제</string>
+    <string name="deleting_files_title">파일 삭제 중</string>
+    <string name="delete_files_confirmation">%1$d개의 파일(%2$s)을 삭제하시겠습니까? 삭제 후에는 복구할 수 없습니다.</string>
+    <string name="deleting_files_progress">%1$d개의 파일을 삭제하고 있습니다. 잠시 기다려 주십시오…</string>
+
+    <!-- Duplicates -->
+    <string name="duplicates_count_label">%d개의 중복 항목</string>
+
+    <!-- Optimise -->
+    <string name="optimise_title">이미지 최적화</string>
+    <string name="optimise_button">최적화</string>
+    <string name="optimise_dialog_title">이미지 최적화</string>
+    <string name="optimising_dialog_title">최적화 중…</string>
+    <string name="optimise_progress_text">%2$d개 중 %1$d개 이미지를 최적화했습니다…</string>
+    <string name="optimise_confirm_button">최적화</string>
+    <string name="optimise_warning">이 작업은 되돌릴 수 없습니다. 원본 이미지가 영구적으로 교체됩니다.</string>
+    <string name="optimise_all_done_title">모든 이미지가 최적화되었습니다</string>
+    <string name="optimise_all_done_subtitle">500 KB보다 큰 JPEG 이미지를 찾을 수 없습니다.</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_duplicate_title">중복 파일 정리</string>
+    <string name="onboarding_duplicate_subtitle">중복된 미디어 파일을 지능적으로 감지하고 삭제하여 저장 공간을 즉시 확보하십시오.</string>
+    <string name="onboarding_duplicate_photos_label">중복 사진</string>
+    <string name="onboarding_large_files_title">대용량 파일 관리</string>
+    <string name="onboarding_large_files_subtitle">귀중한 기가바이트를 차지하는 대용량 ZIP 파일, 동영상, 다운로드 파일을 찾아보십시오.</string>
+    <string name="onboarding_find_large_files">대용량 파일 찾기</string>
+    <string name="onboarding_media_optimizer_title">미디어 최적화</string>
+    <string name="onboarding_media_optimizer_subtitle">용량이 큰 이미지와 동영상을 찾아냅니다. 추억은 간직하고 저장 공간 낭비는 줄이십시오.</string>
+    <string name="onboarding_image_optimiser_label">이미지 최적화 도구</string>
+    <string name="onboarding_original_label">원본</string>
+    <string name="onboarding_optimised_label">최적화됨</string>
+    <string name="onboarding_space_saved">절약된 공간</string>
+    <string name="onboarding_optimise_now">지금 최적화</string>
+    <string name="onboarding_privacy_title">개인 정보 보호</string>
+    <string name="onboarding_privacy_subtitle">데이터는 기기에 저장됩니다. 인터넷 없음, 추적 없음. 완벽한 로컬 보안을 제공합니다.</string>
+    <string name="onboarding_100_local">100% 로컬</string>
+    <string name="onboarding_no_internet">인터넷 불필요</string>
+    <string name="onboarding_no_data_collection">데이터 수집 없음</string>
+    <string name="onboarding_no_ad_tracking">광고 추적 없음</string>
+    <string name="onboarding_free_title">완전 무료</string>
+    <string name="onboarding_free_subtitle">광고 없음, 구독 없음, 숨겨진 비용 없음. 커뮤니티를 위한 순수한 유틸리티입니다.</string>
+    <string name="onboarding_100_free">100% 무료</string>
+    <string name="onboarding_free_forever">영원히 무료. 조건 없음.</string>
+    <string name="onboarding_no_advertisements">광고 없음</string>
+    <string name="onboarding_no_subscription">구독 없음</string>
+    <string name="onboarding_no_hidden_costs">숨겨진 비용 없음</string>
+    <string name="onboarding_offline_title">오프라인 우선</string>
+    <string name="onboarding_offline_subtitle">언제 어디서나 기기를 정리할 수 있습니다. 인터넷 연결이나 데이터 사용이 필요하지 않습니다.</string>
+    <string name="onboarding_works_anywhere">어디서든 사용 가능</string>
+    <string name="onboarding_inflight">비행기 모드</string>
+    <string name="onboarding_remote_outdoors">외딴 야외</string>
+    <string name="onboarding_underground">지하철 지하</string>
+    <string name="onboarding_family_title">가족 친화적</string>
+    <string name="onboarding_family_subtitle">Google Play 가족 정책을 준수합니다. 모든 연령대에 안전하며 위험한 권한이 없습니다.</string>
+    <string name="onboarding_family_policy">가족 정책</string>
+    <string name="onboarding_safe_all_ages">모든 연령 안전</string>
+    <string name="onboarding_no_risky_permissions">위험한 권한 없음</string>
+    <string name="onboarding_no_ads_or_purchases">광고 및 인앱 구매 없음</string>
+    <string name="onboarding_theme_title">기본 테마</string>
+    <string name="onboarding_theme_subtitle">라이트 및 다크 모드를 완벽 지원합니다. 고해상도 태블릿 디스플레이에서도 아름답게 표시되도록 설계되었습니다.</string>
+    <string name="onboarding_follows_system_theme">시스템 테마 따름</string>
+    <string name="onboarding_material_you">Material You 디자인</string>
+    <string name="onboarding_tablet_optimised">고해상도 태블릿 최적화</string>
+    <string name="onboarding_light_mode">라이트</string>
+    <string name="onboarding_dark_mode">다크</string>
+</resources>

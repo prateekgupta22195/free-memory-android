@@ -20,9 +20,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForwardIos
+import androidx.compose.material.icons.outlined.AutoFixHigh
 import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.FolderOpen
 import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.Screenshot
 import androidx.compose.material.icons.outlined.VideoFile
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -49,12 +51,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import coil3.compose.AsyncImage
+import com.pg.cloudcleaner.R
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.app.Routes
 import com.pg.cloudcleaner.data.model.LocalFile
@@ -79,6 +83,12 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
     val imageSizeBytes by vm.imageSizeBytes.collectAsState()
     val videoSizeBytes by vm.videoSizeBytes.collectAsState()
     val largeSizeBytes by vm.largeSizeBytes.collectAsState()
+    val optimizableCount by vm.optimizableImagesCount.collectAsState()
+    val optimizableSizeBytes by vm.optimizableImagesSizeBytes.collectAsState()
+    val optimizablePreview by vm.previewOptimizableImages.collectAsState()
+    val screenshotsCount by vm.screenshotsCount.collectAsState()
+    val screenshotsSizeBytes by vm.screenshotsSizeBytes.collectAsState()
+    val screenshotsThumbnails by vm.previewScreenshots.collectAsState()
 
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
@@ -99,12 +109,12 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
-                text = "Scan Complete",
+                text = stringResource(R.string.scan_complete_title),
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
-                text = "Found files you can delete to free up space",
+                text = stringResource(R.string.scan_complete_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -147,7 +157,7 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
-                    text = "Total space you can free",
+                    text = stringResource(R.string.scan_total_space_label),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
@@ -176,7 +186,7 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
                     ),
                 ) {
                     Text(
-                        text = "Start cleaning",
+                        text = stringResource(R.string.scan_start_cleaning),
                         style = MaterialTheme.typography.labelLarge,
                     )
                 }
@@ -194,14 +204,14 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                text = "Categories",
+                text = stringResource(R.string.scan_categories_header),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
 
             // Duplicate Photos
             ScanResultCategoryCard(
-                title = "Duplicate Media",
+                title = stringResource(R.string.category_duplicate_media),
                 subtitle = "$duplicatesCount files • ${Formatter.formatFileSize(context, duplicateSizeBytes)}",
                 accentColor = MaterialTheme.colorScheme.primary,
                 icon = Icons.Outlined.ContentCopy,
@@ -213,7 +223,7 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
 
             // Old Screenshots / Images
             ScanResultCategoryCard(
-                title = "Large Images",
+                title = stringResource(R.string.category_large_images),
                 subtitle = "$imagesCount files • ${Formatter.formatFileSize(context, imageSizeBytes)}",
                 accentColor = MaterialTheme.colorScheme.tertiary,
                 icon = Icons.Outlined.Image,
@@ -225,7 +235,7 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
 
             // Large Videos
             ScanResultCategoryCard(
-                title = "Large Videos",
+                title = stringResource(R.string.category_large_videos),
                 subtitle = "$videosCount files • ${Formatter.formatFileSize(context, videoSizeBytes)}",
                 accentColor = MaterialTheme.colorScheme.secondary,
                 icon = Icons.Outlined.VideoFile,
@@ -234,16 +244,40 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
                     App.instance.navController().navigate(Routes.FLAT_VIDEOS_FILE_MANAGER)
                 },
             )
-
             // Large Files
             ScanResultCategoryCard(
-                title = "Large Files",
+                title = stringResource(R.string.category_large_files),
                 subtitle = "$largeFilesCount files • ${Formatter.formatFileSize(context, largeSizeBytes)}",
                 accentColor = MaterialTheme.colorScheme.onErrorContainer,
                 icon = Icons.Outlined.FolderOpen,
                 thumbnails = largeFiles,
                 onReviewClick = {
                     App.instance.navController().navigate(Routes.FLAT_LARGE_FILE_MANAGER)
+                },
+            )
+
+            // Screenshots
+            ScanResultCategoryCard(
+                title = stringResource(R.string.category_screenshots),
+                subtitle = "$screenshotsCount files • ${Formatter.formatFileSize(context, screenshotsSizeBytes)}",
+                accentColor = MaterialTheme.colorScheme.secondary,
+                icon = Icons.Outlined.Screenshot,
+                thumbnails = screenshotsThumbnails,
+                onReviewClick = {
+                    App.instance.navController().navigate(Routes.FLAT_SCREENSHOTS_FILE_MANAGER)
+                },
+            )
+
+            // Image Optimiser
+            val estimatedSavings = (optimizableSizeBytes * 0.5).toLong()
+            ScanResultCategoryCard(
+                title = stringResource(R.string.category_optimise_images),
+                subtitle = "$optimizableCount JPEG ${if (optimizableCount == 1) "image" else "images"} • ~${Formatter.formatFileSize(context, estimatedSavings)} potential savings",
+                accentColor = MaterialTheme.colorScheme.tertiary,
+                icon = Icons.Outlined.AutoFixHigh,
+                thumbnails = optimizablePreview,
+                onReviewClick = {
+                    App.instance.navController().navigate(Routes.OPTIMISE_IMAGES)
                 },
             )
         }
@@ -256,7 +290,7 @@ fun ScanResultComposable(vm: HomeVM = viewModel()) {
                 .padding(bottom = 8.dp),
         ) {
             Text(
-                text = "Scan Again",
+                text = stringResource(R.string.scan_again),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -381,7 +415,7 @@ private fun ScanResultCategoryCard(
                     ),
                 ) {
                     Text(
-                        text = "Review & Clean",
+                        text = stringResource(R.string.review_clean_button),
                         style = MaterialTheme.typography.labelLarge,
                     )
                     Spacer(modifier = Modifier.size(8.dp))
