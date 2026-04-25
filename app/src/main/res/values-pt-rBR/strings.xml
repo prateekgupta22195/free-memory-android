@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Brazilian Portuguese overrides. The base values-pt is already BR-style;
+     this file only re-affirms the distinctly Brazilian terms. -->
+<resources>
+    <string name="category_screenshots">Capturas de Tela</string>
+    <string name="action_delete">Excluir</string>
+    <string name="detail_delete_title">Excluir Arquivo</string>
+    <string name="detail_deleting_title">Excluindo…</string>
+    <string name="detail_delete_button">Excluir</string>
+    <string name="cd_delete">Excluir</string>
+    <string name="delete_files_title">Excluir Arquivos</string>
+    <string name="deleting_files_title">Excluindo Arquivos</string>
+    <string name="delete_files_confirmation">Tem certeza que deseja excluir %1$d arquivos (%2$s)? Não será possível recuperá-los.</string>
+    <string name="deleting_files_progress">Excluindo %1$d arquivos, aguarde…</string>
+    <string name="scanning_title">Analisando Armazenamento</string>
+    <string name="scanning_default_message">Encontrando arquivos desnecessários…</string>
+    <string name="scanning_please_wait">Aguarde, verificando seu dispositivo em busca de arquivos que podem ser excluídos</string>
+    <string name="scanning_files_found">%d arquivos encontrados</string>
+    <string name="category_large_files">Arquivos Grandes</string>
+    <string name="scan_complete_subtitle">Arquivos encontrados que podem ser excluídos para liberar espaço</string>
+    <string name="onboarding_large_files_subtitle">Encontre arquivos zip enormes, vídeos e downloads que estão ocupando gigabytes preciosos.</string>
+    <string name="optimising_dialog_title">Otimizando…</string>
+</resources>

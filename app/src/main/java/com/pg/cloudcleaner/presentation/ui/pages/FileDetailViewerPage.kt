@@ -22,7 +22,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -39,9 +38,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.presentation.ui.components.BackNavigationIconCompose
-import com.pg.cloudcleaner.presentation.ui.components.VideoPlayer
 import com.pg.cloudcleaner.presentation.ui.components.common.ImageViewer
 import com.pg.cloudcleaner.presentation.ui.components.common.PopupCompose
+import com.pg.cloudcleaner.presentation.ui.components.common.VideoPlayer
 import com.pg.cloudcleaner.presentation.ui.components.common.thumbnail.OtherFileThumbnailCompose
 import com.pg.cloudcleaner.presentation.vm.FileDetailViewerVM
 import com.pg.cloudcleaner.utils.isFileImage
@@ -161,7 +160,8 @@ fun FileDetailViewerCompose(
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize(),
-                pageSpacing = 16.dp
+                pageSpacing = 16.dp,
+                beyondViewportPageCount = 0,
             ) { pageIndex ->
                 val file = currentFiles.getOrNull(pageIndex) ?: return@HorizontalPager
 

@@ -24,7 +24,6 @@
             </intent-filter>
         </activity>
 
-
         <!--Sentry configuration-->
         <meta-data android:name="io.sentry.dsn" android:value="https://a7a1e5324f974f6a9bd88b1fb0b59302@o4505045496037376.ingest.sentry.io/4505045496954880" />
         <!-- enable automatic breadcrumbs for user interactions (clicks, swipes, scrolls) -->
@@ -37,6 +36,10 @@
         <meta-data android:name="io.sentry.traces.sample-rate" android:value="1.0" />
         <!-- enable profiling when starting transactions, adjust in production env -->
         <meta-data android:name="io.sentry.traces.profiling.sample-rate" android:value="1.0" />
+
+        <meta-data
+            android:name="io.sentry.tombstone.enable"
+            android:value="true" />
 
     </application>
 

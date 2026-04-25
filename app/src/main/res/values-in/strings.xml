@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Free Memory</string>
+
+    <!-- Permission -->
+    <string name="permission_title">Izin Penyimpanan Diperlukan</string>
+    <string name="permission_description">Kami memerlukan akses ke penyimpanan perangkat Anda untuk memindai file dan menampilkan apa yang bisa dibersihkan.</string>
+    <string name="permission_grant_button">Berikan Izin</string>
+
+    <!-- Home -->
+    <string name="home_free_up_title">Bebaskan Ruang Anda</string>
+    <string name="home_free_up_description">Pindai perangkat Anda untuk menemukan file duplikat, file besar, dan media yang bisa dihapus dengan aman.</string>
+    <string name="home_start_scan">Mulai Pindai</string>
+    <string name="home_error_title">Terjadi Kesalahan</string>
+    <string name="home_error_description">Kami tidak dapat memuat data penyimpanan Anda. Silakan coba pindai lagi.</string>
+    <string name="home_scan_again">Pindai Lagi</string>
+    <string name="home_freed_suffix">dibebaskan</string>
+
+    <!-- Scan Complete -->
+    <string name="scan_complete_title">Pemindaian Selesai</string>
+    <string name="scan_complete_subtitle">Ditemukan file yang bisa dihapus untuk membebaskan ruang</string>
+    <string name="scan_total_space_label">Total ruang yang bisa dibebaskan</string>
+    <string name="scan_start_cleaning">Mulai Bersihkan</string>
+    <string name="scan_categories_header">Kategori</string>
+    <string name="scan_again">Pindai Lagi</string>
+
+    <!-- Categories -->
+    <string name="category_duplicate_media">Media Duplikat</string>
+    <string name="category_large_images">Gambar Besar</string>
+    <string name="category_large_videos">Video Besar</string>
+    <string name="category_large_files">File Besar</string>
+    <string name="category_screenshots">Tangkapan Layar</string>
+    <string name="category_optimise_images">Optimalkan Gambar</string>
+
+    <!-- Review -->
+    <string name="review_clean_button">Tinjau &amp; Bersihkan</string>
+
+    <!-- Scanning -->
+    <string name="scanning_title">Menganalisis Penyimpanan</string>
+    <string name="scanning_default_message">Mencari file yang tidak diperlukan…</string>
+    <string name="scanning_please_wait">Harap tunggu, memindai perangkat Anda untuk file yang bisa dihapus</string>
+    <string name="scanning_found_so_far">Ditemukan Sejauh Ini</string>
+    <string name="scanning_files_found">%d file ditemukan</string>
+
+    <!-- Detail / Delete -->
+    <string name="detail_delete_title">Hapus File</string>
+    <string name="detail_deleting_title">Menghapus…</string>
+    <string name="detail_please_wait">Harap tunggu…</string>
+    <string name="detail_delete_confirmation">Apakah Anda yakin ingin menghapus %s? File ini tidak dapat dipulihkan.</string>
+    <string name="detail_delete_button">Hapus</string>
+
+    <!-- Actions -->
+    <string name="action_select">Pilih</string>
+    <string name="action_cancel">Batal</string>
+    <string name="action_delete">Hapus</string>
+    <string name="action_deselect_all">Batalkan Semua</string>
+    <string name="action_select_all">Pilih Semua</string>
+    <string name="action_skip">Lewati</string>
+    <string name="action_next">Berikutnya</string>
+    <string name="action_get_started">Mulai</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_info">Info</string>
+    <string name="cd_delete">Hapus</string>
+    <string name="cd_app_logo">Logo Aplikasi</string>
+
+    <!-- Delete Files -->
+    <string name="delete_files_title">Hapus File</string>
+    <string name="deleting_files_title">Menghapus File</string>
+    <string name="delete_files_confirmation">Apakah Anda yakin ingin menghapus %1$d file (%2$s)? File-file ini tidak dapat dipulihkan.</string>
+    <string name="deleting_files_progress">Menghapus %1$d file, harap tunggu…</string>
+
+    <!-- Duplicates -->
+    <string name="duplicates_count_label">%d Duplikat</string>
+
+    <!-- Optimise -->
+    <string name="optimise_title">Optimalkan Gambar</string>
+    <string name="optimise_button">Optimalkan</string>
+    <string name="optimise_dialog_title">Optimalkan Gambar</string>
+    <string name="optimising_dialog_title">Mengoptimalkan…</string>
+    <string name="optimise_progress_text">%1$d dari %2$d gambar dioptimalkan…</string>
+    <string name="optimise_confirm_button">Optimalkan</string>
+    <string name="optimise_warning">Tindakan ini tidak dapat dibatalkan. Gambar asli akan diganti secara permanen.</string>
+    <string name="optimise_all_done_title">Semua gambar sudah dioptimalkan</string>
+    <string name="optimise_all_done_subtitle">Tidak ada gambar JPEG yang lebih besar dari 500 KB ditemukan.</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_duplicate_title">Pembersihan Duplikat</string>
+    <string name="onboarding_duplicate_subtitle">Identifikasi dan hapus file media yang redundan secara cerdas untuk membebaskan penyimpanan seketika.</string>
+    <string name="onboarding_duplicate_photos_label">Foto Duplikat</string>
+    <string name="onboarding_large_files_title">Manajer File Besar</string>
+    <string name="onboarding_large_files_subtitle">Temukan file zip besar, video, dan unduhan yang memakan gigabyte berharga Anda.</string>
+    <string name="onboarding_find_large_files">Temukan File Besar</string>
+    <string name="onboarding_media_optimizer_title">Pengoptimal Media</string>
+    <string name="onboarding_media_optimizer_subtitle">Identifikasi gambar dan video yang terlalu besar. Simpan kenangan Anda, kurangi beban penyimpanan.</string>
+    <string name="onboarding_image_optimiser_label">Pengoptimal Gambar</string>
+    <string name="onboarding_original_label">Asli</string>
+    <string name="onboarding_optimised_label">Dioptimalkan</string>
+    <string name="onboarding_space_saved">Ruang tersimpan</string>
+    <string name="onboarding_optimise_now">Optimalkan Sekarang</string>
+    <string name="onboarding_privacy_title">Penjaga Privasi</string>
+    <string name="onboarding_privacy_subtitle">Data Anda tetap di perangkat. Tanpa internet, tanpa pelacakan. Keamanan lokal penuh.</string>
+    <string name="onboarding_100_local">100% Lokal</string>
+    <string name="onboarding_no_internet">Tidak Perlu Internet</string>
+    <string name="onboarding_no_data_collection">Tanpa Pengumpulan Data</string>
+    <string name="onboarding_no_ad_tracking">Tanpa Pelacakan Iklan</string>
+    <string name="onboarding_free_title">Benar-Benar Gratis</string>
+    <string name="onboarding_free_subtitle">Tanpa iklan, tanpa langganan, tanpa biaya tersembunyi. Utilitas murni untuk komunitas.</string>
+    <string name="onboarding_100_free">100% GRATIS</string>
+    <string name="onboarding_free_forever">Selamanya. Tanpa syarat.</string>
+    <string name="onboarding_no_advertisements">Tanpa Iklan</string>
+    <string name="onboarding_no_subscription">Tanpa Langganan</string>
+    <string name="onboarding_no_hidden_costs">Tanpa Biaya Tersembunyi</string>
+    <string name="onboarding_offline_title">Offline Pertama</string>
+    <string name="onboarding_offline_subtitle">Bersihkan perangkat Anda di mana saja, kapan saja. Tidak memerlukan koneksi internet atau penggunaan data.</string>
+    <string name="onboarding_works_anywhere">Bekerja di Mana Saja</string>
+    <string name="onboarding_inflight">Mode penerbangan</string>
+    <string name="onboarding_remote_outdoors">Luar ruangan terpencil</string>
+    <string name="onboarding_underground">Kereta bawah tanah</string>
+    <string name="onboarding_family_title">Aman untuk Keluarga</string>
+    <string name="onboarding_family_subtitle">Berkomitmen pada Kebijakan Keluarga Google Play. Aman untuk semua usia tanpa izin berbahaya.</string>
+    <string name="onboarding_family_policy">Kebijakan Keluarga</string>
+    <string name="onboarding_safe_all_ages">Aman untuk semua usia</string>
+    <string name="onboarding_no_risky_permissions">Tanpa izin berbahaya</string>
+    <string name="onboarding_no_ads_or_purchases">Tanpa iklan atau pembelian</string>
+    <string name="onboarding_theme_title">Tema Asli</string>
+    <string name="onboarding_theme_subtitle">Dukungan penuh untuk mode terang dan gelap. Dirancang untuk tampil menakjubkan di layar tablet resolusi tinggi.</string>
+    <string name="onboarding_follows_system_theme">Mengikuti Tema Sistem</string>
+    <string name="onboarding_material_you">Desain Material You</string>
+    <string name="onboarding_tablet_optimised">Dioptimalkan untuk tablet resolusi tinggi</string>
+    <string name="onboarding_light_mode">Terang</string>
+    <string name="onboarding_dark_mode">Gelap</string>
+</resources>
