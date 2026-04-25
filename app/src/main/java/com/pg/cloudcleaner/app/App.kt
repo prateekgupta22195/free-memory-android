@@ -11,7 +11,6 @@ import coil3.ImageLoader
 import coil3.request.CachePolicy
 import coil3.request.crossfade
 import coil3.video.VideoFrameDecoder
-import kotlinx.coroutines.Dispatchers
 import com.pg.cloudcleaner.BuildConfig
 import com.pg.cloudcleaner.app.uim3.theme.AppTheme
 import com.pg.cloudcleaner.data.db.AppDatabase
