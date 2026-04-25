@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Free Memory</string>
+
+    <!-- Permission -->
+    <string name="permission_title">Permissão de Armazenamento Necessária</string>
+    <string name="permission_description">Precisamos de acesso ao armazenamento do seu dispositivo para verificar arquivos e mostrar o que pode ser limpo.</string>
+    <string name="permission_grant_button">Conceder Permissão</string>
+
+    <!-- Home -->
+    <string name="home_free_up_title">Libere Seu Espaço</string>
+    <string name="home_free_up_description">Verifique seu dispositivo para encontrar arquivos duplicados, arquivos grandes e mídias que podem ser removidas com segurança.</string>
+    <string name="home_start_scan">Iniciar Verificação</string>
+    <string name="home_error_title">Algo deu errado</string>
+    <string name="home_error_description">Não conseguimos carregar os dados de armazenamento. Por favor, tente verificar novamente.</string>
+    <string name="home_scan_again">Verificar Novamente</string>
+    <string name="home_freed_suffix">liberado</string>
+
+    <!-- Scan Complete -->
+    <string name="scan_complete_title">Verificação Concluída</string>
+    <string name="scan_complete_subtitle">Arquivos encontrados que podem ser excluídos para liberar espaço</string>
+    <string name="scan_total_space_label">Espaço total que pode ser liberado</string>
+    <string name="scan_start_cleaning">Iniciar Limpeza</string>
+    <string name="scan_categories_header">Categorias</string>
+    <string name="scan_again">Verificar Novamente</string>
+
+    <!-- Categories -->
+    <string name="category_duplicate_media">Mídia Duplicada</string>
+    <string name="category_large_images">Imagens Grandes</string>
+    <string name="category_large_videos">Vídeos Grandes</string>
+    <string name="category_large_files">Arquivos Grandes</string>
+    <string name="category_screenshots">Capturas de Tela</string>
+    <string name="category_optimise_images">Otimizar Imagens</string>
+
+    <!-- Review -->
+    <string name="review_clean_button">Revisar &amp; Limpar</string>
+
+    <!-- Scanning -->
+    <string name="scanning_title">Analisando Armazenamento</string>
+    <string name="scanning_default_message">Encontrando arquivos desnecessários…</string>
+    <string name="scanning_please_wait">Aguarde, verificando seu dispositivo em busca de arquivos que podem ser excluídos</string>
+    <string name="scanning_found_so_far">Encontrados Até Agora</string>
+    <string name="scanning_files_found">%d arquivos encontrados</string>
+
+    <!-- Detail / Delete -->
+    <string name="detail_delete_title">Excluir Arquivo</string>
+    <string name="detail_deleting_title">Excluindo…</string>
+    <string name="detail_please_wait">Aguarde…</string>
+    <string name="detail_delete_confirmation">Tem certeza que deseja excluir %s? Não será possível recuperá-lo.</string>
+    <string name="detail_delete_button">Excluir</string>
+
+    <!-- Actions -->
+    <string name="action_select">Selecionar</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_delete">Excluir</string>
+    <string name="action_deselect_all">Desmarcar Todos</string>
+    <string name="action_select_all">Selecionar Todos</string>
+    <string name="action_skip">Pular</string>
+    <string name="action_next">Próximo</string>
+    <string name="action_get_started">Começar</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_info">Informações</string>
+    <string name="cd_delete">Excluir</string>
+    <string name="cd_app_logo">Logo do Aplicativo</string>
+
+    <!-- Delete Files -->
+    <string name="delete_files_title">Excluir Arquivos</string>
+    <string name="deleting_files_title">Excluindo Arquivos</string>
+    <string name="delete_files_confirmation">Tem certeza que deseja excluir %1$d arquivos (%2$s)? Não será possível recuperá-los.</string>
+    <string name="deleting_files_progress">Excluindo %1$d arquivos, aguarde…</string>
+
+    <!-- Duplicates -->
+    <string name="duplicates_count_label">%d Duplicatas</string>
+
+    <!-- Optimise -->
+    <string name="optimise_title">Otimizar Imagens</string>
+    <string name="optimise_button">Otimizar</string>
+    <string name="optimise_dialog_title">Otimizar Imagens</string>
+    <string name="optimising_dialog_title">Otimizando…</string>
+    <string name="optimise_progress_text">%1$d de %2$d imagens otimizadas…</string>
+    <string name="optimise_confirm_button">Otimizar</string>
+    <string name="optimise_warning">Esta ação é irreversível. As imagens originais serão substituídas permanentemente.</string>
+    <string name="optimise_all_done_title">Todas as imagens estão otimizadas</string>
+    <string name="optimise_all_done_subtitle">Nenhuma imagem JPEG maior que 500 KB foi encontrada.</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_duplicate_title">Limpeza de Duplicatas</string>
+    <string name="onboarding_duplicate_subtitle">Identifique e remova arquivos de mídia redundantes de forma inteligente para liberar armazenamento instantaneamente.</string>
+    <string name="onboarding_duplicate_photos_label">Fotos Duplicadas</string>
+    <string name="onboarding_large_files_title">Gerenciador de Arquivos Grandes</string>
+    <string name="onboarding_large_files_subtitle">Encontre arquivos zip enormes, vídeos e downloads que estão ocupando gigabytes preciosos.</string>
+    <string name="onboarding_find_large_files">Encontrar Arquivos Grandes</string>
+    <string name="onboarding_media_optimizer_title">Otimizador de Mídia</string>
+    <string name="onboarding_media_optimizer_subtitle">Identifique imagens e vídeos muito grandes. Guarde suas memórias, elimine o excesso de armazenamento.</string>
+    <string name="onboarding_image_optimiser_label">Otimizador de Imagens</string>
+    <string name="onboarding_original_label">Original</string>
+    <string name="onboarding_optimised_label">Otimizado</string>
+    <string name="onboarding_space_saved">Espaço economizado</string>
+    <string name="onboarding_optimise_now">Otimizar Agora</string>
+    <string name="onboarding_privacy_title">Proteção de Privacidade</string>
+    <string name="onboarding_privacy_subtitle">Seus dados ficam no seu dispositivo. Sem internet, sem rastreamento. Segurança local total.</string>
+    <string name="onboarding_100_local">100% Local</string>
+    <string name="onboarding_no_internet">Sem Internet Necessária</string>
+    <string name="onboarding_no_data_collection">Sem Coleta de Dados</string>
+    <string name="onboarding_no_ad_tracking">Sem Rastreamento de Anúncios</string>
+    <string name="onboarding_free_title">Verdadeiramente Gratuito</string>
+    <string name="onboarding_free_subtitle">Sem anúncios, sem assinaturas, sem custos ocultos. Um utilitário puro para a comunidade.</string>
+    <string name="onboarding_100_free">100% GRATUITO</string>
+    <string name="onboarding_free_forever">Para sempre. Sem pegadinhas.</string>
+    <string name="onboarding_no_advertisements">Sem Anúncios</string>
+    <string name="onboarding_no_subscription">Sem Assinatura</string>
+    <string name="onboarding_no_hidden_costs">Sem Custos Ocultos</string>
+    <string name="onboarding_offline_title">Offline Primeiro</string>
+    <string name="onboarding_offline_subtitle">Limpe seu dispositivo em qualquer lugar, a qualquer hora. Sem necessidade de conexão ativa à internet ou uso de dados.</string>
+    <string name="onboarding_works_anywhere">Funciona em Qualquer Lugar</string>
+    <string name="onboarding_inflight">Modo avião</string>
+    <string name="onboarding_remote_outdoors">Área remota ao ar livre</string>
+    <string name="onboarding_underground">Metrô subterrâneo</string>
+    <string name="onboarding_family_title">Seguro para a Família</string>
+    <string name="onboarding_family_subtitle">Comprometido com a Política Familiar do Google Play. Seguro para todas as idades sem permissões arriscadas.</string>
+    <string name="onboarding_family_policy">Política Familiar</string>
+    <string name="onboarding_safe_all_ages">Seguro para todas as idades</string>
+    <string name="onboarding_no_risky_permissions">Sem permissões arriscadas</string>
+    <string name="onboarding_no_ads_or_purchases">Sem anúncios ou compras</string>
+    <string name="onboarding_theme_title">Tema Nativo</string>
+    <string name="onboarding_theme_subtitle">Suporte completo para modos claro e escuro. Projetado para parecer impressionante em displays de tablet de alta resolução.</string>
+    <string name="onboarding_follows_system_theme">Segue o Tema do Sistema</string>
+    <string name="onboarding_material_you">Design Material You</string>
+    <string name="onboarding_tablet_optimised">Otimizado para tablet de alta resolução</string>
+    <string name="onboarding_light_mode">Claro</string>
+    <string name="onboarding_dark_mode">Escuro</string>
+</resources>

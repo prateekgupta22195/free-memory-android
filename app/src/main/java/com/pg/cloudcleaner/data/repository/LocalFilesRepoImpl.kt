@@ -15,7 +15,33 @@ class LocalFilesRepoImpl(private val dao: LocalFilesDao) : LocalFilesRepo {
     }
 
     override suspend fun insertAll(localFiles: List<LocalFile>) {
-        return dao.insertAll(localFiles)
+        localFiles.chunked(BULK_INSERT_CHUNK_SIZE).forEach { chunk ->
+            dao.insertAllRaw(buildBulkInsertQuery(chunk))
+        }
+    }
+
+    private fun buildBulkInsertQuery(files: List<LocalFile>): SimpleSQLiteQuery {
+        val sql = buildString {
+            append("INSERT OR REPLACE INTO localfile (id, mimeType, modifiedTime, originalFilename, size, md5, isOptimised) VALUES ")
+            files.indices.joinTo(this, separator = ",") { "(?,?,?,?,?,?,?)" }
+        }
+        val args = arrayOfNulls<Any>(files.size * 7)
+        files.forEachIndexed { i, file ->
+            val base = i * 7
+            args[base]     = file.id
+            args[base + 1] = file.fileType
+            args[base + 2] = file.modifiedTime
+            args[base + 3] = file.fileName
+            args[base + 4] = file.size
+            args[base + 5] = file.md5CheckSum
+            args[base + 6] = if (file.isOptimised) 1 else 0
+        }
+        return SimpleSQLiteQuery(sql, args)
+    }
+
+    companion object {
+        // floor(999 / 7 columns) — stays within SQLite's SQLITE_MAX_VARIABLE_NUMBER on API 23+
+        private const val BULK_INSERT_CHUNK_SIZE = 142
     }
 
     override fun getAllFiles(): Flow<List<LocalFile>> {

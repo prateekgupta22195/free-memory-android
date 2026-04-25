@@ -22,8 +22,8 @@ interface LocalFilesDao {
     @RawQuery(observedEntities = [LocalFile::class])
     fun getFilesViaQuery(query: SupportSQLiteQuery): Flow<List<LocalFile>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(files: List<LocalFile>)
+    @RawQuery
+    suspend fun insertAllRaw(query: SupportSQLiteQuery): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(file: LocalFile)

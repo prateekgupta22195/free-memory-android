@@ -1,6 +1,7 @@
 package com.pg.cloudcleaner.domain.interactors
 
 import android.text.format.Formatter
+import androidx.room.withTransaction
 import com.pg.cloudcleaner.app.App
 import com.pg.cloudcleaner.data.model.LocalFile
 import com.pg.cloudcleaner.data.model.toLocalFile
@@ -18,7 +19,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.io.File
 import java.util.Date
 
@@ -55,10 +55,11 @@ class FileUseCases(private val repo: LocalFilesRepo) {
             channel.close()
         }
 
-        // Consumer: each batch is its own Room transaction (no long-lived lock)
         for (batch in channel) {
-            repo.insertAll(batch)
-            repeat(batch.size) { onFileProcessed?.invoke() }
+            App.instance.db.withTransaction {
+                repo.insertAll(batch)
+                repeat(batch.size) { onFileProcessed?.invoke() }
+            }
         }
     }
 

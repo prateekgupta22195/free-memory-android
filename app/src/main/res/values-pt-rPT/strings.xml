@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- European Portuguese overrides over the base values-pt (Brazilian). -->
+<resources>
+    <!-- "arquivo" → "ficheiro" -->
+    <string name="home_free_up_description">Analise o seu dispositivo para encontrar ficheiros duplicados, ficheiros grandes e multimédia que pode remover com segurança.</string>
+    <string name="category_large_files">Ficheiros Grandes</string>
+    <string name="scan_complete_subtitle">Ficheiros encontrados que podem ser eliminados para libertar espaço</string>
+    <string name="scanning_files_found">%d ficheiros encontrados</string>
+    <string name="detail_delete_title">Eliminar Ficheiro</string>
+    <string name="delete_files_title">Eliminar Ficheiros</string>
+    <string name="delete_files_confirmation">Tem a certeza de que pretende eliminar %1$d ficheiros (%2$s)? Não será possível recuperá-los.</string>
+    <string name="deleting_files_progress">A eliminar %1$d ficheiros, aguarde…</string>
+    <string name="onboarding_large_files_subtitle">Encontre ficheiros zip enormes, vídeos e transferências que estão a ocupar gigabytes preciosos.</string>
+
+    <!-- "captura de tela" → "captura de ecrã" -->
+    <string name="category_screenshots">Capturas de Ecrã</string>
+
+    <!-- "excluir" → "eliminar" -->
+    <string name="action_delete">Eliminar</string>
+    <string name="detail_delete_confirmation">Tem a certeza de que pretende eliminar %s? Não será possível recuperá-lo.</string>
+    <string name="detail_delete_button">Eliminar</string>
+    <string name="cd_delete">Eliminar</string>
+    <string name="deleting_files_title">A eliminar Ficheiros</string>
+
+    <!-- Gerunds ("-ando/-endo") → "a + infinitive" (European progressive) -->
+    <string name="scanning_title">A analisar o Armazenamento</string>
+    <string name="scanning_default_message">A encontrar ficheiros desnecessários…</string>
+    <string name="scanning_please_wait">Aguarde, a verificar o seu dispositivo em busca de ficheiros que podem ser eliminados</string>
+    <string name="detail_deleting_title">A eliminar…</string>
+    <string name="optimising_dialog_title">A otimizar…</string>
+    <string name="optimise_progress_text">%1$d de %2$d imagens otimizadas…</string>
+</resources>
